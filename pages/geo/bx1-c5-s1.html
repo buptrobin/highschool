@@ -40,7 +40,1128 @@
 window.PAGE = {"sid": "geo", "slug": "bx1-c5-s1", "title": "植被", "anchor": "#bx1-c5-s1"};
 </script>
 <script type="text/markdown" id="md">
+<style>
+.gx{
+  --ink:#151a21; --mid:#5a6472; --faint:#9aa3ae;
+  --line:#e6e9ee; --paper:#fbfcfd;
+  --blue:#0891b2; --blue-soft:#ecfbff; --blue-line:#b8e6f2;
+  --amber:#b8791f; --amber-soft:#fdf3e0; --amber-line:#f0dcb4;
+  --green:#2f8a5b; --green-soft:#e6f6ee; --green-line:#bfe0cd;
+  --red:#b8402f; --red-soft:#fbeae7; --red-line:#f0cbc4;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:15px; line-height:1.75; color:var(--ink);
+}
+.gx *{box-sizing:border-box}
+.gx p{margin:0}
+.gx b{font-weight:650}
+
+.gx-kicker{font-size:12px;letter-spacing:.16em;color:var(--mid);margin:0 0 8px}
+.gx-claim{
+  font-size:21px;line-height:1.5;font-weight:650;letter-spacing:-.01em;
+  margin:0 0 10px;color:var(--ink);
+}
+.gx-claim b{color:var(--blue);background:var(--blue-soft);padding:0 5px;border-radius:5px}
+.gx-meta{display:flex;flex-wrap:wrap;gap:5px 15px;font-size:12.5px;color:var(--mid);margin:0 0 14px}
+.gx-meta span{display:inline-flex;align-items:center;gap:6px}
+.gx-meta i{width:5px;height:5px;border-radius:50%;background:var(--faint);display:block}
+.gx-lede{font-size:16px;line-height:1.78;color:#3a424e;margin:0 0 16px}
+.gx-lede b{background:var(--amber-soft);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+.gx-toc{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px}
+.gx-toc a{
+  font-size:12.5px;color:#3a424e;background:#f3f6f8;border:1px solid var(--line);
+  border-radius:999px;padding:5px 12px;transition:.14s;
+}
+.gx-toc a:hover{border-color:var(--blue-line);color:var(--blue);background:var(--blue-soft)}
+
+.gx-sec{margin:0 0 34px;scroll-margin-top:70px}
+.gx-sec:last-of-type{margin-bottom:20px}
+.gx h2{
+  font-size:19px;margin:0 0 4px;padding:0;border:0;line-height:1.4;
+  display:flex;align-items:baseline;gap:9px;letter-spacing:-.01em;
+}
+.gx h2 .sn{font-family:var(--mono);font-size:12.5px;color:var(--blue);font-weight:700}
+.gx-h2s{font-size:13px;color:var(--mid);margin:0 0 14px}
+
+.bdg{display:inline-block;font-size:11px;font-weight:700;line-height:1;padding:4px 8px;
+  border-radius:5px;letter-spacing:.03em;vertical-align:2px;white-space:nowrap}
+.bdg-must{background:var(--amber-soft);color:#8a5c14;border:1px solid var(--amber-line)}
+.bdg-warn{background:var(--red-soft);color:#8f3226;border:1px solid var(--red-line)}
+.bdg-diff{background:var(--blue-soft);color:#0b6580;border:1px solid var(--blue-line)}
+.bdg-ext{background:var(--green-soft);color:#1e6640;border:1px solid var(--green-line)}
+
+.gx-quote{border-left:3px solid var(--amber);background:#fffaf2;border-radius:0 12px 12px 0;
+  padding:13px 16px;margin:0 0 14px}
+.q-t{font-size:12.5px;color:var(--mid);margin:0 0 7px;font-weight:600}
+.q-src{font-family:var(--mono);font-weight:400;margin-left:6px;font-size:11px}
+.q-b{margin:0;font-size:15.5px;line-height:1.85;color:#2b2a26;
+  font-family:"Kaiti SC","KaiTi","STKaiti",Georgia,serif}
+.q-n{margin:9px 0 0;font-size:13px;color:#3a3a35;line-height:1.72;
+  padding-top:8px;border-top:1px dashed var(--amber-line)}
+.q-n b{color:#8a5c14}
+
+.gx-fig{margin:0 0 16px;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px 16px}
+.fig-cap{display:flex;align-items:baseline;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.fig-no{font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.05em;white-space:nowrap}
+.fig-t{font-size:15.5px;font-weight:650}
+.fig-s{font-size:13.5px;color:var(--mid);line-height:1.72;margin:0 0 12px}
+.fig-s b{color:var(--ink)}
+.gx-fig svg{display:block;width:100%;height:auto}
+.gx-take{margin:12px 0 0;padding-top:11px;border-top:1px dashed var(--line);
+  font-size:13px;color:#3a3a35;line-height:1.72}
+.gx-take::before{content:"结论\00a0\00a0";font-weight:700;color:var(--amber);letter-spacing:.05em}
+.gx-note{font-size:12.5px;color:var(--mid);margin:10px 0 0;padding-top:9px;
+  border-top:1px dashed var(--line);line-height:1.7}
+.gx-note b{color:#3a3a35}
+.halo{stroke:#fff;stroke-width:3.4;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
+
+.gx-board svg{touch-action:none;user-select:none;outline:none}
+.gx-board svg:focus-visible{box-shadow:0 0 0 3px var(--blue-soft);border-radius:10px}
+.bar{display:flex;flex-wrap:wrap;gap:9px 13px;align-items:center;margin-top:12px;
+  padding-top:13px;border-top:1px dashed var(--line)}
+.bar .lb{font-size:13.5px;font-weight:650;color:#3a3a35}
+.bar input[type=range]{flex:1 1 200px;min-width:150px;accent-color:var(--blue);height:24px}
+.bar button{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);background:#f4f7f9;
+  border:1px solid var(--line);border-radius:9px;padding:6px 12px;cursor:pointer;transition:.14s}
+.bar button:hover{background:#e9eff3;border-color:var(--faint)}
+.bar .hint{font-size:12px;color:var(--mid);flex-basis:100%;margin:0;line-height:1.6}
+.stats{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);margin-top:13px}
+.st{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 13px}
+.st .k{font-size:11.5px;color:var(--mid);margin-bottom:2px;font-weight:600}
+.st .v{font-size:19px;font-weight:700;font-family:var(--mono);letter-spacing:-.01em;line-height:1.3}
+.st .s{font-size:11.5px;color:var(--mid);margin-top:1px;line-height:1.5}
+.st.state .v{font-size:15px;font-family:inherit;line-height:1.4}
+.st.state{border-color:#dde2e8;background:#fff}
+
+.gx-ex{border:1px solid var(--line);border-radius:14px;padding:17px 19px;background:var(--paper);margin:0 0 14px}
+.gx-ex .ex-t{font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.05em;margin:0 0 9px}
+.gx-ex .ex-q{font-size:14px;line-height:1.8;margin:0 0 14px;color:#2b2a26;background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.step{position:relative;padding:0 0 12px 32px;margin:0 0 12px;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:none;margin-bottom:4px;padding-bottom:0}
+.step[hidden]{display:none}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;
+  width:21px;height:21px;border-radius:50%;background:var(--blue-soft);color:#0b6580;
+  font-size:11.5px;font-weight:700;text-align:center;line-height:21px}
+.s-h{font-size:13px;font-weight:700;margin:0 0 4px;color:#0b6580}
+.s-b{font-size:13.5px;line-height:1.78;margin:0;color:#3a3a35}
+.s-b b{color:var(--ink)}
+.s-k{font-size:11.5px;color:var(--mid);margin:5px 0 0;font-family:var(--mono)}
+.exbar{display:flex;align-items:center;gap:11px;margin-top:12px;flex-wrap:wrap}
+.exbar button{font:inherit;font-size:13px;font-weight:650;color:#fff;background:var(--blue);
+  border:1px solid var(--blue);border-radius:9px;padding:8px 18px;cursor:pointer;transition:.14s}
+.exbar button:hover{filter:brightness(1.08)}
+.exbar button:disabled{background:#dfe4e9;border-color:#dfe4e9;color:#8e97a4;cursor:default;filter:none}
+.exbar .cnt{font-size:12px;color:var(--mid);font-family:var(--mono)}
+.ans{margin-top:14px;border:1px dashed var(--green-line);background:#f6fbf8;border-radius:11px;padding:12px 15px}
+.ans[hidden]{display:none}
+.ans-t{font-size:12px;font-weight:700;color:var(--green);margin:0 0 7px;letter-spacing:.05em}
+.ans-b{font-size:13.5px;line-height:1.9;margin:0;color:#2b2a26}
+.ans-b b{color:#1e6640}
+
+.gx-qa{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.qac{border:1px solid var(--line);border-radius:12px;padding:13px 14px 12px;background:var(--paper)}
+.qac .q{margin:0 0 7px;font-size:14px;font-weight:700;line-height:1.55}
+.qac .a{margin:0 0 10px;font-size:13px;line-height:1.75;color:#3a3a35}
+.qac .a b{color:var(--ink)}
+.qac svg{background:#fff;border:1px solid var(--line);border-radius:9px}
+.ms{font-size:10px;fill:#6b7280}
+.mm{font-size:10.5px;font-family:var(--mono);font-weight:700}
+.mh{font-size:10.5px;font-weight:700;fill:#151a21}
+
+.gx-errs{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.er{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.er-x{margin:0 0 7px;font-size:13.5px;color:#a04437;background:var(--red-soft);
+  border-radius:7px;padding:7px 10px;line-height:1.6}
+.er-v{margin:0 0 7px;font-size:13.5px;color:#1e6640;background:var(--green-soft);
+  border-radius:7px;padding:7px 10px;line-height:1.75}
+.er-w{margin:0;font-size:12.5px;color:var(--mid);line-height:1.7}
+.er-w b{color:#3a3a35}
+
+.gx table.gx-cmp{width:100%;border-collapse:collapse;font-size:13px;margin:0 0 12px;
+  display:table;table-layout:auto;white-space:normal;background:#fff;
+  border:1px solid var(--line);border-radius:10px}
+.gx table.gx-cmp th,.gx table.gx-cmp td{padding:8px 10px;text-align:left;
+  border:1px solid var(--line);line-height:1.65;vertical-align:top;white-space:normal}
+.gx table.gx-cmp thead th{background:#f4f7f9;font-size:12.5px;font-weight:700;border-top:0}
+.gx table.gx-cmp tbody td:first-child{color:var(--mid);font-weight:600;width:72px;white-space:nowrap}
+.gx table.gx-cmp tr.key td{background:var(--amber-soft)}
+
+.gx-foot{margin-top:14px;font-size:12px;color:var(--mid);border-top:1px solid var(--line);
+  padding-top:14px;line-height:1.8}
+.gx-foot code{font-family:var(--mono);font-size:.92em;background:#f2f4f6;padding:1px 4px;border-radius:3px}
+
+.gx-zoomchip{display:none;position:absolute;top:-5px;right:-5px;z-index:2;font-size:11.5px;font-weight:600;
+  color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:999px;padding:4px 10px}
+.gx-svgbox{position:relative}
+.gx-zoom{position:fixed;inset:0;z-index:60;background:#fff;overflow:auto;padding:54px 10px 30px}
+.gx-zoom[hidden]{display:none}
+.gx-zoom svg{width:760px;max-width:none;height:auto;display:block;margin:0 auto}
+.gx-zoom-x{position:fixed;top:12px;right:14px;z-index:61;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;cursor:pointer;font-size:17px;line-height:1;color:var(--ink);font-family:inherit}
+.gx-zoom-tip{position:fixed;top:20px;left:16px;z-index:61;font-size:12.5px;color:var(--mid)}
+
+@media (max-width:760px){
+  .gx{font-size:14.5px}
+  .gx-claim{font-size:18px}
+  .gx-lede{font-size:14.5px}
+  .gx h2{font-size:17px}
+  .gx-fig{padding:14px 12px 13px;border-radius:12px}
+  .fig-s{font-size:13px}
+  .gx-quote{padding:11px 13px}
+  .q-b{font-size:14.5px}
+  .gx-zoomchip{display:inline-block}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats .st:last-child{grid-column:1/-1}
+  .st .v{font-size:17px}
+  .gx-qa{grid-template-columns:1fr}
+  .gx-errs{grid-template-columns:1fr}
+  .gx-ex{padding:14px 13px}
+  .bar button{min-height:42px;flex:1 1 auto}
+  .bar input[type=range]{flex-basis:100%}
+  .gx table.gx-cmp{font-size:12px}
+  .gx table.gx-cmp th,.gx table.gx-cmp td{padding:6px 7px}
+  .gx table.gx-cmp tbody td:first-child{width:56px;white-space:normal}
+  .gx table.gx-cmp thead th{font-size:11.5px}
+}
+@media (pointer:coarse){ .gx button{min-height:42px} }
+</style>
+
+<div class="gx">
+
+<div class="gx-kicker">ELI5-HIGH · 讲给要考试的人</div>
+<p class="gx-claim">植被不是"植物的名单"，而是<b>水热条件写在叶子上的答案</b>。</p>
+<div class="gx-meta">
+  <span><i></i>人教版必修第一册 第五章第一节</span>
+  <span><i></i>高一 · 植被与土壤</span>
+  <span><i></i>阅读 12 分钟</span>
+  <span><i></i>含 1 个互动模型</span>
+</div>
+<p class="gx-lede">这一节的所有内容，都是在回答同一件事：<b>这块地方的水热条件，会长出什么样的植物</b>。
+森林分四型、草原分两类、荒漠一类——名字不同，判据其实只有两条：<b>够不够湿</b>、<b>够不够暖</b>。
+记住这条主线，比背七个名字有用得多。</p>
+
+<nav class="gx-toc">
+  <a href="#a">① 课本怎么说</a><a href="#b">② 拆开看</a><a href="#c">③ 自己拖一下</a>
+  <a href="#d">④ 一道题走一遍</a><a href="#e">⑤ 会怎么考</a><a href="#f">⑥ 易错清单</a>
+</nav>
+
+<!-- ================= A ================= -->
+<section class="gx-sec" id="a">
+  <h2><span class="sn">01</span>课本怎么说</h2>
+  <p class="gx-h2s">先背标准表述，再看解释。顺序反了，答题时就写不出术语。</p>
+
+  <div class="gx-quote">
+    <p class="q-t">课本原话 · 定义与分类<span class="q-src">人教版（2019）必修第一册 · 第五章第一节</span></p>
+    <p class="q-b">自然界成群生长的各种植物的整体，称为植被。天然植被是天然形成的植被，如森林、草原、荒漠等；人工植被是人工栽培和经营管理的植被，如经济林、人工草场等。</p>
+    <p class="q-n">→ 定义里有 <b>三个词缺一不可</b>：<b>① 成群生长</b>（不是单株）、<b>② 各种植物</b>（不是一种）、
+    <b>③ 整体</b>（是一个有结构的群落）。所以"植被就是指植物"这句话<b>一定是错的</b>——
+    一棵树叫植物，一片互相争光的树才叫植被。</p>
+  </div>
+
+  <div class="gx-quote">
+    <p class="q-t">课本原话 · 植被与环境<span class="q-src">人教版（2019）必修第一册 · 第五章第一节</span></p>
+    <p class="q-b">植被是自然环境的重要组成部分，对自然环境具有改造作用。环境影响植被的分布：气温越高、降水量越多的地方，植被高度越大，植物种的数量越多，垂直结构越丰富。天然植被一般按类型有规律地分布在适宜其生长的地方，并具有适应当地环境的特征，所以它对环境有一定的指示作用。</p>
+    <p class="q-n">→ 这段是 <b>双向关系 + 一个功能</b>：<b>环境 → 植被</b>（决定分布）、<b>植被 → 环境</b>（改造水热与土壤）、
+    外加一个 <b>指示作用</b>（看到椰子树就知道在热带）。答题时问"关系"，三个方向都要写，
+    只写"环境决定植被"会丢掉一半分。</p>
+  </div>
+
+  <p class="gx-note">最容易忽略的是那句<b>「气温越高、降水量越多，垂直结构越丰富」</b>——
+  它把"植被长什么样"和"水热条件"直接挂了钩。后面所有森林类型的特征，
+  本质上都是这句话的具体展开：<b>热 + 湿 → 层次多；冷或干 → 层次少</b>。</p>
+
+  <p class="gx-h2s" style="margin-top:18px">四种森林的判据，一张表看完（背气候区 + 一个"标志性特征"就够）：</p>
+  <div style="overflow-x:auto">
+  <table class="gx-cmp">
+    <thead><tr><th>森林类型</th><th>气候区</th><th>标志性特征</th></tr></thead>
+    <tbody>
+      <tr><td>热带雨林</td><td>热带雨林气候区、热带季风气候区</td><td>全年旺盛生长、深绿色；种类丰富、<b>垂直结构复杂</b>；藤本附生多，常见茎花、板根</td></tr>
+      <tr><td>常绿阔叶林</td><td>亚热带季风气候区、亚热带湿润气候区</td><td>森林常绿、<b>多革质叶片</b>；花期集中在春末夏初；垂直结构较简单</td></tr>
+      <tr class="key"><td>落叶阔叶林</td><td>温带季风气候区、温带海洋性气候区</td><td>叶片宽阔；<b>春季发叶、秋冬季落叶</b>，季相变化明显</td></tr>
+      <tr><td>亚寒带针叶林</td><td>亚欧大陆和北美大陆的亚寒带地区</td><td>以松、杉类为主；<b>叶片缩小为针状</b>，以抗寒抗旱</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="gx-note">高亮那一行是四种里<b>唯一有"季相变化"</b>的：夏绿冬枯、一眼能看出来。
+  考试给照片时，<b>看有没有落叶</b>是最快的判据——有落叶就不是常绿，没落叶再看叶子是革质还是针状。</p>
+</section>
+
+<!-- ================= B ================= -->
+<section class="gx-sec" id="b">
+  <h2><span class="sn">02</span>拆开看</h2>
+  <p class="gx-h2s">四张图：怎么认森林、草原和荒漠差在哪、层次怎么数、植被怎么反过来改环境。</p>
+
+  <!-- 图1 森林四型 -->
+  <figure class="gx-fig">
+    <div class="fig-cap">
+      <span class="fig-no">图 1</span><span class="fig-t">四种森林：看叶、看层次、看落不落叶</span>
+      <span class="bdg bdg-must">必考</span>
+    </div>
+    <p class="fig-s">四种森林的差别不在"树好不好看"，而在<b>三处可观察的细节</b>：叶子是宽是窄、有没有革质或针状、
+    冬春有没有光秃期。<b>热带雨林靠"层次多 + 藤本附生"</b>认，<b>落叶阔叶林靠"冬季落叶"</b>认，
+    中间两种看叶子厚不厚。</p>
+    <div class="gx-svgbox">
+      <svg viewBox="0 0 820 330" role="img"
+           aria-label="四种森林并列对比：热带雨林多层且藤本多，常绿阔叶林革质叶，落叶阔叶林冬季落叶，亚寒带针叶林针状叶">
+        <!-- P1 热带雨林 -->
+        <rect x="8" y="34" width="192" height="176" rx="10" fill="#f4f9f4" stroke="#d8e4d8"/>
+        <path d="M 100 196 L 100 112" stroke="#7a6a4e" stroke-width="4"/>
+        <ellipse cx="100" cy="170" rx="23" ry="13" fill="#7cbc7f"/>
+        <ellipse cx="100" cy="142" rx="27" ry="15" fill="#6fae72"/>
+        <ellipse cx="100" cy="110" rx="31" ry="20" fill="#5f9e63"/>
+        <ellipse cx="72" cy="126" rx="18" ry="12" fill="#7cbc7f"/>
+        <ellipse cx="130" cy="124" rx="18" ry="12" fill="#7cbc7f"/>
+        <path d="M 56 196 C 66 162, 118 152, 130 122" fill="none" stroke="#8ab37f" stroke-width="1.8"/>
+        <path d="M 150 196 C 146 168, 132 150, 124 138" fill="none" stroke="#8ab37f" stroke-width="1.6"/>
+        <text x="104" y="52" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e6640">① 热带雨林</text>
+        <text x="104" y="230" text-anchor="middle" font-size="10.5" fill="#3a3a35">热带雨林 / 热带季风气候</text>
+        <text x="104" y="246" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e6640">层次多 · 藤本附生 · 茎花板根</text>
+        <text x="104" y="262" text-anchor="middle" font-size="10" fill="#5a6472">全年常绿，深绿色</text>
+
+        <!-- P2 常绿阔叶林 -->
+        <rect x="212" y="34" width="192" height="176" rx="10" fill="#f7f9f4" stroke="#dde4d4"/>
+        <path d="M 300 196 L 300 118" stroke="#7a6a4e" stroke-width="3"/>
+        <ellipse cx="300" cy="106" rx="34" ry="26" fill="#6fae72"/>
+        <ellipse cx="268" cy="126" rx="20" ry="15" fill="#7cbc7f"/>
+        <ellipse cx="332" cy="126" rx="20" ry="15" fill="#7cbc7f"/>
+        <ellipse cx="356" cy="62" rx="9" ry="17" transform="rotate(28 356 62)" fill="#2f8a5b" opacity="0.9" stroke="#1e6640" stroke-width="1"/>
+        <path d="M 350 50 L 362 74" stroke="#e6f6ee" stroke-width="1"/>
+        <text x="308" y="52" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e6640">② 常绿阔叶林</text>
+        <text x="308" y="230" text-anchor="middle" font-size="10.5" fill="#3a3a35">亚热带季风 / 湿润气候</text>
+        <text x="308" y="246" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e6640">常绿 · 革质叶 · 层次较简单</text>
+        <text x="308" y="262" text-anchor="middle" font-size="10" fill="#5a6472">春末夏初集中开花</text>
+
+        <!-- P3 落叶阔叶林 -->
+        <rect x="416" y="34" width="192" height="176" rx="10" fill="#fbf8f2" stroke="#e4ddce"/>
+        <path d="M 470 196 L 470 120" stroke="#7a6a4e" stroke-width="3"/>
+        <ellipse cx="470" cy="108" rx="32" ry="24" fill="#8fbf6f"/>
+        <ellipse cx="440" cy="126" rx="18" ry="13" fill="#a3cf84"/>
+        <text x="470" y="216" text-anchor="middle" font-size="9.5" fill="#5a6472">夏季：盛叶</text>
+        <path d="M 556 196 L 556 120" stroke="#7a6a4e" stroke-width="3"/>
+        <path d="M 556 120 L 532 100 M 556 120 L 580 100 M 556 120 L 556 94 M 556 120 L 540 112 M 556 120 L 572 112"
+              stroke="#b08b5e" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <text x="556" y="216" text-anchor="middle" font-size="9.5" fill="#8a5c14">冬季：落叶</text>
+        <text x="512" y="52" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a5c14">③ 落叶阔叶林</text>
+        <text x="512" y="240" text-anchor="middle" font-size="10.5" fill="#3a3a35">温带季风 / 温带海洋性气候</text>
+        <text x="512" y="256" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a5c14">季相变化明显（夏绿冬枯）</text>
+
+        <!-- P4 亚寒带针叶林 -->
+        <rect x="620" y="34" width="192" height="176" rx="10" fill="#f4f7f9" stroke="#d4dfe4"/>
+        <path d="M 690 196 L 690 172" stroke="#6b5a42" stroke-width="3"/>
+        <path d="M 690 60 L 660 128 L 720 128 Z" fill="#3f7d63"/>
+        <path d="M 690 96 L 654 172 L 726 172 Z" fill="#4c8f72"/>
+        <path d="M 756 196 L 756 158" stroke="#6b5a42" stroke-width="3"/>
+        <path d="M 756 76 L 734 132 L 778 132 Z" fill="#3f7d63"/>
+        <path d="M 756 108 L 728 176 L 784 176 Z" fill="#4c8f72"/>
+        <text x="716" y="52" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b6580">④ 亚寒带针叶林</text>
+        <text x="716" y="230" text-anchor="middle" font-size="10.5" fill="#3a3a35">亚欧、北美大陆亚寒带</text>
+        <text x="716" y="246" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0b6580">松杉为主 · 针状叶</text>
+        <text x="716" y="262" text-anchor="middle" font-size="10" fill="#5a6472">抗寒抗旱，冬季不落叶</text>
+      </svg>
+      <span class="gx-zoomchip">点击放大</span>
+    </div>
+    <p class="gx-take">判别顺序：<b>先看冬季有没有光秃</b>（有 → 落叶阔叶林）→ <b>再看叶子</b>（针状 → 亚寒带针叶林；
+    宽阔偏硬有光泽 → 常绿阔叶林）→ <b>最后看层次和藤本</b>（层次多、藤本附生多 → 热带雨林）。</p>
+  </figure>
+
+  <!-- 图2 草原与荒漠 -->
+  <figure class="gx-fig">
+    <div class="fig-cap">
+      <span class="fig-no">图 2</span><span class="fig-t">草原和荒漠：水分再少一档，草也长不住</span>
+      <span class="bdg bdg-diff">辨析</span>
+    </div>
+    <p class="fig-s">课本的判据只有一句：<b>水分条件不能满足森林生长 → 草原；水分更少 → 荒漠</b>。
+    草原的主角是草本，<b>根系密而浅</b>；荒漠的主角是旱生灌木，<b>根系极深极广</b>，把水"抢"在手里。
+    两者的区别不在"有没有绿色"，而在<b>谁是主角、根往哪长</b>。</p>
+    <div class="gx-svgbox">
+<svg viewBox="0 0 820 320" role="img"
+           aria-label="左：草原以草本为主、根系密而浅；右：荒漠以旱生灌木为主、根系深而广">
+        <!-- ===== 左：草原 ===== -->
+        <rect x="14" y="30" width="386" height="270" rx="10" fill="#fbfcfd" stroke="#dfe6e0"/>
+        <rect x="15" y="146" width="384" height="104" fill="#efe6d4"/>
+        <line x1="14" y1="146" x2="400" y2="146" stroke="#c9bda3" stroke-width="1.5"/>
+        <text x="200" y="58" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e6640">草原</text>
+        <text x="200" y="76" text-anchor="middle" font-size="10.5" fill="#3a3a35">以草本为主 · 根系密而浅</text>
+        <g stroke="#5f9e63" stroke-width="1.8" fill="none" stroke-linecap="round">
+          <path d="M 40 146 L 34 112 M 40 146 L 44 106 M 40 146 L 50 118 M 40 146 L 28 120"/>
+          <path d="M 66 146 L 60 114 M 66 146 L 70 104 M 66 146 L 76 116 M 66 146 L 54 122"/>
+          <path d="M 92 146 L 86 110 M 92 146 L 96 102 M 92 146 L 102 114 M 92 146 L 80 120"/>
+          <path d="M 118 146 L 112 112 M 118 146 L 122 106 M 118 146 L 128 118 M 118 146 L 106 122"/>
+          <path d="M 144 146 L 138 114 M 144 146 L 148 104 M 144 146 L 154 116 M 144 146 L 132 120"/>
+          <path d="M 170 146 L 164 110 M 170 146 L 174 102 M 170 146 L 180 114 M 170 146 L 158 120"/>
+          <path d="M 196 146 L 190 112 M 196 146 L 200 106 M 196 146 L 206 118 M 196 146 L 184 122"/>
+          <path d="M 222 146 L 216 114 M 222 146 L 226 104 M 222 146 L 232 116 M 222 146 L 210 120"/>
+          <path d="M 248 146 L 242 110 M 248 146 L 252 102 M 248 146 L 258 114 M 248 146 L 236 120"/>
+          <path d="M 274 146 L 268 112 M 274 146 L 278 106 M 274 146 L 284 118 M 274 146 L 262 122"/>
+          <path d="M 300 146 L 294 114 M 300 146 L 304 104 M 300 146 L 310 116 M 300 146 L 288 120"/>
+          <path d="M 326 146 L 320 110 M 326 146 L 330 102 M 326 146 L 336 114 M 326 146 L 314 120"/>
+          <path d="M 352 146 L 346 112 M 352 146 L 356 106 M 352 146 L 362 118 M 352 146 L 340 122"/>
+          <path d="M 378 146 L 372 114 M 378 146 L 382 104 M 378 146 L 388 116 M 378 146 L 366 120"/>
+        </g>
+        <g stroke="#b08b5e" stroke-width="1.2" fill="none" opacity="0.9">
+          <path d="M 40 146 L 38 176 M 40 146 L 30 172 M 40 146 L 50 174"/>
+          <path d="M 66 146 L 64 178 M 66 146 L 56 174 M 66 146 L 76 176"/>
+          <path d="M 92 146 L 90 176 M 92 146 L 82 172 M 92 146 L 102 174"/>
+          <path d="M 118 146 L 116 178 M 118 146 L 108 174 M 118 146 L 128 176"/>
+          <path d="M 144 146 L 142 176 M 144 146 L 134 172 M 144 146 L 154 174"/>
+          <path d="M 170 146 L 168 178 M 170 146 L 160 174 M 170 146 L 180 176"/>
+          <path d="M 196 146 L 194 176 M 196 146 L 186 172 M 196 146 L 206 174"/>
+          <path d="M 222 146 L 220 178 M 222 146 L 212 174 M 222 146 L 232 176"/>
+          <path d="M 248 146 L 246 176 M 248 146 L 238 172 M 248 146 L 258 174"/>
+          <path d="M 274 146 L 272 178 M 274 146 L 264 174 M 274 146 L 284 176"/>
+          <path d="M 300 146 L 298 176 M 300 146 L 290 172 M 300 146 L 310 174"/>
+          <path d="M 326 146 L 324 178 M 326 146 L 316 174 M 326 146 L 336 176"/>
+          <path d="M 352 146 L 350 176 M 352 146 L 342 172 M 352 146 L 362 174"/>
+          <path d="M 378 146 L 376 178 M 378 146 L 368 174 M 378 146 L 388 176"/>
+        </g>
+        <line x1="30" y1="180" x2="386" y2="180" stroke="#c2b299" stroke-width="1" stroke-dasharray="5 5"/>
+        <text x="382" y="193" text-anchor="end" font-size="9.5" fill="#a8987c">根系下界（浅）</text>
+        <text x="200" y="228" text-anchor="middle" font-size="10.5" fill="#5a6472">热带草原：全年高温、分干湿两季</text>
+        <text x="200" y="246" text-anchor="middle" font-size="10.5" fill="#5a6472">湿季葱绿 · 干季枯黄；温带草原夏绿冬枯</text>
+        <text x="200" y="272" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a5c14">有的热带草原散生乔木或灌木</text>
+
+        <!-- ===== 右：荒漠 ===== -->
+        <rect x="420" y="30" width="386" height="270" rx="10" fill="#fdfaf4" stroke="#e6dccb"/>
+        <rect x="421" y="146" width="384" height="104" fill="#e8dcc4"/>
+        <line x1="420" y1="146" x2="806" y2="146" stroke="#c9bda3" stroke-width="1.5"/>
+        <text x="613" y="58" text-anchor="middle" font-size="12.5" font-weight="700" fill="#8a5c14">荒漠</text>
+        <text x="613" y="76" text-anchor="middle" font-size="10.5" fill="#3a3a35">以旱生灌木为主 · 根系深而广</text>
+        <g stroke="#8a7a55" stroke-width="2.6" fill="none" stroke-linecap="round">
+          <path d="M 470 146 L 470 124"/><path d="M 470 124 L 456 114 M 470 124 L 484 114"/>
+          <path d="M 540 146 L 540 126"/><path d="M 540 126 L 528 116 M 540 126 L 552 116"/>
+          <path d="M 610 146 L 610 122"/><path d="M 610 122 L 596 112 M 610 122 L 624 112"/>
+          <path d="M 680 146 L 680 126"/><path d="M 680 126 L 668 116 M 680 126 L 692 116"/>
+          <path d="M 750 146 L 750 124"/><path d="M 750 124 L 736 114 M 750 124 L 764 114"/>
+        </g>
+        <g fill="#8aa86a">
+          <circle cx="456" cy="114" r="5"/><circle cx="484" cy="114" r="5"/>
+          <circle cx="528" cy="116" r="4.6"/><circle cx="552" cy="116" r="4.6"/>
+          <circle cx="596" cy="112" r="5"/><circle cx="624" cy="112" r="5"/>
+          <circle cx="668" cy="116" r="4.6"/><circle cx="692" cy="116" r="4.6"/>
+          <circle cx="736" cy="114" r="5"/><circle cx="764" cy="114" r="5"/>
+        </g>
+        <g stroke="#b08b5e" stroke-width="1.5" fill="none" opacity="0.9">
+          <path d="M 470 146 L 470 226 M 470 180 L 442 214 M 470 192 L 498 222"/>
+          <path d="M 540 146 L 540 232 M 540 186 L 514 220 M 540 198 L 566 226"/>
+          <path d="M 610 146 L 610 224 M 610 178 L 584 212 M 610 190 L 636 220"/>
+          <path d="M 680 146 L 680 232 M 680 186 L 654 220 M 680 198 L 706 226"/>
+          <path d="M 750 146 L 750 226 M 750 180 L 724 214 M 750 192 L 776 222"/>
+        </g>
+        <line x1="436" y1="238" x2="790" y2="238" stroke="#c2b299" stroke-width="1" stroke-dasharray="5 5"/>
+        <text x="786" y="251" text-anchor="end" font-size="9.5" fill="#a8987c">根系下界（深）</text>
+        <text x="613" y="272" text-anchor="middle" font-size="10.5" fill="#5a6472">热带荒漠 / 温带荒漠：气候干旱，叶小或退化为刺</text>
+        <text x="613" y="290" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a5c14">也会有雨后才萌发的短生命植物</text>
+      </svg>
+      <span class="gx-zoomchip">点击放大</span>
+    </div>
+    <p class="gx-take">三者的分界是<b>水分</b>：森林 → 草原 → 荒漠，越往后越干。
+    草原"地上是草、地下是毯"，荒漠"地上稀疏、地下很长"——<b>根系形态就是判据</b>。</p>
+  </figure>
+
+<!-- ================= B 续 ================= -->
+  <!-- 图3 垂直结构 -->
+  <figure class="gx-fig">
+    <div class="fig-cap">
+      <span class="fig-no">图 3</span><span class="fig-t">垂直结构：层数就是水热条件的"体温计"</span>
+      <span class="bdg bdg-diff">辨析</span>
+    </div>
+    <p class="fig-s">同一片森林里，不同高度的植物为了<b>争夺阳光</b>，长成一层层的，这就是<b>垂直结构</b>。
+    课本的规律是：<b>气温越高、降水越多，垂直结构越丰富</b>。所以从热带雨林到亚寒带针叶林，
+    层数是一路减少的——这也是判断"这片林子在哪"的间接证据。</p>
+    <div class="gx-svgbox">
+      <svg viewBox="0 0 820 310" role="img"
+           aria-label="三种森林的垂直结构对比：热带雨林4到5层，常绿阔叶林3到4层，落叶阔叶林2到3层且冬季草本层消失">
+        <!-- 雨林 -->
+        <rect x="26" y="46" width="220" height="212" rx="8" fill="#f2f8f2" stroke="#cfe0cf"/>
+        <rect x="26" y="46" width="220" height="42" fill="#4d8a55" opacity="0.85"/>
+        <rect x="26" y="88" width="220" height="42" fill="#63a06a" opacity="0.8"/>
+        <rect x="26" y="130" width="220" height="42" fill="#7cb683" opacity="0.75"/>
+        <rect x="26" y="172" width="220" height="42" fill="#9cc9a0" opacity="0.7"/>
+        <rect x="26" y="214" width="220" height="44" fill="#bcdcb8" opacity="0.7"/>
+        <text x="136" y="72" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">乔木层（上）</text>
+        <text x="136" y="114" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">乔木层（下）</text>
+        <text x="136" y="156" text-anchor="middle" font-size="10" fill="#1e6640">灌木层</text>
+        <text x="136" y="198" text-anchor="middle" font-size="10" fill="#1e6640">草本层</text>
+        <text x="136" y="242" text-anchor="middle" font-size="10" fill="#1e6640">地被层</text>
+        <text x="136" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e6640">热带雨林 · 4–5 层</text>
+        <text x="136" y="294" text-anchor="middle" font-size="9.5" fill="#5a6472">终年高温多雨，光照竞争最激烈</text>
+
+        <!-- 常绿阔叶林 -->
+        <rect x="300" y="46" width="220" height="212" rx="8" fill="#f5f9f2" stroke="#d6e2ce"/>
+        <rect x="300" y="46" width="220" height="54" fill="#5a9a62" opacity="0.85"/>
+        <rect x="300" y="100" width="220" height="54" fill="#78b47c" opacity="0.78"/>
+        <rect x="300" y="154" width="220" height="52" fill="#9cc9a0" opacity="0.72"/>
+        <rect x="300" y="206" width="220" height="52" fill="#bcdcb8" opacity="0.7"/>
+        <text x="410" y="78" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">乔木层</text>
+        <text x="410" y="132" text-anchor="middle" font-size="10" fill="#1e6640">灌木层</text>
+        <text x="410" y="186" text-anchor="middle" font-size="10" fill="#1e6640">草本层</text>
+        <text x="410" y="238" text-anchor="middle" font-size="10" fill="#1e6640">地被层</text>
+        <text x="410" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e6640">常绿阔叶林 · 3–4 层</text>
+        <text x="410" y="294" text-anchor="middle" font-size="9.5" fill="#5a6472">冬季温和，层次比雨林少一层</text>
+
+        <!-- 落叶阔叶林 -->
+        <rect x="574" y="46" width="220" height="212" rx="8" fill="#fbf9f3" stroke="#e2dac8"/>
+        <rect x="574" y="46" width="220" height="70" fill="#8fbf6f" opacity="0.85"/>
+        <rect x="574" y="116" width="220" height="64" fill="#a8cd8c" opacity="0.75"/>
+        <rect x="574" y="180" width="220" height="78" fill="#e8e2d2" opacity="0.9"/>
+        <text x="684" y="86" text-anchor="middle" font-size="10" fill="#3a3a35" font-weight="700">乔木层（夏季盛叶）</text>
+        <text x="684" y="153" text-anchor="middle" font-size="10" fill="#3a3a35">灌木层</text>
+        <text x="684" y="222" text-anchor="middle" font-size="10" fill="#8a5c14">草本层：冬季枯死消失</text>
+        <text x="684" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a5c14">落叶阔叶林 · 2–3 层</text>
+        <text x="684" y="294" text-anchor="middle" font-size="9.5" fill="#5a6472">季相变化使层数"随季节变"</text>
+      </svg>
+      <span class="gx-zoomchip">点击放大</span>
+    </div>
+    <p class="gx-take"><b>层数多 = 水热条件好</b>。热带雨林 4–5 层且藤本附生多，常绿阔叶林 3–4 层，
+    落叶阔叶林 2–3 层且<b>草本层冬季消失</b>。所以"垂直结构"既是特征，也是判据。</p>
+    <p class="gx-note">别把"层数多"理解成"树多"。雨林的乔木密度未必比人工林大，
+    但<b>不同高度的植物分层明确</b>——层次是"结构"，不是"数量"。</p>
+  </figure>
+
+  <!-- 图4 双向作用 -->
+  <figure class="gx-fig">
+    <div class="fig-cap">
+      <span class="fig-no">图 4</span><span class="fig-t">植被与环境：不是单向决定，是互相改造</span>
+    </div>
+    <p class="fig-s">课本给了<b>三个方向</b>，答题时必须都想到：<b>①环境决定植被</b>（水热决定类型和层次）、
+    <b>②植被改造环境</b>（固土、保水、调节气候）、<b>③植被指示环境</b>（椰子树 = 热带，是"活的气候标志"）。
+    只写第一条，是最典型的丢分方式。</p>
+    <div class="gx-svgbox">
+      <svg viewBox="0 0 820 290" role="img"
+           aria-label="植被与环境双向作用：气候土壤水分决定植被，植被又通过涵养水源、保持水土、调节气候改造环境">
+        <rect x="40" y="70" width="230" height="150" rx="12" fill="#f4f7f9" stroke="#d4dfe4"/>
+        <text x="155" y="98" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0b6580">环境</text>
+        <text x="155" y="126" text-anchor="middle" font-size="11" fill="#3a3a35">气候（气温 · 降水）</text>
+        <text x="155" y="150" text-anchor="middle" font-size="11" fill="#3a3a35">土壤（肥力 · 水分）</text>
+        <text x="155" y="174" text-anchor="middle" font-size="11" fill="#3a3a35">地形（坡向 · 海拔）</text>
+        <text x="155" y="200" text-anchor="middle" font-size="10.5" fill="#5a6472">决定植被的类型与层次</text>
+
+        <circle cx="410" cy="145" r="52" fill="#e6f6ee" stroke="#8fc9a8" stroke-width="1.6"/>
+        <text x="410" y="142" text-anchor="middle" font-size="15" font-weight="700" fill="#1e6640">植被</text>
+        <text x="410" y="162" text-anchor="middle" font-size="10" fill="#2f8a5b">群落</text>
+
+        <rect x="550" y="70" width="230" height="150" rx="12" fill="#fbf8f2" stroke="#e2dac8"/>
+        <text x="665" y="98" text-anchor="middle" font-size="12.5" font-weight="700" fill="#8a5c14">被改造的环境</text>
+        <text x="665" y="126" text-anchor="middle" font-size="11" fill="#3a3a35">涵养水源、保持水土</text>
+        <text x="665" y="150" text-anchor="middle" font-size="11" fill="#3a3a35">防风固沙、调节气候</text>
+        <text x="665" y="174" text-anchor="middle" font-size="11" fill="#3a3a35">增加土壤有机质</text>
+        <text x="665" y="200" text-anchor="middle" font-size="10.5" fill="#5a6472">形成新的水热与土壤条件</text>
+
+        <path d="M 276 132 L 350 132" stroke="#0891b2" stroke-width="2.2"/>
+        <path d="M 350 132 l -11 -5 l 0 10 z" fill="#0891b2"/>
+        <text x="313" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="#0891b2">决定</text>
+
+        <path d="M 470 158 L 544 158" stroke="#b8791f" stroke-width="2.2"/>
+        <path d="M 544 158 l -11 -5 l 0 10 z" fill="#b8791f"/>
+        <text x="507" y="176" text-anchor="middle" font-size="10" font-weight="700" fill="#b8791f">改造</text>
+
+        <path d="M 544 200 C 500 236, 320 236, 276 200" stroke="#5a6472" stroke-width="1.4"
+              fill="none" stroke-dasharray="5 4"/>
+        <path d="M 276 200 l 10 2 l -4 -9 z" fill="#5a6472"/>
+        <text x="410" y="248" text-anchor="middle" font-size="10" fill="#5a6472">改造后的环境，又反过来影响植被（循环）</text>
+
+        <text x="410" y="272" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e6640">
+          指示作用：椰子树 → 热带；冷杉云杉 → 亚寒带
+        </text>
+      </svg>
+      <span class="gx-zoomchip">点击放大</span>
+    </div>
+    <p class="gx-take">答"植被与环境的关系"，稳妥的写法是<b>"环境决定植被的分布与特征，植被又通过改造水热、土壤反过来影响环境，因此天然植被对环境具有指示作用"</b>——
+    一句话把三个方向全包住。</p>
+  </figure>
+</section>
+
+<!-- ================= C ================= -->
+<section class="gx-sec" id="c">
+  <h2><span class="sn">03</span>自己拖一下<span class="bdg bdg-must">核心</span></h2>
+  <p class="gx-h2s">森林、草原、荒漠不是三个并列的名字，而是一条水分梯度上的三个刻度。</p>
+
+  <figure class="gx-fig">
+    <div class="fig-cap">
+      <span class="fig-no">图 5</span><span class="fig-t">水少一点，树就变成草；再少一点，草也站不住</span>
+    </div>
+    <p class="fig-s">拖动滑块改变<b>年降水量</b>。往左拉——植被越来越稀、越来越矮，根系却越来越深；
+    往右拉——草变密，过了 400 mm 就长出树来。<b>注意右边那条轴：200 mm 和 400 mm 是两条真实的界线，
+    不是我们编的。</b></p>
+    <div class="gx-board">
+      <svg id="gxStage" viewBox="0 0 880 360" tabindex="0" role="application"
+           aria-label="可拖动年降水量的互动图：左侧剖面显示植被高度、密度与根系深度随降水变化，右侧刻度轴标出荒漠、草原、森林的分界">
+        <g id="gxVeg"></g>
+        <g id="gxAxis"></g>
+      </svg>
+      <div class="bar">
+        <span class="lb">年降水量</span>
+        <input type="range" id="gxSl" min="0" max="1000" step="10" value="450" aria-label="年降水量（毫米）">
+        <button id="gxP1" type="button">120 mm</button>
+        <button id="gxP2" type="button">300 mm</button>
+        <button id="gxP3" type="button">450 mm</button>
+        <button id="gxP4" type="button">900 mm</button>
+        <p class="hint">也可以在右侧刻度轴上左右拖，或用键盘 ← → 微调。</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="st"><div class="k">年降水量</div><div class="v" id="gxVp">450 mm</div>
+        <div class="s">你正在调的量</div></div>
+      <div class="st"><div class="k">植被覆盖度</div><div class="v" id="gxVa">68%</div>
+        <div class="s">地表被植物遮住的比例</div></div>
+      <div class="st state" id="gxStBox"><div class="k">状态判断</div>
+        <div class="v" id="gxVs">森林</div><div class="s" id="gxVsn">乔木为主 · 根系较深</div></div>
+    </div>
+    <p class="gx-take"><b>水分是这条梯度上的总开关</b>：400 mm 上下是森林与草原的分界，
+    200 mm 上下是草原与荒漠的分界。我国这两条等降水量线，大致就是把东部的林、中部的草原、西北的荒漠分开的线。</p>
+    <p class="gx-note">严格说植被类型由<b>水热组合</b>决定，不是只看降水。这一页固定"气温适宜"这个前提，
+    单独看水分的作用；真实情况下，同样的降水量在热带和寒带长出的植被并不相同。</p>
+  </figure>
+</section>
+
+<!-- ================= D ================= -->
+<section class="gx-sec" id="d">
+  <h2><span class="sn">04</span>一道题走一遍</h2>
+  <p class="gx-h2s">先自己读题干想 30 秒，再点"下一步"。每一步只推进一个判断。</p>
+
+  <div class="gx-ex">
+    <p class="ex-t">例题<span class="bdg bdg-must">必考</span></p>
+    <p class="ex-q">三个考察点的资料如下：<br>
+    ① 甲：大兴安岭北部，年均温约 −2 ℃，年降水量约 450 mm；<br>
+    ② 乙：海南岛中部，年均温约 24 ℃，年降水量约 1800 mm；<br>
+    ③ 丙：内蒙古中部，年均温约 6 ℃，年降水量约 300 mm。<br><br>
+    （1）分别指出三地的天然植被类型。<br>
+    （2）说明甲、乙两地植被垂直结构差异的原因。<br>
+    （3）丙地植被的根系有什么特点？为什么会长成这样？</p>
+
+    <ol class="steps" id="gxSteps">
+      <li class="step">
+        <p class="s-h">第 1 步 · 先算"水"，再算"热"</p>
+        <p class="s-b">把三组数据按两条线排一排：<b>450 mm、1800 mm 都超过 400 mm</b>（能长树），
+        <b>300 mm 落在 200–400 mm 之间</b>（只能是草原）。再看温度：甲年均温 −2 ℃ 极冷，乙 24 ℃ 终年高温，
+        丙 6 ℃ 温和。<b>先用水分定大类，再用温度定小类</b>，顺序不能反。</p>
+        <p class="s-k">用到：水分条件决定森林/草原/荒漠；热量决定森林的具体类型</p>
+      </li>
+      <li class="step" hidden>
+        <p class="s-h">第 2 步 · 对号入座</p>
+        <p class="s-b">乙：高温多雨 → <b>热带雨林</b>；甲：冷、降水不算多 → <b>亚寒带针叶林</b>；
+        丙：年降水 300 mm，不够长树但能长草 → <b>温带草原</b>。
+        注意甲<b>不能写"温带落叶阔叶林"</b>——年均温 −2 ℃ 已经在亚寒带，阔叶树扛不住。</p>
+        <p class="s-k">用到：四种森林的气候区对应</p>
+      </li>
+      <li class="step" hidden>
+        <p class="s-h">第 3 步 · 解释"为什么层次不一样"</p>
+        <p class="s-b">课本的原话是：<b>气温越高、降水量越多，植被高度越大，植物种的数量越多，垂直结构越丰富</b>。
+        乙地水热条件远好于甲地，所以植物种类多、植株高大、可以分出多层；甲地冷、生长期短，
+        只有耐寒的针叶树能活，种类少，自然就只有一两层。<b>要写"水热条件"四个字，不能只写"气候不同"。</b></p>
+        <p class="s-k">用到：环境对植被的作用（水热 → 高度、种类、垂直结构）</p>
+      </li>
+      <li class="step" hidden>
+        <p class="s-h">第 4 步 · 用根系解释"草原为什么是草原"</p>
+        <p class="s-b">丙地是草原，主角是草本，根系<b>密而浅</b>，集中在表层 20–40 cm。
+        原因有两层：<b>①</b> 降水少且集中在夏季，<b>只有表层土壤能被雨水打湿</b>，根扎得深反而吸不到水；
+        <b>②</b> 草本的根呈须状、数量极多，能在短时间内把表层的水"抢"完。
+        对比一下荒漠——那里才需要<b>深而广</b>的根去够地下水，两者不要写混。</p>
+        <p class="s-k">用到：植被形态对水分条件的适应</p>
+      </li>
+    </ol>
+
+    <div class="exbar">
+      <button id="gxNext" type="button">下一步</button>
+      <span class="cnt" id="gxCnt">1 / 4</span>
+    </div>
+
+    <div class="ans" id="gxAns" hidden>
+      <p class="ans-t">标准答案（可抄进答题卡）</p>
+      <p class="ans-b">
+      （1）甲：<b>亚寒带针叶林</b>；乙：<b>热带雨林</b>；丙：<b>温带草原</b>。<br>
+      （2）乙地纬度低、<b>气温高、降水多</b>，水热条件优越，植物种类丰富、植株高大，
+      不同高度的植物为争夺阳光形成明显的分层，<b>垂直结构复杂</b>；甲地纬度高、气温低、生长期短，
+      树种单一（以松、杉为主），<b>垂直结构简单</b>。<br>
+      （3）丙地植被以草本为主，<b>根系密集且分布浅</b>（集中在表层）。
+      原因：该地年降水量约 300 mm，水分不足且集中于夏季，<b>降水只能湿润表层土壤</b>，
+      根系分布在表层才能有效吸收水分；草本根系呈须状、数量多，利于在短时间内吸收有限的降水。
+      </p>
+    </div>
+  </div>
+  <p class="gx-note">这类题的通用套路：<b>先按水分定大类（森林/草原/荒漠）→ 再按热量定森林小类 → 最后用"水热→高度、种类、层次"解释差异</b>。
+  最容易丢分的是第（1）问只写"森林"不写"亚寒带针叶林"——大类对了，小类没到位。</p>
+</section>
+
+<!-- ================= E ================= -->
+<section class="gx-sec" id="e">
+  <h2><span class="sn">05</span>会怎么考</h2>
+  <p class="gx-h2s">六问，全部来自教材的"判断"栏目——也就是出题人最喜欢设的反例。</p>
+  <div class="gx-qa">
+
+    <div class="qac">
+      <p class="q">「植被就是植物，对吗？」</p>
+      <p class="a">错。植被是<b>成群生长的各种植物的整体</b>——强调"成群""各种""整体"。
+      一棵树是植物，一片互相争光的树才是植被。同理，把几棵树栽在广场上也不叫植被，那是绿化。</p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="单株植物不构成植被，成群的植物整体才是植被">
+        <line x1="14" y1="100" x2="106" y2="100" stroke="#c9c7bf"/>
+        <path d="M 58 100 L 58 62" stroke="#7a6a4e" stroke-width="3"/>
+        <circle cx="58" cy="52" r="15" fill="#8fbf6f"/>
+        <text class="ms" x="60" y="118" text-anchor="middle">一株 → 植物</text>
+        <line x1="130" y1="100" x2="228" y2="100" stroke="#c9c7bf"/>
+        <g fill="#6fae72">
+          <circle cx="146" cy="66" r="13"/><circle cx="172" cy="58" r="16"/>
+          <circle cx="200" cy="64" r="14"/><circle cx="216" cy="74" r="10"/>
+        </g>
+        <g stroke="#7a6a4e" stroke-width="2"><path d="M 146 100 L 146 76"/><path d="M 172 100 L 172 72"/><path d="M 200 100 L 200 76"/></g>
+        <text class="ms" x="180" y="118" text-anchor="middle">成群 → 植被</text>
+      </svg>
+    </div>
+
+    <div class="qac">
+      <p class="q">「气温越高，植被越茂密吗？」</p>
+      <p class="a">不一定。课本说的是<b>气温越高、降水越多，垂直结构越丰富</b>——两个条件并列。
+      热带沙漠气温极高，植被却极度稀疏；寒温带气温低，针叶林照样连片。<b>决定茂密程度的是水热组合，不是单看温度。</b></p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="高温但干旱时植被稀疏，说明不能只看温度">
+        <rect x="18" y="30" width="94" height="70" rx="6" fill="#fdf6e3" stroke="#e2cf9a"/>
+        <circle cx="65" cy="52" r="11" fill="#fbeed7" stroke="#d8a03a"/>
+        <g stroke="#8a7a55" stroke-width="2"><path d="M 46 96 L 46 88"/><path d="M 84 96 L 84 90"/></g>
+        <text class="ms" x="65" y="116" text-anchor="middle">高温＋干旱 → 稀疏</text>
+        <rect x="128" y="30" width="94" height="70" rx="6" fill="#f2f8f2" stroke="#cfe0cf"/>
+        <g fill="#5f9e63"><circle cx="152" cy="60" r="12"/><circle cx="176" cy="54" r="14"/><circle cx="200" cy="62" r="11"/></g>
+        <text class="ms" x="175" y="116" text-anchor="middle">温和＋湿润 → 茂密</text>
+        <text class="mm" x="120" y="20" text-anchor="middle" fill="#5a6472">要看水热组合</text>
+      </svg>
+    </div>
+
+    <div class="qac">
+      <p class="q">「常绿阔叶林比热带雨林层次更复杂吗？」</p>
+      <p class="a">错，正好相反。热带雨林<b>垂直结构复杂</b>（4–5 层，藤本附生多）；
+      常绿阔叶林<b>较简单</b>（3–4 层，藤本附生、板根茎花都少）。原因还是那句：<b>水热越好，层次越多</b>。</p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="热带雨林层次多，常绿阔叶林层次少">
+        <rect x="36" y="26" width="56" height="76" fill="#4d8a55" opacity="0.5"/>
+        <rect x="36" y="46" width="56" height="18" fill="#63a06a" opacity="0.7"/>
+        <rect x="36" y="64" width="56" height="18" fill="#7cb683" opacity="0.7"/>
+        <rect x="36" y="82" width="56" height="20" fill="#9cc9a0" opacity="0.7"/>
+        <text class="ms" x="64" y="118" text-anchor="middle">雨林：层多</text>
+        <rect x="148" y="26" width="56" height="76" fill="#5a9a62" opacity="0.5"/>
+        <rect x="148" y="52" width="56" height="24" fill="#78b47c" opacity="0.7"/>
+        <rect x="148" y="76" width="56" height="26" fill="#9cc9a0" opacity="0.7"/>
+        <text class="ms" x="176" y="118" text-anchor="middle">常绿阔叶林：层少</text>
+      </svg>
+    </div>
+
+    <div class="qac">
+      <p class="q">「落叶阔叶林分布在降水稀少的地方吗？」</p>
+      <p class="a">错。它分布在<b>温带季风气候区和温带海洋性气候区</b>，降水是"适宜"而不是稀少——温带海洋性气候甚至全年湿润。
+      它落叶的原因是<b>冬季寒冷</b>（减少蒸腾），不是缺水。</p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="落叶阔叶林因冬季寒冷而落叶，不是因缺水">
+        <path d="M 56 100 L 56 52" stroke="#7a6a4e" stroke-width="3"/>
+        <ellipse cx="56" cy="46" rx="24" ry="18" fill="#8fbf6f"/>
+        <text class="ms" x="56" y="118" text-anchor="middle">夏季盛叶</text>
+        <path d="M 150 100 L 150 52" stroke="#7a6a4e" stroke-width="3"/>
+        <path d="M 150 52 L 132 36 M 150 52 L 168 36 M 150 52 L 150 30 M 150 52 L 138 46 M 150 52 L 162 46"
+              stroke="#b08b5e" stroke-width="2" fill="none"/>
+        <text class="ms" x="150" y="118" text-anchor="middle">冬季落叶</text>
+        <text class="mm" x="196" y="62" fill="#b8402f">冷</text>
+        <text class="ms" x="196" y="80">→ 落叶</text>
+        <text class="ms" x="120" y="20" text-anchor="middle">减少蒸腾，不是缺水</text>
+      </svg>
+    </div>
+
+    <div class="qac">
+      <p class="q">「草原上一定没有树吗？」</p>
+      <p class="a">不一定。<b>热带草原中常散生着乔木或灌木</b>（猴面包树、金合欢就是典型）。
+      判断草原看的是"<b>有没有连续成片的乔木层</b>"，不是"一棵树都不能有"。
+      同样，荒漠也不是"寸草不生"，只是<b>植被稀疏</b>。</p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="热带草原上散生着乔木，并非完全没有树">
+        <line x1="14" y1="100" x2="226" y2="100" stroke="#c9c7bf"/>
+        <g stroke="#5f9e63" stroke-width="1.8">
+          <path d="M 26 100 L 24 76"/><path d="M 40 100 L 40 72"/><path d="M 54 100 L 56 78"/><path d="M 68 100 L 66 74"/>
+          <path d="M 108 100 L 106 76"/><path d="M 122 100 L 122 72"/><path d="M 136 100 L 138 78"/>
+          <path d="M 190 100 L 188 76"/><path d="M 204 100 L 204 74"/><path d="M 218 100 L 220 78"/>
+        </g>
+        <path d="M 86 100 L 86 56" stroke="#7a6a4e" stroke-width="3"/>
+        <ellipse cx="86" cy="46" rx="20" ry="14" fill="#8fbf6f"/>
+        <path d="M 168 100 L 168 60" stroke="#7a6a4e" stroke-width="3"/>
+        <ellipse cx="168" cy="50" rx="17" ry="12" fill="#8fbf6f"/>
+        <text class="ms" x="120" y="118" text-anchor="middle">草为主，乔木散生</text>
+      </svg>
+    </div>
+
+    <div class="qac">
+      <p class="q">「荒漠里没有植被吗？」</p>
+      <p class="a">错。荒漠<b>植被稀疏</b>，但并非没有：以<b>旱生灌木</b>为主，具有耐长期干旱的形态结构（根深、叶小或退化为刺），
+      还有些<b>短生命植物</b>——一下雨就迅速萌发、开花、结籽，几周内完成一生。这是教材明确写到的。</p>
+      <svg viewBox="0 0 240 132" role="img" aria-label="荒漠植被稀疏但有旱生灌木和雨后萌发的短生命植物">
+        <rect x="14" y="16" width="212" height="86" fill="#fdf6e3"/>
+        <line x1="14" y1="82" x2="226" y2="82" stroke="#c9bda3"/>
+        <g stroke="#8a7a55" stroke-width="2.5" fill="none">
+          <path d="M 60 82 L 60 62"/><path d="M 60 62 L 46 54 M 60 62 L 74 54"/>
+          <path d="M 150 82 L 150 64"/><path d="M 150 64 L 138 56 M 150 64 L 162 56"/>
+        </g>
+        <g stroke="#b08b5e" stroke-width="1.4"><path d="M 60 82 L 60 118"/><path d="M 60 96 L 40 112"/><path d="M 60 100 L 82 114"/></g>
+        <g fill="#9ec97a"><circle cx="110" cy="76" r="3"/><circle cx="118" cy="72" r="2.4"/><circle cx="104" cy="72" r="2.4"/></g>
+        <text class="ms" x="110" y="96" text-anchor="middle">短生命植物</text>
+        <text class="ms" x="120" y="118" text-anchor="middle">稀疏 ≠ 没有</text>
+      </svg>
+    </div>
+
+  </div>
+  <p class="gx-note">这六问其实是同一句话：<b>植被的每一个特征，都是为了在水热条件下"活下去"。</b>
+  落叶是为了过冬，针叶是为了抗寒抗旱，深根是为了够水，多层是为了争光——问什么，就回到"它在适应什么"。</p>
+</section>
+
+<!-- ================= F ================= -->
+<section class="gx-sec" id="f">
+  <h2><span class="sn">06</span>易错清单</h2>
+  <p class="gx-h2s">左边是考试里真的会写出来的错句，右边是应该写的样子。后者可以直接背。</p>
+
+  <div style="overflow-x:auto;margin-bottom:16px">
+  <table class="gx-cmp">
+    <thead><tr><th>类型</th><th>气候区</th><th>一句话判据</th></tr></thead>
+    <tbody>
+      <tr><td>热带雨林</td><td>热带雨林 / 热带季风</td><td>终年常绿 + 层次多 + 藤本附生</td></tr>
+      <tr><td>常绿阔叶林</td><td>亚热带季风 / 湿润</td><td>终年常绿 + 革质叶 + 层次较少</td></tr>
+      <tr><td>落叶阔叶林</td><td>温带季风 / 温带海洋性</td><td>冬季落叶 + 季相变化</td></tr>
+      <tr><td>亚寒带针叶林</td><td>亚寒带</td><td>针状叶 + 松杉为主</td></tr>
+      <tr class="key"><td>草原 vs 荒漠</td><td>200–400 mm / &lt;200 mm</td><td>草本为主、根密而浅 = 草原；旱生灌木、根深而广 = 荒漠</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="gx-errs">
+    <div class="er">
+      <p class="er-x">✗ 植被就是指植物</p>
+      <p class="er-v">✓ 植被是<b>成群生长的各种植物的整体</b>，强调群体与结构，不是单株</p>
+      <p class="er-w">错在哪：把"整体"丢了。一棵树叫植物，一片互相争光的树才叫植被。</p>
+    </div>
+    <div class="er">
+      <p class="er-x">✗ 气温越高，植被越茂密</p>
+      <p class="er-v">✓ 要看<b>水热组合</b>：气温越高、降水越多，植被越高、种类越多、垂直结构越丰富</p>
+      <p class="er-w">错在哪：漏掉水分条件。热带沙漠气温最高，植被却最稀疏。</p>
+    </div>
+    <div class="er">
+      <p class="er-x">✗ 常绿阔叶林比热带雨林垂直结构复杂</p>
+      <p class="er-v">✓ 雨林<b>复杂</b>（层次多、藤本附生多），常绿阔叶林<b>较简单</b></p>
+      <p class="er-w">错在哪：想成"越往北树越整齐"。实际是水热越好层次越多，雨林在热带。</p>
+    </div>
+    <div class="er">
+      <p class="er-x">✗ 落叶阔叶林分布在降水稀少的地区</p>
+      <p class="er-v">✓ 分布在<b>温带季风气候区和温带海洋性气候区</b>，降水适宜甚至全年湿润</p>
+      <p class="er-w">错在哪：把"落叶"当成了"缺水"。落叶是为了减少冬季蒸腾，因为冷，不是因为旱。</p>
+    </div>
+    <div class="er">
+      <p class="er-x">✗ 草原上没有树，荒漠里没有植被</p>
+      <p class="er-v">✓ 热带草原可<b>散生乔木或灌木</b>；荒漠有<b>旱生灌木</b>和<b>短生命植物</b>，只是稀疏</p>
+      <p class="er-w">错在哪：把"以谁为主"当成了"只能有谁"。生态系统里很少只有一种东西。</p>
+    </div>
+    <div class="er">
+      <p class="er-x">✗ 亚寒带针叶林冬季也落叶</p>
+      <p class="er-v">✓ 针叶林是<b>常绿</b>的，针状叶能抗寒抗旱，<b>冬季不落叶</b></p>
+      <p class="er-w">错在哪：把"冷"和"落叶"绑在一起。落叶阔叶林落叶，针叶林靠叶形硬扛。</p>
+    </div>
+  </div>
+</section>
+
+<footer class="gx-foot">
+  对应 人教版（2019）必修第一册 第五章第一节「植被」· 生成自 <code>eli5-high</code> skill<br>
+  数据口径：森林、草原、荒漠的气候区划分与形态特征均按教材表述；
+  <b>400 mm</b> 年等降水量线为我国森林与草原的大致分界、<b>200 mm</b> 年等降水量线为草原与荒漠的大致分界，属地理学通行划法，
+  并非教材原文给出的绝对界线。<br>
+  图 5 为<b>教学示意模型</b>：固定"气温适宜"这一前提，仅演示水分对植被形态的影响；
+  覆盖度为按降水量分段线性估算的<b>示意值</b>，不代表实测植被盖度。
+</footer>
+
+<div class="gx-zoom" id="gxZoom" hidden>
+  <span class="gx-zoom-tip">双指放大 · 左右滑动看全图</span>
+  <button class="gx-zoom-x" type="button" aria-label="关闭">✕</button>
+  <div id="gxZoomInner"></div>
+</div>
+
+</div>
 </script>
+
 <script src="../../assets/page.js"></script>
+<script>
+/* 植被 · 讲义交互（等 page.js 把 #md 渲染成正文之后再跑） */
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+  function $(id) { return document.getElementById(id); }
+  function el(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function n1(v) { return (Math.round(v * 10) / 10).toString(); }
+
+  if (!$("gxStage")) return;
+
+  /* ================= 手机的图放大 ================= */
+  (function () {
+    var zoom = $("gxZoom"), inner = $("gxZoomInner");
+    if (!zoom || !inner) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".gx-svgbox"), function (box) {
+      box.style.cursor = "zoom-in";
+      box.addEventListener("click", function () {
+        if (window.innerWidth > 760) return;
+        var svg = box.querySelector("svg");
+        if (!svg) return;
+        inner.textContent = "";
+        inner.appendChild(svg.cloneNode(true));
+        zoom.hidden = false;
+        document.body.style.overflow = "hidden";
+      });
+    });
+    function close() { zoom.hidden = true; document.body.style.overflow = ""; }
+    zoom.addEventListener("click", function (e) {
+      if (e.target === zoom || e.target.classList.contains("gx-zoom-x")) close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !zoom.hidden) close();
+    });
+  })();
+
+  /* ================= 分步揭示 ================= */
+  (function () {
+    var steps = document.querySelectorAll("#gxSteps .step");
+    var ans = $("gxAns"), btn = $("gxNext"), cnt = $("gxCnt");
+    if (!steps.length || !btn) return;
+    var i = 1;
+    function paint() { if (cnt) cnt.textContent = Math.min(i, steps.length) + " / " + steps.length; }
+    steps[0].hidden = false;
+    paint();
+    btn.addEventListener("click", function () {
+      if (i < steps.length) { steps[i].hidden = false; i++; }
+      if (i >= steps.length) {
+        if (ans) ans.hidden = false;
+        btn.textContent = "已全部展开";
+        btn.disabled = true;
+      }
+      paint();
+    });
+  })();
+
+  /* ================= 互动：降水 → 植被 ================= */
+  (function () {
+    var stage = $("gxStage"), gVeg = $("gxVeg"), gAxis = $("gxAxis");
+    var sl = $("gxSl"), vP = $("gxVp"), vA = $("gxVa"), vS = $("gxVs"), vSn = $("gxVsn"), box = $("gxStBox");
+
+    var WIDE = {
+      vb: "0 0 880 360", FS: 1, k: 1,
+      veg: { x: 20, y: 20, w: 500, h: 320, gy: 215 },
+      ax: { x: 556, y: 210, w: 296 }, bp: 620
+    };
+    var NARROW = {
+      vb: "0 0 360 560", FS: 1.2, k: 0.8,
+      veg: { x: 6, y: 16, w: 348, h: 300, gy: 196 },
+      ax: { x: 16, y: 420, w: 328 }, bp: 620
+    };
+    var L = WIDE, FS = 1, P = 450, dragging = false, R = {};
+
+    function tx(x, y, s, col, anchor, size, weight, halo) {
+      var o = { x: n1(x), y: n1(y), "font-size": (size || 10.5) * FS, fill: col,
+                "text-anchor": anchor || "start", "font-weight": weight || 400 };
+      if (halo) o["class"] = "halo";
+      var t = el("text", o, null);
+      t.textContent = s;
+      return t;
+    }
+
+    function build() {
+      gVeg.textContent = ""; gAxis.textContent = "";
+      var V = L.veg, A = L.ax;
+
+      /* 天空与土 */
+      el("rect", { x: V.x, y: V.y, width: V.w, height: V.gy - V.y, fill: "#fbfcfd" }, gVeg);
+      el("rect", { x: V.x, y: V.gy, width: V.w, height: V.y + V.h - V.gy, fill: "#efe6d4" }, gVeg);
+      el("line", { x1: V.x, y1: V.gy, x2: V.x + V.w, y2: V.gy, stroke: "#c9bda3", "stroke-width": 1.6 }, gVeg);
+      var t1 = tx(V.x + 8, V.y + 16, "地表以上：植被", "#9aa3ae", "start", 10);
+      gVeg.appendChild(t1);
+      var t2 = tx(V.x + 8, V.y + V.h - 10, "地表以下：根系", "#a8987c", "start", 10);
+      gVeg.appendChild(t2);
+
+      /* 轴线 */
+      var ay = A.y, aw = A.w;
+      var seg = [[0, 200, "#f3e4c4", "荒漠"], [200, 400, "#dceccf", "草原"], [400, 1000, "#bcdcb8", "森林"]];
+      seg.forEach(function (s) {
+        var x1 = A.x + s[0] / 1000 * aw, x2 = A.x + s[1] / 1000 * aw;
+        el("rect", { x: n1(x1), y: ay - 16, width: n1(x2 - x1), height: 32, fill: s[2] }, gAxis);
+        var lb = tx((x1 + x2) / 2, ay + 5, s[3], "#3a3a35", "middle", 11, 700);
+        gAxis.appendChild(lb);
+      });
+      el("line", { x1: A.x, y1: ay + 16, x2: A.x + aw, y2: ay + 16, stroke: "#c9c2b0", "stroke-width": 1.2 }, gAxis);
+      [200, 400].forEach(function (v) {
+        var xx = A.x + v / 1000 * aw;
+        el("line", { x1: n1(xx), y1: ay - 22, x2: n1(xx), y2: ay + 16,
+                     stroke: "#5a6472", "stroke-width": 1, "stroke-dasharray": "4 3" }, gAxis);
+        var lt = tx(xx, ay + 34, v + " mm", "#5a6472", "middle", 10, 700);
+        gAxis.appendChild(lt);
+      });
+      var t0 = tx(A.x, ay + 34, "0", "#9aa3ae", "middle", 10);
+      gAxis.appendChild(t0);
+      var t9 = tx(A.x + aw, ay + 34, "1000 mm", "#9aa3ae", "end", 10);
+      gAxis.appendChild(t9);
+      var cap = tx(A.x, ay + 52, "年降水量（mm）→", "#5a6472", "start", 10);
+      gAxis.appendChild(cap);
+
+      R.cursor = el("path", { fill: "#b8402f" }, gAxis);
+      R.cline = el("line", { stroke: "#b8402f", "stroke-width": 1.6 }, gAxis);
+      R.txt = el("text", { "font-size": 11 * FS, fill: "#b8402f", "font-weight": 700,
+                           "text-anchor": "middle" }, gAxis);
+    }
+
+    function shrub(x, y, h, col, rootD, g) {
+      el("path", { d: "M " + n1(x) + " " + n1(y) + " L " + n1(x) + " " + n1(y - h * 0.55),
+                   stroke: "#8a7a55", "stroke-width": 2.4, fill: "none" }, g);
+      el("path", { d: "M " + n1(x) + " " + n1(y - h * 0.5) + " L " + n1(x - h * 0.42) + " " + n1(y - h)
+                   + " M " + n1(x) + " " + n1(y - h * 0.5) + " L " + n1(x + h * 0.42) + " " + n1(y - h * 0.92),
+                   stroke: "#8a7a55", "stroke-width": 2, fill: "none", "stroke-linecap": "round" }, g);
+      el("circle", { cx: n1(x - h * 0.42), cy: n1(y - h), r: n1(h * 0.16), fill: col }, g);
+      el("circle", { cx: n1(x + h * 0.42), cy: n1(y - h * 0.92), r: n1(h * 0.15), fill: col }, g);
+      el("path", { d: "M " + n1(x) + " " + n1(y) + " L " + n1(x) + " " + n1(y + rootD)
+                   + " M " + n1(x) + " " + n1(y + rootD * 0.4) + " L " + n1(x - rootD * 0.75) + " " + n1(y + rootD)
+                   + " M " + n1(x) + " " + n1(y + rootD * 0.55) + " L " + n1(x + rootD * 0.7) + " " + n1(y + rootD),
+                   stroke: "#b08b5e", "stroke-width": 1.5, fill: "none", "stroke-linecap": "round" }, g);
+    }
+
+    function grass(x, y, h, col, rootD, g) {
+      var i, dx;
+      for (i = -3; i <= 3; i++) {
+        dx = i * (h * 0.15);
+        el("path", { d: "M " + n1(x) + " " + n1(y) + " Q " + n1(x + dx * 0.4) + " " + n1(y - h * 0.62)
+                     + " " + n1(x + dx) + " " + n1(y - h * (1 - Math.abs(i) * 0.07)),
+                     stroke: col, "stroke-width": 2, fill: "none", "stroke-linecap": "round" }, g);
+      }
+      for (i = -1; i <= 1; i++) {
+        dx = i * (h * 0.22);
+        el("path", { d: "M " + n1(x) + " " + n1(y) + " L " + n1(x + dx) + " " + n1(y + rootD),
+                     stroke: "#b08b5e", "stroke-width": 1.2, fill: "none" }, g);
+      }
+    }
+
+    function tree(x, y, h, col, rootD, g) {
+      el("path", { d: "M " + n1(x) + " " + n1(y) + " L " + n1(x) + " " + n1(y - h * 0.58),
+                   stroke: "#7a6a4e", "stroke-width": 5, "stroke-linecap": "round" }, g);
+      el("ellipse", { cx: n1(x), cy: n1(y - h * 0.74), rx: n1(h * 0.24), ry: n1(h * 0.22), fill: col }, g);
+      el("ellipse", { cx: n1(x - h * 0.14), cy: n1(y - h * 0.66), rx: n1(h * 0.16), ry: n1(h * 0.15), fill: col, opacity: 0.92 }, g);
+      el("ellipse", { cx: n1(x + h * 0.15), cy: n1(y - h * 0.86), rx: n1(h * 0.15), ry: n1(h * 0.14), fill: col, opacity: 0.92 }, g);
+      el("path", { d: "M " + n1(x) + " " + n1(y) + " L " + n1(x) + " " + n1(y + rootD)
+                   + " M " + n1(x) + " " + n1(y + rootD * 0.3) + " L " + n1(x - rootD * 0.8) + " " + n1(y + rootD * 0.9)
+                   + " M " + n1(x) + " " + n1(y + rootD * 0.4) + " L " + n1(x + rootD * 0.8) + " " + n1(y + rootD * 0.85),
+                   stroke: "#b08b5e", "stroke-width": 1.6, fill: "none", "stroke-linecap": "round" }, g);
+    }
+
+    function render() {
+      var V = L.veg, A = L.ax, k = L.k;
+      var y = V.gy, x0 = V.x + 18, w = V.w - 36;
+      var g = gVeg;
+      /* 清掉上一帧的植株（保留背景：前 5 个元素） */
+      while (g.childNodes.length > 5) g.removeChild(g.lastChild);
+
+      var n, h, rootD, type, col, gy2;
+      if (P < 200) {
+        type = "shrub"; n = 4; h = (30 + P / 200 * 16) * k;
+        rootD = (62 - P / 200 * 12) * k; col = "#8aa86a";
+      } else if (P < 400) {
+        type = "grass"; n = Math.round(14 + (P - 200) / 200 * 8);
+        h = (32 + (P - 200) / 200 * 20) * k; rootD = 26 * k; col = "#5f9e63";
+      } else {
+        type = "tree"; n = 4;
+        h = (90 + (P - 400) / 600 * 95) * k; rootD = (44 + (P - 400) / 600 * 16) * k; col = "#4d8a55";
+      }
+      var vk = [1.0, 1.13, 0.93, 1.06];
+      for (var i = 0; i < n; i++) {
+        var px = x0 + (i + 0.5) * (w / n);
+        var hh = type === "tree" ? h * vk[i % 4] : h;
+        if (type === "shrub") shrub(px, y, hh, col, rootD, g);
+        else if (type === "grass") grass(px, y, hh, col, rootD, g);
+        else tree(px, y, hh, col, rootD, g);
+      }
+
+      /* 根系下界：让"土层有多空"变成可视信息 */
+      el("line", { x1: n1(x0 - 10), y1: n1(y + rootD), x2: n1(x0 + w + 10), y2: n1(y + rootD),
+                   stroke: "#c2b299", "stroke-width": 1, "stroke-dasharray": "5 5" }, g);
+      var rl = tx(x0 + w + 10, y + rootD + 13, "根系下界", "#a8987c", "end", 9.5);
+      g.appendChild(rl);
+
+      /* 标注株高与根深 */
+      var lab = tx(x0, V.y + 40, (type === "tree" ? "株高约 " + Math.round(4 + (P - 400) / 600 * 26) + " m"
+                 : type === "shrub" ? "株高约 " + (0.3 + P / 200 * 0.6).toFixed(1) + " m"
+                 : "株高约 " + (0.3 + (P - 200) / 200 * 0.5).toFixed(1) + " m"),
+                 "#8a5c14", "start", 10.5, 700, true);
+      g.appendChild(lab);
+
+      /* 游标 */
+      var cx = A.x + P / 1000 * A.w;
+      R.cline.setAttribute("x1", n1(cx)); R.cline.setAttribute("x2", n1(cx));
+      R.cline.setAttribute("y1", n1(A.y - 17)); R.cline.setAttribute("y2", n1(A.y + 16));
+      R.cursor.setAttribute("d", "M " + n1(cx) + " " + n1(A.y - 17) + " l -6 -11 l 12 0 z");
+      R.txt.setAttribute("x", n1(cx));
+      R.txt.setAttribute("y", n1(A.y - 33));
+      R.txt.textContent = P + " mm";
+
+      /* 数值卡 */
+      var cov;
+      if (P < 200) cov = 4 + P / 200 * 21;
+      else if (P < 400) cov = 25 + (P - 200) / 200 * 40;
+      else cov = 65 + (P - 400) / 600 * 30;
+      vP.textContent = P + " mm";
+      vA.textContent = Math.round(cov) + "%";
+
+      var st, sn, cc, bg;
+      if (P < 200) { st = "荒漠"; sn = "旱生灌木 · 根系深而广"; cc = "#8a5c14"; bg = "#fdf3e0"; }
+      else if (P < 400) { st = "草原"; sn = "草本为主 · 根系密而浅"; cc = "#1e6640"; bg = "#e6f6ee"; }
+      else { st = "森林"; sn = "乔木为主 · 层次明显"; cc = "#1e6640"; bg = "#e6f6ee"; }
+      vS.textContent = st; vSn.textContent = sn;
+      vS.style.color = cc;
+      box.style.background = bg;
+      box.style.borderColor = cc + "44";
+      if (sl.value !== String(P)) sl.value = P;
+    }
+
+    function applyLayout() {
+      var w = stage.parentElement.getBoundingClientRect().width;
+      L = w >= WIDE.bp ? WIDE : NARROW;
+      FS = L.FS;
+      stage.setAttribute("viewBox", L.vb);
+      build();
+      render();
+    }
+
+    sl.addEventListener("input", function () { P = +this.value; render(); });
+    $("gxP1").addEventListener("click", function () { P = 120; render(); });
+    $("gxP2").addEventListener("click", function () { P = 300; render(); });
+    $("gxP3").addEventListener("click", function () { P = 450; render(); });
+    $("gxP4").addEventListener("click", function () { P = 900; render(); });
+
+    function setFromX(clientX) {
+      var bb = stage.getBoundingClientRect();
+      var vbw = parseFloat(L.vb.split(" ")[2]);
+      var x = (clientX - bb.left) * (vbw / bb.width);
+      var frac = (x - L.ax.x) / L.ax.w;
+      P = Math.max(0, Math.min(1000, Math.round((frac * 1000) / 10) * 10));
+      render();
+    }
+    stage.addEventListener("pointerdown", function (ev) {
+      dragging = true;
+      try { stage.setPointerCapture(ev.pointerId); } catch (e) {}
+      setFromX(ev.clientX);
+    });
+    stage.addEventListener("pointermove", function (ev) {
+      if (!dragging) return;
+      ev.preventDefault();
+      setFromX(ev.clientX);
+    });
+    ["pointerup", "pointercancel"].forEach(function (e) {
+      stage.addEventListener(e, function () { dragging = false; });
+    });
+    window.addEventListener("blur", function () { dragging = false; });
+
+    var tmr = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(tmr);
+      tmr = setTimeout(applyLayout, 180);
+    });
+
+    applyLayout();
+  })();
+});
+</script>
 </body>
 </html>
