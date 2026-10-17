@@ -5,9 +5,9 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-for f in sorted(glob.glob("pages/geo/xx1-*.html")):
+for f in sorted(glob.glob("pages/geo/xx1-*.html") + glob.glob("pages/geo/xx2-*.html")):
     s = open(f, encoding="utf-8").read()
-    key = f.split("xx1-")[1][:-5]
+    key = f.replace("\\", "/").split("pages/geo/")[1][:-5]
     issues = []
     if s.count('<script type="text/markdown" id="md">') != 1:
         issues.append("md-open x%d" % s.count('<script type="text/markdown" id="md">'))
