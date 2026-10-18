@@ -1,0 +1,435 @@
+<div class="gx-kicker">ELI5-HIGH · 讲给要考试的人</div>
+<p class="gx-claim">一元线性回归只做一件事：在散点里挑一条直线，让<b>残差平方和 Q 最小</b>；记住三个判据——<b>残差是 y−ŷ</b>、<b>Q 最小就是最小二乘</b>、<b>回归直线一定过样本中心 (x̄,ȳ)</b>。</p>
+<div class="gx-meta">
+<span><i></i>人教A版选择性必修第三册 第八章第2节</span>
+<span><i></i>高二 · 选择性必修第三册</span>
+<span><i></i>阅读 12 分钟</span>
+<span><i></i>含 1 个互动模型</span>
+</div>
+<p class="gx-lede">第八章先讲「成对数据的相关性」，这一节把相关性落到一条能算、能预测的直线上：用最小二乘求出 b̂ 与 â，得到经验回归方程 ŷ=b̂x+â，再用残差去看它拟合得好不好。最常见的一处翻车是把残差写成 ŷ−y（预测减观测），符号全反，后面 Q、残差图、判断拟合优度全部跟着错。另一处是只会代公式、不知道这条线为什么一定过样本中心 (x̄,ȳ)。</p>
+
+<nav class="gx-toc">
+<a href="#a">① 课本怎么说</a><a href="#b">② 拆开看</a><a href="#c">③ 自己拖一下</a>
+<a href="#d">④ 一道题走一遍</a><a href="#e">⑤ 会怎么考</a><a href="#f">⑥ 易错清单</a>
+</nav>
+
+<section class="gx-sec" id="a">
+<h2><span class="sn">01</span>课本怎么说</h2>
+<p class="gx-h2s">先背标准表述，再拆关键词。答题时写左边这句，不是右边的人话。</p>
+
+<div class="gx-quote">
+<p class="q-t">课本原话 · 经验回归方程<span class="q-src">人教A版选择性必修第三册 · 第八章第2节</span></p>
+<p class="q-b">经验回归方程 ŷ=b̂x+â，其中 b̂=Σ(xᵢ−x̄)(yᵢ−ȳ)/Σ(xᵢ−x̄)²，â=ȳ−b̂x̄。</p>
+<p class="q-n">→ 翻成人话：这句话是<b>三个条件</b>串起来的——① b̂ 的分子是「叉积和」Σ(xᵢ−x̄)(yᵢ−ȳ)，不是 ΣxᵢΣyᵢ；② 分母是同名变量的平方和 Σ(xᵢ−x̄)²，必须有平方；③ â 不是独立算的，它由 ȳ−b̂x̄ 倒推出来。少一个条件，b̂ 与 â 就配不上一组数。</p>
+</div>
+
+<div class="gx-quote">
+<p class="q-t">课本原话 · 残差与残差平方和<span class="q-src">人教A版选择性必修第三册 · 第八章第2节</span></p>
+<p class="q-b">残差 eᵢ=yᵢ−ŷᵢ，残差平方和 Q=Σ(yᵢ−ŷᵢ)² 越小，拟合效果越好。</p>
+<p class="q-n">→ 翻成人话：残差是观测减预测 y−ŷ，方向不能反——观测在直线上方，eᵢ 为正。Q 是全部残差平方相加，平方把正负抵消掉，只留「离得多远」。所以 Q 最小就是最小二乘，Q 越小直线贴得越紧。</p>
+</div>
+
+<div class="gx-quote">
+<p class="q-t">课本原话 · 样本中心<span class="q-src">人教A版选择性必修第三册 · 第八章第2节</span></p>
+<p class="q-b">经验回归直线一定过样本中心点 (x̄,ȳ)。</p>
+<p class="q-n">→ 翻成人话：把 â=ȳ−b̂x̄ 代回方程，得 ŷ−ȳ=b̂(x−x̄)，x=x̄ 时右端为 0，于是 ŷ=ȳ。这条不是巧合而是恒等式：<b>回归直线一定过样本中心 (x̄,ȳ)</b>，任何一组数据都成立，考试常拿它出「不过中心」的错选项。</p>
+</div>
+
+<div style="overflow-x:auto">
+<table class="gx-cmp">
+<thead><tr><th>条件</th><th>标准写法</th><th>缺了会怎样</th></tr></thead>
+<tbody>
+<tr><td>分子是叉积和</td><td>Σ(xᵢ−x̄)(yᵢ−ȳ)</td><td>写成 ΣxᵢΣyᵢ 或 Σxᵢyᵢ，数值完全对不上</td></tr>
+<tr><td>分母是同名平方和</td><td>Σ(xᵢ−x̄)²=10</td><td>漏平方会算出负数或量纲错，b̂ 无从谈起</td></tr>
+<tr><td>截距由 b̂ 倒推</td><td>â=ȳ−b̂x̄</td><td>另起炉灶硬算 â，直线就不过 (x̄,ȳ)</td></tr>
+<tr class="key"><td>残差方向</td><td>eᵢ=yᵢ−ŷᵢ（观测减预测）</td><td>写成 ŷᵢ−yᵢ，每个残差符号全反，Q 却不变、判断题必错</td></tr>
+<tr><td>Q 的口径</td><td>Q=Σ(yᵢ−ŷᵢ)²，取最小</td><td>以为 Q 最小是「算得最省事」，不知道那正是最小二乘的定义</td></tr>
+</tbody>
+</table>
+</div>
+<p class="gx-note">背法：<b>叉积和除以平方和，截距回头找中心</b>。整张表只有一行是「方向性」的错——残差是观测减预测 y−ŷ，其余四行都是算错而不是理解错。做题时先写 x̄、ȳ 两个数，再写 Σ(xᵢ−x̄)(yᵢ−ȳ) 与 Σ(xᵢ−x̄)²，最后才动笔算 b̂，顺序别倒。</p>
+</section>
+
+<section class="gx-sec" id="b">
+<h2><span class="sn">02</span>拆开看</h2>
+<p class="gx-h2s">四张图：各讲一件事，按「是什么 → 怎么变 → 怎么用」排。</p>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 1</span><span class="fig-t">散点图与经验回归直线</span>
+<span class="bdg bdg-must">必考</span>
+</div>
+<p class="fig-s">五个样本点 (1,2)(2,3)(3,5)(4,6)(5,8) 大致沿一条上升直线分布，最小二乘挑出的那条就是经验回归直线 ŷ=1.5x+0.3。先看那条虚线交点：横坐标 x̄=3，纵坐标 ȳ=4.8，直线正好穿过它。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 260" role="img" aria-label="五个散点与经验回归直线，直线穿过样本中心">
+<rect x="16" y="16" width="788" height="228" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">散点 + 经验回归直线 ŷ=1.5x+0.3</text>
+<line x1="104" y1="222" x2="748" y2="222" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar1)"/>
+<line x1="104" y1="222" x2="104" y2="48" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar1)"/>
+<defs><marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9aa7b4"/></marker></defs>
+<line x1="104" y1="126" x2="446" y2="126" stroke="#c7d2dc" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="446" y1="222" x2="446" y2="126" stroke="#c7d2dc" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="183.8" y1="195" x2="708" y2="57" stroke="#2563eb" stroke-width="2.2"/>
+<text x="470" y="70" font-size="10" font-weight="700" fill="#2563eb">ŷ=1.5x+0.3</text>
+<circle cx="218" cy="182" r="4.6" fill="#b8402f"/><circle cx="332" cy="162" r="4.6" fill="#b8402f"/>
+<circle cx="446" cy="122" r="4.6" fill="#b8402f"/><circle cx="560" cy="102" r="4.6" fill="#b8402f"/>
+<circle cx="674" cy="62" r="4.6" fill="#b8402f"/>
+<circle cx="446" cy="126" r="6.4" fill="none" stroke="#2f8a5b" stroke-width="2.2"/>
+<circle cx="446" cy="126" r="2.2" fill="#2f8a5b"/>
+<text x="392" y="146" font-size="9.6" font-weight="700" fill="#2f8a5b">样本中心 (x̄,ȳ)=(3,4.8)</text>
+<text x="446" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">x̄=3</text>
+<text x="94" y="130" font-size="9.6" fill="#5a6472" text-anchor="end">ȳ=4.8</text>
+<text x="218" y="238" font-size="9.6" fill="#5a6472" text-anchor="middle">1</text>
+<text x="332" y="238" font-size="9.6" fill="#5a6472" text-anchor="middle">2</text>
+<text x="560" y="238" font-size="9.6" fill="#5a6472" text-anchor="middle">4</text>
+<text x="674" y="238" font-size="9.6" fill="#5a6472" text-anchor="middle">5</text>
+<text x="94" y="186" font-size="9.6" fill="#5a6472" text-anchor="end">2</text>
+<text x="94" y="66" font-size="9.6" fill="#5a6472" text-anchor="end">8</text>
+<text x="756" y="236" font-size="10" font-weight="700" fill="#5a6472">x</text>
+<text x="116" y="64" font-size="10" font-weight="700" fill="#5a6472">y</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">回归直线一定过样本中心 (x̄,ȳ)：这五个点算出来 x̄=3、ȳ=4.8，直线恰好穿过 (3,4.8)，可以直接当验算用。</p>
+</figure>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 2</span><span class="fig-t">残差是竖直小线段</span>
+<span class="bdg bdg-key">辨析</span>
+</div>
+<p class="fig-s">把每个样本点到直线的竖直距离画出来，就是残差 eᵢ=yᵢ−ŷᵢ，方向只取竖直、不取垂直。这组数据每条线段只有 4–7 像素长，说明直线几乎贴住每个点；右边把五条线段按符号排开，正负一目了然。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 260" role="img" aria-label="残差是样本点到回归直线的竖直小线段，右侧为残差符号图">
+<rect x="16" y="16" width="788" height="228" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">残差 eᵢ = 观测 − 预测 = yᵢ − ŷᵢ（竖直小线段）</text>
+<line x1="70" y1="222" x2="536" y2="222" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar2)"/>
+<line x1="70" y1="222" x2="70" y2="46" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar2)"/>
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9aa7b4"/></marker></defs>
+<line x1="120" y1="190" x2="524" y2="62" stroke="#2563eb" stroke-width="2"/>
+<line x1="158" y1="180" x2="158" y2="184.2" stroke="#b8791f" stroke-width="2.6"/>
+<line x1="246" y1="159" x2="246" y2="153.3" stroke="#b8791f" stroke-width="2.6"/>
+<line x1="334" y1="117" x2="334" y2="121.2" stroke="#b8791f" stroke-width="2.6"/>
+<line x1="422" y1="96" x2="422" y2="90.3" stroke="#b8791f" stroke-width="2.6"/>
+<line x1="510" y1="54" x2="510" y2="58.2" stroke="#b8791f" stroke-width="2.6"/>
+<circle cx="158" cy="180" r="4" fill="#b8402f"/><circle cx="246" cy="159" r="4" fill="#b8402f"/>
+<circle cx="334" cy="117" r="4" fill="#b8402f"/><circle cx="422" cy="96" r="4" fill="#b8402f"/>
+<circle cx="510" cy="54" r="4" fill="#b8402f"/>
+<text x="158" y="240" font-size="9.4" fill="#5a6472" text-anchor="middle">x=1</text>
+<text x="246" y="240" font-size="9.4" fill="#5a6472" text-anchor="middle">2</text>
+<text x="334" y="240" font-size="9.4" fill="#5a6472" text-anchor="middle">3</text>
+<text x="422" y="240" font-size="9.4" fill="#5a6472" text-anchor="middle">4</text>
+<text x="510" y="240" font-size="9.4" fill="#5a6472" text-anchor="middle">5</text>
+<text x="352" y="70" font-size="9.6" font-weight="700" fill="#2563eb">直线 ŷ=1.5x+0.3</text>
+<line x1="540" y1="150" x2="790" y2="150" stroke="#9aa7b4" stroke-width="1.2"/>
+<text x="546" y="140" font-size="9.4" fill="#5a6472">0</text>
+<text x="560" y="66" font-size="10" font-weight="700" fill="#151a21">残差符号：+0.2 / −0.3 交替</text>
+<rect x="556" y="126" width="26" height="24" fill="#2f8a5b" opacity="0.85"/>
+<rect x="601" y="150" width="26" height="36" fill="#b8402f" opacity="0.85"/>
+<rect x="646" y="126" width="26" height="24" fill="#2f8a5b" opacity="0.85"/>
+<rect x="691" y="150" width="26" height="36" fill="#b8402f" opacity="0.85"/>
+<rect x="736" y="126" width="26" height="24" fill="#2f8a5b" opacity="0.85"/>
+<text x="569" y="120" font-size="9" fill="#2f8a5b" text-anchor="middle">+0.2</text>
+<text x="614" y="200" font-size="9" fill="#b8402f" text-anchor="middle">−0.3</text>
+<text x="659" y="120" font-size="9" fill="#2f8a5b" text-anchor="middle">+0.2</text>
+<text x="704" y="200" font-size="9" fill="#b8402f" text-anchor="middle">−0.3</text>
+<text x="749" y="120" font-size="9" fill="#2f8a5b" text-anchor="middle">+0.2</text>
+<text x="569" y="216" font-size="9" fill="#5a6472" text-anchor="middle">e₁</text>
+<text x="614" y="216" font-size="9" fill="#5a6472" text-anchor="middle">e₂</text>
+<text x="659" y="216" font-size="9" fill="#5a6472" text-anchor="middle">e₃</text>
+<text x="704" y="216" font-size="9" fill="#5a6472" text-anchor="middle">e₄</text>
+<text x="749" y="216" font-size="9" fill="#5a6472" text-anchor="middle">e₅</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">残差是观测减预测 y−ŷ，不是 ŷ−y：点跑到直线上方 eᵢ 为正、下方为负，竖直方向量，不量垂直距离。</p>
+<p class="gx-note">口径：残差图里量的是「竖直距离」而不是点到直线的垂直距离，因为回归是把 x 当已知、只看 y 的偏差。</p>
+</figure>
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 3</span><span class="fig-t">Q 随斜率 b 变化的抛物线</span>
+<span class="bdg bdg-must">必考</span>
+</div>
+<p class="fig-s">固定 â=0.3，把斜率 b 从 0.5 扫到 2.5，每换一个 b 就重算一次 Q=Σ(yᵢ−0.3−b·xᵢ)²，描出来的点连成一条开口向上的抛物线。左右两端关于 b=1.5 对称，b=0.5 与 b=2.5 的 Q 都是 55.3。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 250" role="img" aria-label="残差平方和Q随斜率b变化的抛物线，最低点在b=1.5">
+<rect x="16" y="16" width="788" height="218" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">Q(b)=Σ(yᵢ−0.3−b·xᵢ)² 的最低点就是 b̂=1.5</text>
+<line x1="100" y1="218" x2="784" y2="218" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar3)"/>
+<line x1="100" y1="218" x2="100" y2="60" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar3)"/>
+<defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9aa7b4"/></marker></defs>
+<polyline points="100,74.2 166,125.7 232,165.7 298,194.3 364,211.5 430,217.2 496,211.5 562,194.3 628,165.7 694,125.7 760,74.2" fill="none" stroke="#2563eb" stroke-width="2.4"/>
+<line x1="430" y1="217.2" x2="430" y2="218" stroke="#2f8a5b" stroke-width="1.4"/>
+<line x1="100" y1="217.2" x2="430" y2="217.2" stroke="#2f8a5b" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="430" y1="217.2" x2="430" y2="230" stroke="#c7d2dc" stroke-width="1" stroke-dasharray="3 3"/>
+<circle cx="430" cy="217.2" r="5.6" fill="#2f8a5b"/>
+<circle cx="100" cy="74.2" r="3.6" fill="#b8791f"/><circle cx="760" cy="74.2" r="3.6" fill="#b8791f"/>
+<text x="444" y="206" font-size="9.8" font-weight="700" fill="#2f8a5b">最低点 b̂=1.5，Q=0.3</text>
+<text x="110" y="92" font-size="9.4" fill="#b8791f">Q(0.5)=55.3</text>
+<text x="700" y="70" font-size="9.4" fill="#b8791f" text-anchor="end">Q(2.5)=55.3</text>
+<text x="100" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">0.5</text>
+<text x="265" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">1.0</text>
+<text x="430" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">1.5</text>
+<text x="595" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">2.0</text>
+<text x="760" y="240" font-size="9.6" fill="#5a6472" text-anchor="middle">2.5</text>
+<text x="792" y="232" font-size="10" font-weight="700" fill="#5a6472">b</text>
+<text x="110" y="64" font-size="10" font-weight="700" fill="#5a6472">Q</text>
+<text x="254" y="96" font-size="9.4" fill="#5a6472">同一个 Q 对应两个 b，一左一右</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">Q 最小就是最小二乘：这条抛物线的最低点给了唯一的 b̂=1.5，直线越偏离它就 Q 越大，所以「最小二乘」不是一种算法，而是 Q 最小这个要求本身。</p>
+</figure>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 4</span><span class="fig-t">内插可信与外推危险</span>
+<span class="bdg bdg-ext">延伸</span>
+</div>
+<p class="fig-s">回归方程只在样本 x 的取值范围内（这里是 1≤x≤5）有观测支撑，这一段叫内插。把直线延长到 x=8 算出 ŷ=12.3，可实际只有 9——没有数据撑着的那一段，直线只是惯性延伸。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 220" role="img" aria-label="回归直线在样本范围内内插可信，延长到样本外则预测偏差大">
+<rect x="16" y="16" width="788" height="188" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">绿色段 1≤x≤5 内插可信 · 红色段 x&gt;5 外推危险</text>
+<rect x="162" y="56" width="280" height="130" fill="#e6f6ee" opacity="0.75"/>
+<rect x="442" y="56" width="290" height="130" fill="#fbeae7" opacity="0.75"/>
+<line x1="92" y1="186" x2="748" y2="186" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar4)"/>
+<line x1="92" y1="186" x2="92" y2="52" stroke="#9aa7b4" stroke-width="1.2" marker-end="url(#ar4)"/>
+<defs><marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9aa7b4"/></marker></defs>
+<line x1="162" y1="167.1" x2="442" y2="104.1" stroke="#2f8a5b" stroke-width="2.6"/>
+<line x1="442" y1="104.1" x2="652" y2="56.9" stroke="#b8402f" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="162" cy="165" r="4" fill="#2f8a5b"/><circle cx="232" cy="154.5" r="4" fill="#2f8a5b"/>
+<circle cx="302" cy="133.5" r="4" fill="#2f8a5b"/><circle cx="372" cy="123" r="4" fill="#2f8a5b"/>
+<circle cx="442" cy="102" r="4" fill="#2f8a5b"/>
+<circle cx="652" cy="91.5" r="4.4" fill="none" stroke="#b8402f" stroke-width="2"/>
+<circle cx="652" cy="56.9" r="3.6" fill="#b8402f"/>
+<line x1="652" y1="56.9" x2="652" y2="91.5" stroke="#b8402f" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="178" y="78" font-size="9.6" font-weight="700" fill="#2f8a5b">内插：有观测支撑</text>
+<text x="458" y="78" font-size="9.6" font-weight="700" fill="#b8402f">外推：没有观测支撑</text>
+<text x="664" y="62" font-size="9.4" font-weight="700" fill="#b8402f">预测 12.3</text>
+<text x="664" y="96" font-size="9.4" font-weight="700" fill="#b8402f">实际 9</text>
+<text x="162" y="202" font-size="9.4" fill="#5a6472" text-anchor="middle">1</text>
+<text x="442" y="202" font-size="9.4" fill="#5a6472" text-anchor="middle">5</text>
+<text x="652" y="202" font-size="9.4" fill="#5a6472" text-anchor="middle">8</text>
+<text x="756" y="200" font-size="10" font-weight="700" fill="#5a6472">x</text>
+<text x="100" y="60" font-size="10" font-weight="700" fill="#5a6472">y</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">在内插范围内预测是「读直线」，把 x 拖出样本范围再当准确值就是外推——预测值可以算，但不能信。</p>
+</figure>
+</section>
+
+<section class="gx-sec" id="c">
+<h2><span class="sn">03</span>自己拖一下<span class="bdg bdg-must">核心</span></h2>
+<p class="gx-h2s">拖「斜率 b」，看左边直线怎么翻，右边 Q 卡怎么跟着变。盯住三处：直线是否穿过 (3,4.8)、Q 掉到多少、抛物线上的点滑到哪。</p>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">互动 1</span><span class="fig-t">斜率 b → 残差平方和 Q</span>
+<span class="bdg bdg-key">B 级</span>
+<span class="gx-ap" id="gxAp"><i></i><span id="gxApTxt">自动演示中</span></span>
+</div>
+<p class="fig-s">左边是散点与当前直线 ŷ=0.3+b·x，竖直小线段是残差；右边是 Q(b) 抛物线，横轴 b、纵轴 Q。当 b 恰好等于 1.5 时直线穿过 (3,4.8)，Q 掉到最低点 0.3——这一步就是最小二乘。</p>
+<div class="gx-board">
+<svg id="gxStage" viewBox="0 0 880 470" tabindex="0" role="application" aria-label="拖动斜率b观察残差平方和的变化">
+<g id="gxA"></g>
+<g id="gxB"></g>
+</svg>
+<div class="bar">
+<span class="lb">斜率 b</span>
+<input type="range" id="gxSl" min="0.5" max="2.5" step="0.1" value="0.5" aria-label="斜率 b">
+<p class="hint">键盘 ← → 也能调；直接点画布，会跳到下一个关键值。</p>
+</div>
+</div>
+<div class="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px">
+<div class="st"><div class="k">① 斜率 b</div><div class="v" id="gxVa">0.5</div><div class="s">范围 0.5–2.5</div></div>
+<div class="st"><div class="k">② 残差平方和 Q</div><div class="v" id="gxVb">55.3</div><div class="s">Σ(yᵢ−ŷᵢ)²</div></div>
+<div class="st"><div class="k">③ ŷ 在 x̄=3 处</div><div class="v" id="gxVc">1.8</div><div class="s">ȳ=4.8</div></div>
+<div class="st state" id="gxStBox"><div class="k">④ 状态判断</div><div class="v" id="gxVs">—</div><div class="s" id="gxVsn">—</div></div>
+</div>
+<p class="gx-take">b=1.5 是唯一的转折点：Q 最小就是最小二乘，此时直线过样本中心 (x̄,ȳ)=(3,4.8)，ŷ(3)=ȳ。</p>
+<p class="gx-note">模型口径：数据固定为 (1,2)(2,3)(3,5)(4,6)(5,8)，截距固定 â=0.3，只让斜率 b 在 0.5–2.5 间变，Q=Σ(yᵢ−0.3−b·xᵢ)²。b=0.5 与 b=2.5 的 Q 都是 55.3；b=1.5 时 Q=0.3 为最小，并非 0——数据本身不共线。</p>
+</figure>
+</section>
+
+<section class="gx-sec" id="d">
+<h2><span class="sn">04</span>一道题走一遍</h2>
+<p class="gx-h2s">先自己读题干想 30 秒，再点「下一步」。</p>
+
+<div class="gx-ex">
+<p class="ex-t">例题 · 求经验回归方程并说明原因<span class="bdg bdg-must">必考</span></p>
+<p class="ex-q">某研究小组收集到 5 组数据 (1,2)(2,3)(3,5)(4,6)(5,8)。<br>（1）求 y 关于 x 的经验回归方程 ŷ=b̂x+â；<br>（2）判断该直线是否经过样本中心，并由此说明 «Q 最小就是最小二乘» 的含义。<br>陷阱：「b̂ 的分子是叉积和还是 Σx·Σy？」「残差是 y−ŷ 还是 ŷ−y？」</p>
+<ol class="steps" id="gxSteps">
+<li class="step">
+<p class="s-h">第 1 步 · 先写两个均值</p>
+<p class="s-b">x̄=(1+2+3+4+5)/5=3，ȳ=(2+3+5+6+8)/5=24/5=4.8。样本中心是 (3,4.8)。</p>
+<p class="s-k">用到：均值定义。先把中心点算出来，后面 â 要用它倒推。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 2 步 · 列叉积和与平方和</p>
+<p class="s-b">Σ(xᵢ−x̄)(yᵢ−ȳ)=(−2)(−2.8)+(−1)(−1.8)+0·0.2+1·1.2+2·3.2=5.6+1.8+0+1.2+6.4=15；Σ(xᵢ−x̄)²=4+1+0+1+4=10。</p>
+<p class="s-k">用到：b̂ 的分子是叉积和 Σ(xᵢ−x̄)(yᵢ−ȳ)，不是 ΣxᵢΣyᵢ=15×24=360。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 3 步 · 相除得 b̂</p>
+<p class="s-b">b̂=15/10=1.5。含义：x 每增加 1，y 平均增加 1.5。</p>
+<p class="s-k">用到：b̂ 的几何意义是斜率，不是相关系数；|b̂| 大小还依赖单位。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 4 步 · 用中心点倒推 â</p>
+<p class="s-b">â=ȳ−b̂x̄=4.8−1.5×3=0.3，故经验回归方程为 ŷ=1.5x+0.3。</p>
+<p class="s-k">用到：回归直线一定过样本中心 (x̄,ȳ)，把 (3,4.8) 代入 ŷ=1.5x+â 立刻得 â=0.3，这也是最好的验算。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 5 步 · 验算 Q 并回答第（2）问</p>
+<p class="s-b">五个残差为 0.2、−0.3、0.2、−0.3、0.2，Q=0.04+0.09+0.04+0.09+0.04=0.3，比 b=0.5 时的 55.3、b=2.5 时的 55.3 都小。直线过 (3,4.8)，即 ŷ(3)=1.5×3+0.3=4.8=ȳ。Q 最小就是最小二乘：b̂=1.5 之所以被选中，唯一理由就是它让 Q 达到最小。</p>
+<p class="s-k">用到：残差是观测减预测 y−ŷ；Q 最小就是最小二乘，二者是同一句话的两种说法。</p>
+</li>
+</ol>
+<div class="exbar">
+<button id="gxNext" type="button">下一步</button>
+<span class="cnt" id="gxCnt">1 / 5</span>
+</div>
+<div class="ans" id="gxAns" hidden>
+<p class="ans-t">标准答案（可抄进答题卡）</p>
+<p class="ans-b">（1）x̄=3，ȳ=4.8；Σ(xᵢ−x̄)(yᵢ−ȳ)=15，Σ(xᵢ−x̄)²=10；b̂=15/10=1.5；â=ȳ−b̂x̄=4.8−1.5×3=0.3。所以经验回归方程为 ŷ=1.5x+0.3。<br>（2）因为 â=ȳ−b̂x̄，代入得 ŷ−ȳ=b̂(x−x̄)，当 x=x̄ 时 ŷ=ȳ，所以回归直线一定过样本中心 (3,4.8)。最小二乘的含义是：在所有形如 ŷ=â+bx 的直线中，b̂=1.5、â=0.3 使残差平方和 Q=Σ(yᵢ−ŷᵢ)²=0.3 达到最小，故 Q 最小就是最小二乘。<br>（3）残差按 eᵢ=yᵢ−ŷᵢ 计算（观测减预测），得 0.2、−0.3、0.2、−0.3、0.2，符号交替、绝对值都不超过 0.3，说明直线与散点吻合较好；不能把它们写成 ŷᵢ−yᵢ。</p>
+</div>
+</div>
+</section>
+<section class="gx-sec" id="e">
+<h2><span class="sn">05</span>会怎么考</h2>
+<p class="gx-h2s">六问，都是「你以为懂了、一写就错」的地方。</p>
+<div class="gx-qa">
+
+<div class="qac">
+<p class="q">回归直线凭什么一定过 (x̄,ȳ)？题目说「这条线没经过中心」错在哪？</p>
+<p class="a">把 â=ȳ−b̂x̄ 代回方程：ŷ−ȳ=b̂(x−x̄)，当 x=x̄ 时右边为 0，所以 ŷ=ȳ。<b>回归直线一定过样本中心 (x̄,ȳ)</b>，这是恒等式而非巧合，任何数据都成立。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="回归直线穿过样本中心">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<line x1="30" y1="110" x2="212" y2="110" stroke="#9aa7b4" stroke-width="1"/>
+<line x1="30" y1="110" x2="30" y2="26" stroke="#9aa7b4" stroke-width="1"/>
+<line x1="44" y1="104" x2="204" y2="34" stroke="#2563eb" stroke-width="2"/>
+<circle cx="120" cy="70" r="4.6" fill="#2f8a5b"/>
+<text x="128" y="64" font-size="8.6" fill="#2f8a5b">(x̄,ȳ)</text>
+<text x="196" y="124" font-size="8.6" fill="#5a6472">x</text>
+</svg>
+</div>
+
+<div class="qac">
+<p class="q">残差是 yᵢ−ŷᵢ 还是 ŷᵢ−yᵢ？写反了会怎样？</p>
+<p class="a"><b>残差是观测减预测 y−ŷ</b>：eᵢ=yᵢ−ŷᵢ。写反后每个残差符号全变，而 Q 因为平方不变，所以求和题看不出来，判断题与残差图分析必错。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="观测点在直线上方，残差为正">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<line x1="38" y1="96" x2="206" y2="44" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="120" cy="48" r="4.6" fill="#b8402f"/>
+<line x1="120" y1="48" x2="120" y2="70" stroke="#b8791f" stroke-width="2.4"/>
+<text x="126" y="62" font-size="8.6" font-weight="700" fill="#b8791f">e=y−ŷ&gt;0</text>
+<text x="150" y="42" font-size="8.6" fill="#b8402f">观测点</text>
+<text x="46" y="108" font-size="8.6" fill="#5a6472">直线 ŷ=b̂x+â</text>
+</svg>
+</div>
+
+<div class="qac">
+<p class="q">「Q 最小」到底意味着什么？为什么说它就是最小二乘？</p>
+<p class="a">Q=Σ(yᵢ−ŷᵢ)² 是全部残差平方之和，<b>Q 最小就是最小二乘</b>：所有候选直线中，使 Q 达到最小的那条被选中，此时 b̂、â 唯一。反过来，题目给的 b̂ 若不是让 Q 最小的那个，它就不是经验回归方程的斜率。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="Q随b变化的抛物线最低点">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<line x1="32" y1="104" x2="212" y2="104" stroke="#9aa7b4" stroke-width="1"/>
+<line x1="32" y1="104" x2="32" y2="26" stroke="#9aa7b4" stroke-width="1"/>
+<polyline points="40,30 70,78 100,100 120,104 140,100 170,78 200,30" fill="none" stroke="#2563eb" stroke-width="2"/>
+<circle cx="120" cy="104" r="4.2" fill="#2f8a5b"/>
+<text x="96" y="96" font-size="8.6" font-weight="700" fill="#2f8a5b">b̂=1.5，Q 最小</text>
+<text x="196" y="118" font-size="8.6" fill="#5a6472">b</text>
+</svg>
+</div>
+
+<div class="qac">
+<p class="q">用 x=8 代进 ŷ=1.5x+0.3 得 12.3，能当准确预测写吗？</p>
+<p class="a">不能当准确值。样本的 x 只落在 1–5，<b>内插可信、外推危险</b>：x=8 处没有观测支撑，直线只是按斜率惯性延伸，实际情况完全可能偏离（例中实测只有 9）。答题要写「预测值仅供参照，需结合实际意义」。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="内插区间与样本外推的危险">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<rect x="42" y="34" width="84" height="72" fill="#e6f6ee"/>
+<rect x="126" y="34" width="80" height="72" fill="#fbeae7"/>
+<line x1="42" y1="86" x2="126" y2="56" stroke="#2f8a5b" stroke-width="2.2"/>
+<line x1="126" y1="56" x2="196" y2="32" stroke="#b8402f" stroke-width="1.8" stroke-dasharray="5 3"/>
+<circle cx="186" cy="74" r="4" fill="none" stroke="#b8402f" stroke-width="1.8"/>
+<text x="46" y="100" font-size="8.4" fill="#2f8a5b">内插可信</text>
+<text x="130" y="100" font-size="8.4" fill="#b8402f">外推危险</text>
+</svg>
+</div>
+
+<div class="qac">
+<p class="q">b̂ 的分子到底是 Σ(xᵢ−x̄)(yᵢ−ȳ) 还是 Σxᵢ·Σyᵢ？</p>
+<p class="a">是<b>叉积和</b> Σ(xᵢ−x̄)(yᵢ−ȳ)，逐组配对相乘再相加，本组数据为 15；分母是同名平方和 Σ(xᵢ−x̄)²=10，故 b̂=1.5。<b>写成 Σxᵢ·Σyᵢ 或 Σxᵢyᵢ 都是错的。</b></p>
+<svg viewBox="0 0 240 132" role="img" aria-label="b的分子是叉积和，不是和的乘积">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="20" y="42" font-size="8.8" fill="#2f8a5b">✓ Σ(xᵢ−x̄)(yᵢ−ȳ) = 15</text>
+<text x="20" y="66" font-size="8.8" fill="#b8402f">✗ Σxᵢ·Σyᵢ = 360</text>
+<line x1="20" y1="74" x2="150" y2="74" stroke="#b8402f" stroke-width="1.4"/>
+<text x="20" y="98" font-size="8.6" fill="#5a6472">分母 Σ(xᵢ−x̄)² = 10 → b̂=1.5</text>
+</svg>
+</div>
+
+<div class="qac">
+<p class="q">相关系数 r 与回归斜率 b̂ 是同一个东西吗？</p>
+<p class="a">不是。r 是<b>无量纲</b>的线性相关强度，取值 −1≤r≤1；b̂ 有单位，是「x 增 1 时 y 平均增多少」。两者<b>符号相同</b>（r&gt;0 ⇔ b̂&gt;0），但大小不能互换，换单位 b̂ 会变、r 不变。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="相关系数r与斜率b̂符号一致但大小不同">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<line x1="30" y1="104" x2="112" y2="104" stroke="#9aa7b4" stroke-width="1"/>
+<line x1="30" y1="104" x2="30" y2="28" stroke="#9aa7b4" stroke-width="1"/>
+<line x1="38" y1="100" x2="106" y2="38" stroke="#2563eb" stroke-width="2"/>
+<text x="40" y="120" font-size="8.4" fill="#2563eb">r&gt;0 且 b̂&gt;0</text>
+<text x="128" y="50" font-size="8.6" font-weight="700" fill="#5a6472">r 无单位、在</text>
+<text x="128" y="68" font-size="8.6" font-weight="700" fill="#5a6472">[−1,1] 内；</text>
+<text x="128" y="86" font-size="8.6" font-weight="700" fill="#5a6472">b̂ 有单位。</text>
+</svg>
+</div>
+
+</div>
+<p class="gx-note">这六问其实是一件事：<b>回归就是「让 Q 最小的那条直线」</b>。由这个要求能推出 b̂ 的叉积和公式，能推出直线必过样本中心 (x̄,ȳ)，也能解释为什么残差要按 y−ŷ 算、为什么外推不可信。背不下来的公式，都可以从「Q 最小」重新推一遍。</p>
+</section>
+
+<section class="gx-sec" id="f">
+<h2><span class="sn">06</span>易错清单</h2>
+<p class="gx-h2s">左边是学生真会写的错句，右边是应该写的样子。</p>
+
+<div class="gx-errs">
+<div class="er">
+<p class="er-x">✗ 回归直线是拟合出来的，不一定经过样本中心。</p>
+<p class="er-v">✓ 经验回归直线一定过样本中心点 (x̄,ȳ)。</p>
+<p class="er-w">错在哪：由 â=ȳ−b̂x̄ 恒可得 ŷ−ȳ=b̂(x−x̄)，x=x̄ 时 ŷ=ȳ，这是恒等式，不是「碰巧经过」。答题时可以直接用它验算 â。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 残差 eᵢ=ŷᵢ−yᵢ，即预测减观测。</p>
+<p class="er-v">✓ 残差 eᵢ=yᵢ−ŷᵢ，观测减预测。</p>
+<p class="er-w">错在哪：方向反了每个残差的符号全反。平方和 Q 不变，所以求 Q 的题看不出来，但残差图、正负判断、拟合分析全错。记法：残差是「实测减应该」。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ b̂ 的分子是 Σxᵢ·Σyᵢ，把两个和乘一下。</p>
+<p class="er-v">✓ b̂=Σ(xᵢ−x̄)(yᵢ−ȳ)/Σ(xᵢ−x̄)²，分子是逐组配对的叉积和。</p>
+<p class="er-w">错在哪：Σxᵢ·Σyᵢ 把 5 组配对信息全丢了，量纲也不对（本组数据会算出 360 而不是 15）。必须先把 x、y 各自减去均值，再对应相乘、再相加。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 经验回归方程算出来了，x 代多大都行，预测都准。</p>
+<p class="er-v">✓ 回归方程只宜在样本 x 的取值范围内用于预测，外推需谨慎。</p>
+<p class="er-w">错在哪：外推段没有观测支撑，直线只是按斜率惯性延伸。本例 x=8 算出 12.3，实际可能只有 9。考试写「预测值仅作参考」才拿满。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ â=b̂x̄−ȳ，先算斜率再照式子代入。</p>
+<p class="er-v">✓ â=ȳ−b̂x̄，截距由样本中心倒推。</p>
+<p class="er-w">错在哪：减数与被减数颠倒。判据很好记：把 (x̄,ȳ) 代进 ŷ=b̂x+â 必须成立，即 ȳ=b̂x̄+â，所以 â=ȳ−b̂x̄。算完代回中心点验算一遍，错了立刻发现。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 残差平方和 Q=0，说明模型一定选对了。</p>
+<p class="er-v">✓ Q 小说明这组数据上拟合得紧，不代表模型合理或预测可靠。</p>
+<p class="er-w">错在哪：Q=0 只表示 5 个点恰好共线，样本太小或变量太多都会造成这种「贴着过」，对样本外毫无保证，属过拟合。判断拟合好坏还要看残差图是否随机、样本是否有代表性。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 最小二乘就是「计算量最小的算法」。</p>
+<p class="er-v">✓ 最小二乘指使残差平方和 Q=Σ(yᵢ−ŷᵢ)² 达到最小的估计方法。</p>
+<p class="er-w">错在哪：「最小」修饰的是 Q，不是计算量。Q 最小就是最小二乘，这是定义级的等价说法，答概念题时要原样写出来。</p>
+</div>
+</div>
+<p class="gx-note">七条里前三条是「写错符号和公式」，后四条是「理解错口径」。统一的自检动作只有两个：算完把 (x̄,ȳ) 代回直线看是否成立；把每个残差按 y−ŷ 写出来看符号是否符合「点在线上方为正」。</p>
+</section>

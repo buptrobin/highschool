@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#2563eb">
 <title>7.4 二项分布与超几何分布 · 数学 · 俯瞰太阳系</title>
 <link rel="stylesheet" href="../../assets/app.css">
+<link rel="stylesheet" href="../../assets/gx.css">
+<style>
+/* 数学分册：讲义强调色换成数学蓝，语义色（琥珀/绿/红）沿用 gx.css */
+.gx{--blue:#2563eb;--blue-soft:#eff5ff;--blue-line:#c7dbfa}
+.gx h2 .sn{color:#2563eb}
+.gx .fig-no{color:#2563eb}
+</style>
 </head>
 <body class="page" style="--accent:#2563eb;--accent-soft:#eff5ff">
 
@@ -27,7 +34,7 @@
   </nav>
 
   <h1 class="page-title">7.4 二项分布与超几何分布</h1>
-  <div class="page-meta">数学 · 选择性必修第三册 · 第七章 随机变量及其分布</div>
+  <div class="page-meta">数学 · 选择性必修第三册（人教A版） · 第七章 随机变量及其分布</div>
 
   <article class="content" id="content"></article>
 
@@ -40,7 +47,669 @@
 window.PAGE = {"sid": "math", "slug": "xx3-c2-s4", "title": "7.4 二项分布与超几何分布", "anchor": "#xx3-c2-s4"};
 </script>
 <script type="text/markdown" id="md">
+<div class="gx">
+
+<div class="gx-kicker">ELI5-HIGH · 讲给要考试的人</div>
+<p class="gx-claim">二项分布与超几何分布的区别不在公式长得像，而在<b>抽样方式</b>：<b>有放回／独立重复</b>用二项，<b>不放回</b>用超几何；两者的期望都是「总数 × 比例」，但方差只有二项是 <b>np(1−p)</b>。</p>
+<div class="gx-meta">
+<span><i></i>人教A版选择性必修第三册 第七章第四节</span>
+<span><i></i>高二 · 选择性必修第三册</span>
+<span><i></i>阅读 12 分钟</span>
+<span><i></i>含 1 个互动模型</span>
+</div>
+<p class="gx-lede">7.2 讲离散型随机变量的分布列，7.3 讲期望与方差，这一节把它们落到两个天天考的模型上：二项分布和超几何分布。判定只用一句话——「抽完放不放回去」。放回去，每次成功的概率都不变，次数服从 B(n,p)；不放回去，每抽一件样本池就少一件，成功概率逐次变，次数服从超几何分布。最容易错的是两处：把不放回硬套二项分布，以及把 D(X) 写成 np。</p>
+
+<nav class="gx-toc">
+<a href="#a">① 课本怎么说</a><a href="#b">② 拆开看</a><a href="#c">③ 自己拖一下</a>
+<a href="#d">④ 一道题走一遍</a><a href="#e">⑤ 会怎么考</a><a href="#f">⑥ 易错清单</a>
+</nav>
+
+<section class="gx-sec" id="a">
+<h2><span class="sn">01</span>课本怎么说</h2>
+<p class="gx-h2s">先背标准表述，再拆关键词。答题时写左边这句，不是右边的人话。</p>
+
+<div class="gx-quote">
+<p class="q-t">二项分布 · 定义<span class="q-src">人教A版选择性必修第三册 · 第七章第四节</span></p>
+<p class="q-b">一般地，在 n 次独立重复试验中，设每次试验成功的概率为 p，用 X 表示 n 次试验中成功的次数，则 X 的分布列满足 P(X=k)=C(n,k)pᵏ(1−p)ⁿ⁻ᵏ，k=0,1,2,…,n，称 X 服从二项分布，记作 X~B(n,p)。</p>
+<p class="q-n">→ 翻成人话：这句话由<b>三个条件</b>组成——① 试验次数 n 是事先定死的；② 每次只有「成功／失败」两种结果；③ 各次独立且每次成功的概率都是同一个 p。三个条件里 ③ 是命门：只要「放回」或「独立重复」，p 才不变；一旦不放回，第 2 次的成功概率就已经不是 p 了，公式立刻失效。</p>
+</div>
+
+<div class="gx-quote">
+<p class="q-t">二项分布 · 期望与方差<span class="q-src">人教A版选择性必修第三册 · 第七章第四节</span></p>
+<p class="q-b">若 X~B(n,p)，则 E(X)=np，D(X)=np(1−p)。</p>
+<p class="q-n">→ 翻成人话：期望就是「做 n 次、每次 p 的成功率，平均成功 np 次」，直觉好接受；<b>方差是 np(1−p)，不是 np</b>。多乘的那个 (1−p) 是失败概率，它保证 p=0 或 p=1 时方差为 0——每次都必成或必败，当然没有波动。</p>
+</div>
+
+<div class="gx-quote">
+<p class="q-t">超几何分布 · 定义与期望<span class="q-src">人教A版选择性必修第三册 · 第七章第四节</span></p>
+<p class="q-b">从含有 M 件次品的 N 件产品中不放回地抽取 n 件，用 X 表示抽到的次品数，则 P(X=k)=C(M,k)C(N−M,n−k)/C(N,n)，称 X 服从超几何分布，且 E(X)=nM/N。</p>
+<p class="q-n">→ 翻成人话：分子是「从 M 件次品里挑 k 件」乘「从 N−M 件正品里挑 n−k 件」，分母是「从 N 件里随便挑 n 件」，这是<b>不放回</b>的计数方式。注意两点：一是<b>超几何的期望也是 nM/N</b>，就是「样本容量 × 次品率」，和二项的 np 长得一模一样；二是方差不同，超几何的方差比 np(1−p) 小，因为不放回相当于多知道了信息。</p>
+</div>
+
+<div style="overflow-x:auto">
+<table class="gx-cmp">
+<thead><tr><th>条件</th><th>二项分布 B(n,p)</th><th>超几何分布</th></tr></thead>
+<tbody>
+<tr class="key"><td>抽样方式（谁决定用哪个）</td><td>有放回，或各次<b>独立重复</b>，每次 p 不变</td><td><b>不放回</b>，一次取 n 件，样本池逐次变小</td></tr>
+<tr><td>n 的含义</td><td>试验总次数，先定 n 再数成功次数</td><td>样本容量，从 N 件里取 n 件（n ≤ N）</td></tr>
+<tr><td>k 的取值范围</td><td>0,1,2,…,n，全部取得到</td><td>受两端夹住：max(0,n−(N−M)) ≤ k ≤ min(n,M)</td></tr>
+<tr><td>分布列</td><td>C(n,k)pᵏ(1−p)ⁿ⁻ᵏ</td><td>C(M,k)C(N−M,n−k)/C(N,n)</td></tr>
+<tr><td>期望</td><td>E(X)=np</td><td>E(X)=nM/N，也是「样本量 × 比例」</td></tr>
+<tr><td>方差</td><td>D(X)=np(1−p)</td><td>比 np(1−p) 小，高中不必套公式，理解即可</td></tr>
+<tr><td>典型场景</td><td>有放回摸球、独立射击、独立投掷</td><td>产品抽检、抽签、从一批里一次抽若干</td></tr>
+</tbody>
+</table>
+</div>
+<p class="gx-note">背法：先问一句「放不放回去」。放回去 → 二项，套 C(n,k)pᵏ(1−p)ⁿ⁻ᵏ、np、np(1−p)；不放回去 → 超几何，套组合数之比、nM/N，方差别硬套 np(1−p)。另外，当 N 很大而 n 相对很小时，不放回抽到次品的概率几乎不变，超几何分布可以用二项分布近似，这也是「不放回为什么有时也能当二项算」的真正理由。</p>
+</section>
+
+<section class="gx-sec" id="b">
+<h2><span class="sn">02</span>拆开看</h2>
+<p class="gx-h2s">四张图：各讲一件事，按「是什么 → 怎么变 → 怎么用」排。</p>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 1</span><span class="fig-t">二项分布的直方图：n 变大后逼近钟形</span>
+<span class="bdg bdg-must">必考</span>
+</div>
+<p class="fig-s">横轴是成功次数 k，纵轴是概率 P(X=k)，一根柱子就是一个 k 的概率。三块图的 p 都固定为 0.4，只有 n 从 5 加到 10 再加到 20。先看峰值在哪：它总落在 np 附近；再看柱子的整体轮廓怎么从「歪」变「对称」。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 268" role="img" aria-label="p=0.4 时 n=5、n=10、n=20 的二项分布直方图，随 n 增大越来越像钟形">
+<rect x="16" y="16" width="788" height="236" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">同一个 p=0.4，n 变大：柱子越来越像钟形</text>
+<text x="36" y="60" font-size="9" fill="#5a6472">纵轴 = 概率 P(X=k)，横轴 = k（n 次试验中的成功次数）</text>
+
+<text x="42" y="92" font-size="9.5" font-weight="700" fill="#2563eb">n=5</text>
+<text x="296" y="92" font-size="9.5" font-weight="700" fill="#2563eb">n=10</text>
+<text x="552" y="92" font-size="9.5" font-weight="700" fill="#2563eb">n=20</text>
+
+<line x1="36" y1="200" x2="776" y2="200" stroke="#b9c6d2" stroke-width="1"/>
+<path d="M776 200 L768 196 L768 204 Z" fill="#b9c6d2"/>
+
+<rect x="42" y="180" width="26" height="20" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="78" y="133" width="26" height="67" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="114" y="110" width="26" height="90" fill="#2563eb" stroke="#2563eb"/>
+<rect x="150" y="140" width="26" height="60" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="186" y="180" width="26" height="20" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="222" y="197" width="26" height="3" fill="#9ec5f5" stroke="#2563eb"/>
+
+<rect x="296" y="198" width="13" height="2" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="315" y="186" width="13" height="14" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="334" y="157" width="13" height="43" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="353" y="123" width="13" height="77" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="372" y="110" width="13" height="90" fill="#2563eb" stroke="#2563eb"/>
+<rect x="391" y="128" width="13" height="72" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="410" y="160" width="13" height="40" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="429" y="185" width="13" height="15" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="448" y="196" width="13" height="4" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="467" y="199" width="13" height="1" fill="#9ec5f5" stroke="#2563eb"/>
+
+<rect x="552" y="199.9" width="7" height="0.1" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="562" y="199.5" width="7" height="0.5" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="572" y="198.2" width="7" height="1.8" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="582" y="194.5" width="7" height="5.5" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="592" y="186" width="7" height="14" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="602" y="171" width="7" height="29" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="612" y="153" width="7" height="47" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="622" y="135" width="7" height="65" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="632" y="125" width="7" height="75" fill="#2563eb" stroke="#2563eb"/>
+<rect x="642" y="130" width="7" height="70" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="652" y="147" width="7" height="53" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="662" y="169" width="7" height="31" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="672" y="185" width="7" height="15" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="682" y="194.5" width="7" height="5.5" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="692" y="198.2" width="7" height="1.8" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="702" y="199.5" width="7" height="0.5" fill="#9ec5f5" stroke="#2563eb"/>
+
+<text x="118" y="214" font-size="8.5" fill="#5a6472" text-anchor="middle">峰值 k=2</text>
+<text x="378" y="214" font-size="8.5" fill="#5a6472" text-anchor="middle">峰值 k=4</text>
+<text x="635" y="214" font-size="8.5" fill="#5a6472" text-anchor="middle">峰值 k=8</text>
+
+<text x="42" y="236" font-size="8.6" fill="#3a3a35">6 根柱，左高右拖尾，明显右偏</text>
+<text x="296" y="236" font-size="8.6" fill="#3a3a35">11 根柱，左右已接近对称</text>
+<text x="552" y="236" font-size="8.6" fill="#3a3a35">21 根柱，轮廓最接近钟形曲线</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">柱子的峰值永远落在 np 附近，n 越大柱子越多越细、轮廓越像钟形，但每根柱子都更矮——概率被摊薄了。</p>
+<p class="gx-note">口径提醒：这里固定 p=0.4，所以分布并不左右对称。只有 p=0.5 时二项分布才关于 np 严格对称，答题时别默认「二项分布就是对称的」。</p>
+</figure>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 2</span><span class="fig-t">有放回（二项）与不放回（超几何）的分布列对比</span>
+<span class="bdg bdg-key">辨析</span>
+</div>
+<p class="fig-s">同一个袋子：5 件产品里有 2 件次品，取 3 件。左边是每次抽完放回，p 恒为 2/5=0.4，X~B(3,0.4)；右边是一次取 3 件不放回，逐次的次品率会变，X 服从超几何分布。注意两边的 k 取值范围就不一样：右边最多只能抽到 2 件次品。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 300" role="img" aria-label="有放回与不放回两种抽样方式的分布列柱状对比图">
+<rect x="16" y="16" width="788" height="268" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">N=5、M=2、取 n=3：放回与不放回的分布列不同</text>
+<line x1="410" y1="58" x2="410" y2="276" stroke="#dbe7ef" stroke-width="1"/>
+
+<text x="60" y="72" font-size="10" font-weight="700" fill="#2563eb">有放回 · X~B(3,0.4)</text>
+<text x="60" y="88" font-size="8.8" fill="#3a3a35">每次抽完放回，各次独立，p 恒为 0.4</text>
+<line x1="60" y1="200" x2="390" y2="200" stroke="#b9c6d2"/>
+
+<rect x="80" y="110" width="48" height="90" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="150" y="20" width="48" height="180" fill="#2563eb" stroke="#2563eb"/>
+<rect x="220" y="80" width="48" height="120" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="290" y="173" width="48" height="27" fill="#9ec5f5" stroke="#2563eb"/>
+<text x="104" y="104" font-size="8.4" fill="#5a6472" text-anchor="middle">0.216</text>
+<text x="174" y="14" font-size="8.4" fill="#2563eb" text-anchor="middle">0.432</text>
+<text x="244" y="74" font-size="8.4" fill="#5a6472" text-anchor="middle">0.288</text>
+<text x="314" y="167" font-size="8.4" fill="#5a6472" text-anchor="middle">0.064</text>
+<text x="104" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=0</text>
+<text x="174" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=1</text>
+<text x="244" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=2</text>
+<text x="314" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=3</text>
+
+<text x="450" y="72" font-size="10" font-weight="700" fill="#1f6f4a">不放回 · 超几何 (N=5,M=2,n=3)</text>
+<text x="450" y="88" font-size="8.8" fill="#3a3a35">抽走不放回，第二次的次品率已经变了</text>
+<line x1="450" y1="200" x2="780" y2="200" stroke="#b9c6d2"/>
+
+<rect x="490" y="170" width="48" height="30" fill="#a9dfc4" stroke="#1f6f4a"/>
+<rect x="560" y="20" width="48" height="180" fill="#2f8a5b" stroke="#1f6f4a"/>
+<rect x="630" y="110" width="48" height="90" fill="#a9dfc4" stroke="#1f6f4a"/>
+<text x="514" y="164" font-size="8.4" fill="#5a6472" text-anchor="middle">0.100</text>
+<text x="584" y="14" font-size="8.4" fill="#2f8a5b" text-anchor="middle">0.600</text>
+<text x="654" y="104" font-size="8.4" fill="#5a6472" text-anchor="middle">0.300</text>
+<text x="514" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=0</text>
+<text x="584" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=1</text>
+<text x="654" y="214" font-size="8.6" fill="#5a6472" text-anchor="middle">k=2</text>
+<text x="724" y="214" font-size="8.6" fill="#b8402f" text-anchor="middle">k=3 取不到</text>
+
+<text x="60" y="246" font-size="8.8" fill="#3a3a35">P(X=2)=C(3,2)·0.4²·0.6=0.288</text>
+<text x="60" y="264" font-size="8.8" fill="#3a3a35">E(X)=np=1.2，D(X)=np(1−p)=0.72</text>
+<text x="450" y="246" font-size="8.8" fill="#3a3a35">P(X=2)=C(2,2)C(3,1)/C(5,3)=3/10=0.300</text>
+<text x="450" y="264" font-size="8.8" fill="#3a3a35">E(X)=nM/N=1.2，D 比 0.72 小</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take">两者的期望都等于「样本量 × 次品率」，但分布列不同：<b>二项是有放回／独立重复，超几何是不放回</b>，判据只看抽样方式。</p>
+<p class="gx-note">这里把两种分布并排放在同一组 N、M、n 上，就是为了让你看见：期望撞车，方差与分布列不撞车。所以拿到题先看「放不放回」，不要先看期望。</p>
+</figure>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 3</span><span class="fig-t">E(X)=np 与 D(X)=np(1−p) 随 n、p 的变化</span>
+<span class="bdg bdg-warn">易错</span>
+</div>
+<p class="fig-s">四条线都是过原点的直线：n 翻倍，E 与 D 都翻倍。蓝色是期望，斜率就是 p；琥珀色是方差，斜率是 p(1−p)。比较 p=0.8 与 p=0.4 两组就能看出：p 越大期望线越陡，方差线反而更平——因为 p(1−p) 在 p=0.5 时最大。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 290" role="img" aria-label="期望与方差随试验次数变化的四条直线，斜率分别为 p 与 p(1-p)">
+<rect x="16" y="16" width="788" height="258" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">E=np 与 D=np(1−p)：都随 n 线性增长，斜率不同</text>
+<text x="36" y="60" font-size="9" fill="#5a6472">纵轴 = E 或 D 的数值，横轴 = 试验次数 n（0 到 20）</text>
+
+<line x1="70" y1="230" x2="756" y2="230" stroke="#b9c6d2"/>
+<path d="M756 230 L748 226 L748 234 Z" fill="#b9c6d2"/>
+<line x1="70" y1="230" x2="70" y2="64" stroke="#b9c6d2"/>
+<path d="M70 64 L66 72 L74 72 Z" fill="#b9c6d2"/>
+<text x="762" y="234" font-size="9" fill="#5a6472">n</text>
+<text x="62" y="96" font-size="9" fill="#5a6472" text-anchor="middle">值</text>
+
+<line x1="400" y1="76" x2="400" y2="230" stroke="#e2eaf1" stroke-dasharray="4 4"/>
+<text x="235" y="246" font-size="8.6" fill="#5a6472" text-anchor="middle">5</text>
+<text x="400" y="246" font-size="8.6" fill="#5a6472" text-anchor="middle">10</text>
+<text x="565" y="246" font-size="8.6" fill="#5a6472" text-anchor="middle">15</text>
+<text x="730" y="246" font-size="8.6" fill="#5a6472" text-anchor="middle">20</text>
+<text x="62" y="194" font-size="8.6" fill="#5a6472" text-anchor="end">4</text>
+<text x="62" y="154" font-size="8.6" fill="#5a6472" text-anchor="end">8</text>
+<text x="62" y="114" font-size="8.6" fill="#5a6472" text-anchor="end">12</text>
+<text x="62" y="74" font-size="8.6" fill="#5a6472" text-anchor="end">16</text>
+
+<line x1="70" y1="230" x2="730" y2="70" stroke="#2563eb" stroke-width="2"/>
+<line x1="70" y1="230" x2="730" y2="150" stroke="#2563eb" stroke-width="2"/>
+<line x1="70" y1="230" x2="730" y2="182" stroke="#b8791f" stroke-width="2"/>
+<line x1="70" y1="230" x2="730" y2="198" stroke="#b8791f" stroke-width="2" stroke-dasharray="6 3"/>
+
+<text x="684" y="78" font-size="9" font-weight="700" fill="#2563eb">E(p=0.8)</text>
+<text x="684" y="150" font-size="9" font-weight="700" fill="#2563eb">E(p=0.4)</text>
+<text x="684" y="180" font-size="9" font-weight="700" fill="#b8791f">D(p=0.4)</text>
+<text x="684" y="196" font-size="9" font-weight="700" fill="#b8791f">D(p=0.8)</text>
+
+<circle cx="400" cy="190" r="3.4" fill="#2563eb"/>
+<circle cx="400" cy="206" r="3.4" fill="#b8791f"/>
+<text x="70" y="268" font-size="8.8" fill="#3a3a35">虚线上 n=10 处：p=0.4 时 E=4、D=2.4，D 只有 E 的一半多一点——D=np(1−p) 不是 np。</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take"><b>D(X)=np(1−p) 不是 np</b>：方差线永远在期望线下方，p=0.4 时 D 的斜率 0.24 只有 E 的斜率 0.4 的六成。</p>
+<p class="gx-note">若把 p=0.8 与 p=0.4 相比：期望线 0.8 比 0.4 陡一倍，方差线 0.16 反而比 0.24 更平。这就是「p 越极端，波动越小」。</p>
+</figure>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">图 4</span><span class="fig-t">超几何抽样示意：不放回、逐次改变的成功概率</span>
+<span class="bdg bdg-ext">延伸</span>
+</div>
+<p class="fig-s">一箱 20 件产品里有 5 件次品，从中不放回地取 4 件，记 X 为抽到的次品数。红点就是那 5 件次品。取出第一件后箱里只剩 19 件，次品率从 5/20 变成 4/19 或 5/19，所以各次不再独立——这就是不能套二项分布的原因。</p>
+<div class="gx-svgbox">
+<svg viewBox="0 0 820 290" role="img" aria-label="20 件产品中 5 件次品，不放回抽取 4 件的超几何示意">
+<rect x="16" y="16" width="788" height="258" rx="10" fill="#f8fbfd" stroke="#dbe7ef"/>
+<text x="36" y="42" font-size="11.5" font-weight="700" fill="#151a21">不放回抽样：N=20，M=5，n=4</text>
+<rect x="56" y="62" width="320" height="164" rx="8" fill="#ffffff" stroke="#b9c6d2"/>
+
+<circle cx="90" cy="92" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="145" cy="92" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="200" cy="92" r="11" fill="#f3b6ac" stroke="#b8402f"/>
+<circle cx="255" cy="92" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="310" cy="92" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="90" cy="124" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="145" cy="124" r="11" fill="#f3b6ac" stroke="#b8402f"/>
+<circle cx="200" cy="124" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="255" cy="124" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="310" cy="124" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="90" cy="156" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="145" cy="156" r="11" fill="#f3b6ac" stroke="#b8402f"/>
+<circle cx="200" cy="156" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="255" cy="156" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="310" cy="156" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="90" cy="188" r="11" fill="#f3b6ac" stroke="#b8402f"/>
+<circle cx="145" cy="188" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="200" cy="188" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<circle cx="255" cy="188" r="11" fill="#f3b6ac" stroke="#b8402f"/>
+<circle cx="310" cy="188" r="11" fill="#dbe7ef" stroke="#9fb3c4"/>
+<text x="66" y="246" font-size="8.8" fill="#3a3a35">红点＝次品（5 件）；蓝点＝正品（15 件）；箱子里的总数每抽一次少 1</text>
+
+<text x="410" y="86" font-size="9.4" fill="#3a3a35">X 的取值被两端夹住：</text>
+<text x="410" y="104" font-size="9" fill="#2563eb">max(0, 4−15) ≤ X ≤ min(4, 5) → 0 ≤ X ≤ 4</text>
+<text x="410" y="132" font-size="9.4" fill="#3a3a35">P(X=2)=C(5,2)C(15,2)/C(20,4)</text>
+<text x="410" y="150" font-size="9.4" fill="#2563eb">=10×105/4845 = 1050/4845 ≈ 0.217</text>
+<text x="410" y="178" font-size="9.4" fill="#3a3a35">E(X)=nM/N=4×5/20=1</text>
+<text x="410" y="200" font-size="9" fill="#b8791f">D(X) 比 np(1−p)=0.96 小，别把它当精确值</text>
+<text x="410" y="226" font-size="9" fill="#5a6472">抽第 2 件时次品率变成 4/19 或 5/19 → 各次不独立</text>
+<text x="410" y="248" font-size="9" fill="#5a6472">所以：不放回就用超几何，不能直接套二项</text>
+</svg>
+<span class="gx-zoomchip">点击放大</span>
+</div>
+<p class="gx-take"><b>超几何的期望也是 nM/N</b>，形状和 np 一样，但方差要更小；判定用「是否放回」，不用期望去判。</p>
+<p class="gx-note">极端情形：若只取 1 件（n=1），两种分布完全重合——因为「放不放回」在只抽一次时没有区别。</p>
+</figure>
+</section>
+
+<section class="gx-sec" id="c">
+<h2><span class="sn">03</span>自己拖一下<span class="bdg bdg-must">核心</span></h2>
+<p class="gx-h2s">拖「试验次数 n」，看左边直方图怎么变、右边三个数怎么跟着变。</p>
+
+<figure class="gx-fig">
+<div class="fig-cap">
+<span class="fig-no">互动 1</span><span class="fig-t">试验次数 n → 二项分布的期望、方差与直方图轮廓</span>
+<span class="bdg bdg-key">B 级</span>
+<span class="gx-ap" id="gxAp"><i></i><span id="gxApTxt">自动演示中</span></span>
+</div>
+<p class="fig-s">p 固定在 0.4，滑块只改试验次数 n（5 到 20）。盯住 ②③ 两个数和左图峰值的位置：峰值始终在 np 附近，n 变大时柱子变多、变矮、轮廓变圆。④ 会告诉你现在是「右偏」还是「已接近钟形」。</p>
+<div class="gx-board">
+<svg id="gxStage" viewBox="0 0 880 470" tabindex="0" role="application" aria-label="二项分布直方图互动模型">
+<g id="gxA"></g>
+<g id="gxB"></g>
+</svg>
+<div class="bar">
+<span class="lb">试验次数 n</span>
+<input type="range" id="gxSl" min="5" max="20" step="1" value="10" aria-label="试验次数 n">
+<p class="hint">键盘 ← → 也能调；直接点画布，会跳到下一个关键值。</p>
+</div>
+</div>
+<div class="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px">
+<div class="st"><div class="k">① 试验次数</div><div class="v" id="gxVa">10</div><div class="s">n 次独立重复</div></div>
+<div class="st"><div class="k">② 期望 E=np</div><div class="v" id="gxVb">4.00</div><div class="s">= 10 × 0.4</div></div>
+<div class="st"><div class="k">③ 方差 D=np(1−p)</div><div class="v" id="gxVc">2.40</div><div class="s">标准差 √D</div></div>
+<div class="st state" id="gxStBox"><div class="k">④ 状态判断</div><div class="v" id="gxVs">—</div><div class="s" id="gxVsn">—</div></div>
+</div>
+<p class="gx-take">n 从 5 加到 20，E 从 2 走到 8、D 从 1.2 走到 4.8，两者都按比例增长；峰值钉在 np，n 越大轮廓越像钟形，但每根柱子更矮。</p>
+<p class="gx-note">模型口径：p 恒为 0.4，n 取整数 5–20；E=np、D=np(1−p) 是精确值，直方图按 P(X=k)=C(n,k)0.4ᵏ0.6ⁿ⁻ᵏ 逐根计算，不是示意图。状态判断的分界是 n≤9 右偏、10≤n≤14 接近钟形、n≥15 更接近钟形而柱高更平缓。</p>
+</figure>
+</section>
+
+<section class="gx-sec" id="d">
+<h2><span class="sn">04</span>一道题走一遍</h2>
+<p class="gx-h2s">先自己读题干想 30 秒，再点「下一步」。</p>
+
+<div class="gx-ex">
+<p class="ex-t">例题 · 二项分布的期望与方差<span class="bdg bdg-must">必考</span></p>
+<p class="ex-q">某射手每次射击命中目标的概率为 0.8，各次射击相互独立。现连续射击 5 次，用 X 表示命中的次数。（1）写出 X 的分布列形式，并求 E(X)；（2）求 D(X) 与标准差 √D(X)（标准差精确到 0.01）。<span class="bdg bdg-warn">陷阱</span>注意第 2 问，D(X) 不是 np。</p>
+<ol class="steps" id="gxSteps">
+<li class="step">
+<p class="s-h">第 1 步 · 审题定性</p>
+<p class="s-b">5 次射击「相互独立」，且每次命中率都是同一个 0.8：这就是 n=5、p=0.8 的 n 次独立重复试验，X 是其中的成功次数。</p>
+<p class="s-k">用到：二项分布三个条件（次数定、两种结果、独立且 p 不变）。只要出现「不放回」，这一步就走不通。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 2 步 · 写模型与分布列</p>
+<p class="s-b">X~B(5,0.8)，即 P(X=k)=C(5,k)0.8ᵏ0.2⁵⁻ᵏ，k=0,1,2,3,4,5。<b>二项是有放回／独立重复，超几何是不放回</b>，本题属于前者。</p>
+<p class="s-k">用到：分布列公式。别漏写 k 的取值范围。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 3 步 · 求期望</p>
+<p class="s-b">E(X)=np=5×0.8=4。含义是平均命中 4 次，而 4 也正好是分布列的峰值位置（np 一定落在峰值附近）。</p>
+<p class="s-k">用到：E(X)=np。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 4 步 · 求方差</p>
+<p class="s-b">D(X)=np(1−p)=5×0.8×0.2=0.8。这里最容易只写 5×0.8=4，那是期望，不是方差。</p>
+<p class="s-k">用到：<b>D(X)=np(1−p) 不是 np</b>；1−p 就是失败概率 0.2。</p>
+</li>
+<li class="step" hidden>
+<p class="s-h">第 5 步 · 收尾算标准差</p>
+<p class="s-b">√D(X)=√0.8=√(4/5)=2√5/5≈0.89。标准差与 X 同单位，带单位作答才完整。</p>
+<p class="s-k">用到：标准差是方差的算术平方根，开方后要保留两位小数。</p>
+</li>
+</ol>
+<div class="exbar">
+<button id="gxNext" type="button">下一步</button>
+<span class="cnt" id="gxCnt">1 / 5</span>
+</div>
+<div class="ans" id="gxAns" hidden>
+<p class="ans-t">标准答案（可抄进答题卡）</p>
+<p class="ans-b">（1）因为 5 次射击相互独立，且每次命中概率均为 0.8，所以命中次数 X 服从二项分布，即 X~B(5,0.8)，P(X=k)=C(5,k)0.8ᵏ0.2⁵⁻ᵏ（k=0,1,…,5）。于是 E(X)=np=5×0.8=4。<br>（2）D(X)=np(1−p)=5×0.8×(1−0.8)=0.8，所以 √D(X)=√0.8=2√5/5≈0.89。<br>答：E(X)=4，D(X)=0.8，标准差约为 0.89。</p>
+</div>
+</div>
+</section>
+
+<section class="gx-sec" id="e">
+<h2><span class="sn">05</span>会怎么考</h2>
+<p class="gx-h2s">六问，都是「你以为懂了、一写就错」的地方。</p>
+<div class="gx-qa">
+<div class="qac">
+<p class="q">「拿到题，我怎么知道该用二项还是超几何？」</p>
+<p class="a">只看一件事：<b>抽完放不放回去</b>。放回（或题目说「独立重复」「各次相互独立且概率相同」）→ 二项分布 B(n,p)；不放回（「一次抽取 n 件」「从中任取 n 件」）→ 超几何分布。<b>二项是有放回／独立重复，超几何是不放回</b>，与题目里的产品、球、射击这些外壳无关。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="用是否放回判断两种分布的流程图">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="120" y="30" font-size="9.4" font-weight="700" fill="#151a21" text-anchor="middle">抽完放不放回？</text>
+<line x1="120" y1="38" x2="66" y2="58" stroke="#9fb3c4"/>
+<line x1="120" y1="38" x2="174" y2="58" stroke="#9fb3c4"/>
+<text x="62" y="76" font-size="9" fill="#2563eb" text-anchor="middle">放回 → B(n,p)</text>
+<text x="178" y="76" font-size="9" fill="#1f6f4a" text-anchor="middle">不放回 → 超几何</text>
+<text x="62" y="94" font-size="8.4" fill="#5a6472" text-anchor="middle">p 恒定、各次独立</text>
+<text x="178" y="94" font-size="8.4" fill="#5a6472" text-anchor="middle">p 逐次改变</text>
+</svg>
+</div>
+<div class="qac">
+<p class="q">「D(X)=np(1−p) 里的 p 到底是谁？」</p>
+<p class="a">p 是<b>单次试验成功的概率</b>，不是总成功次数、不是命中总数。所以 n=5、p=0.8 时 D=5×0.8×0.2=0.8；把 p 当成 E(X)=4 代进去会算出 5×4×(−3) 这种荒唐值。<b>1−p 是单次失败的概率</b>，两者相加必须是 1。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="p 与 1-p 的含义示意图">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="120" y="34" font-size="9.2" font-weight="700" fill="#151a21" text-anchor="middle">P(X=k)=C(n,k)pᵏ(1−p)ⁿ⁻ᵏ</text>
+<rect x="34" y="48" width="128" height="16" rx="3" fill="#2563eb"/>
+<rect x="162" y="48" width="32" height="16" rx="3" fill="#b8791f"/>
+<text x="98" y="60" font-size="8.4" fill="#ffffff" text-anchor="middle">p=0.8 成功</text>
+<text x="178" y="60" font-size="8.4" fill="#ffffff" text-anchor="middle">0.2</text>
+<text x="120" y="88" font-size="8.6" fill="#5a6472" text-anchor="middle">p 与 1−p 是同一次试验的两个互补概率</text>
+<text x="120" y="106" font-size="8.6" fill="#b8402f" text-anchor="middle">弄反不改变 E、D，但分布列整体错位</text>
+</svg>
+</div>
+<div class="qac">
+<p class="q">「命中率 0.8，期望 4 次，方差怎么才 0.8？是不是算错了？」</p>
+<p class="a">没算错。D=np(1−p)=5×0.8×0.2=0.8，比 E=4 小很多，因为 p=0.8 偏高、结果很集中：多数情况就是命中 4 次。<b>D(X)=np(1−p) 不是 np</b>；p 越接近 0 或 1，方差越小，p=0.5 时方差最大。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="期望与方差大小对比条形图">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="22" y="36" font-size="9" fill="#2563eb">E=np=4</text>
+<rect x="22" y="42" width="140" height="12" rx="3" fill="#2563eb"/>
+<text x="22" y="76" font-size="9" fill="#b8791f">D=np(1−p)=0.8</text>
+<rect x="22" y="82" width="28" height="12" rx="3" fill="#b8791f"/>
+<text x="22" y="112" font-size="8.4" fill="#5a6472">p 越接近 1，方差这条柱子越短</text>
+</svg>
+</div>
+<div class="qac">
+<p class="q">「超几何分布的期望也要用组合数硬算吗？」</p>
+<p class="a">不用。课本给了结论：<b>超几何的期望也是 nM/N</b>，即「样本容量 × 次品率」，和二项的 np 形式完全一致。只有<b>方差</b>不同：超几何的方差比 np(1−p) 小，高中阶段不必记公式，理解「不放回信息更多、波动更小」即可。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="超几何期望与二项期望同形的对照">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="120" y="34" font-size="9.4" font-weight="700" fill="#151a21" text-anchor="middle">N=20，M=5，n=4</text>
+<text x="120" y="58" font-size="9.4" fill="#1f6f4a" text-anchor="middle">E(X)=nM/N=4×5/20=1</text>
+<line x1="34" y1="70" x2="206" y2="70" stroke="#dde4ea"/>
+<text x="120" y="90" font-size="9" fill="#2563eb" text-anchor="middle">二项写法 np=4×0.25=1</text>
+<text x="120" y="110" font-size="8.4" fill="#b8402f" text-anchor="middle">期望撞车，方差与分布列不撞车</text>
+</svg>
+</div>
+<div class="qac">
+<p class="q">「n=1 的时候，二项分布 B(1,p) 是什么东西？」</p>
+<p class="a">就是<b>两点分布</b>（也叫 0–1 分布）：X 只取 0 和 1，P(X=1)=p，P(X=0)=1−p。此时 E=np=p，D=np(1−p)=p(1−p)，与 7.3 的两点分布完全一致。所以二项分布是两点分布的 n 次独立重复版本。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="n 等于 1 时退化为两点分布的示意">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<rect x="34" y="44" width="34" height="52" rx="3" fill="#9ec5f5" stroke="#2563eb"/>
+<rect x="94" y="28" width="34" height="68" rx="3" fill="#2563eb"/>
+<text x="51" y="112" font-size="8.6" fill="#5a6472" text-anchor="middle">X=0</text>
+<text x="111" y="112" font-size="8.6" fill="#5a6472" text-anchor="middle">X=1</text>
+<text x="176" y="60" font-size="8.8" fill="#3a3a35" text-anchor="middle">只有两个结果</text>
+<text x="176" y="78" font-size="8.8" fill="#3a3a35" text-anchor="middle">B(1,p) = 两点分布</text>
+</svg>
+</div>
+<div class="qac">
+<p class="q">「不就是少放回一次吗，凭什么不能直接用二项？」</p>
+<p class="a">因为二项分布的命门是<b>各次独立、p 恒定</b>。不放回时，第一件抽走后面池子只剩 19 件：抽到次品则次品率降为 4/19，抽到正品则升为 5/19，<b>p 已经变了</b>，独立性直接破裂，C(n,k)pᵏ(1−p)ⁿ⁻ᵏ 里的 p 失去意义。只有当 N 远大于 n（如 N=10000 取 n=10）时，p 变化极小，才可用二项分布近似超几何分布。</p>
+<svg viewBox="0 0 240 132" role="img" aria-label="不放回时次品率逐次变化的示意">
+<rect x="8" y="8" width="224" height="116" rx="8" fill="#f6f8fa" stroke="#dde4ea"/>
+<text x="120" y="32" font-size="9" font-weight="700" fill="#151a21" text-anchor="middle">次品率在变，p 不再是常数</text>
+<text x="120" y="56" font-size="9" fill="#2563eb" text-anchor="middle">第 1 件：5/20 = 0.25</text>
+<text x="120" y="78" font-size="9" fill="#b8791f" text-anchor="middle">第 2 件：4/19 或 5/19</text>
+<text x="120" y="100" font-size="9" fill="#b8402f" text-anchor="middle">→ 各次不独立，套二项即错</text>
+</svg>
+</div>
+</div>
+<p class="gx-note">这六问其实是同一件事：先定「放不放回」，再定「用哪个公式」，最后才动笔算数。顺序反了，后面全错。</p>
+</section>
+
+<section class="gx-sec" id="f">
+<h2><span class="sn">06</span>易错清单</h2>
+<p class="gx-h2s">左边是学生真会写的错句，右边是应该写的样子。</p>
+
+<div class="gx-errs">
+<div class="er">
+<p class="er-x">✗ 从 20 件产品（含 5 件次品）中一次任取 4 件，设 X 为次品数，则 X~B(4,0.25)。</p>
+<p class="er-v">✓ 一次任取 4 件是不放回抽取，X 服从超几何分布，P(X=k)=C(5,k)C(15,4−k)/C(20,4)。</p>
+<p class="er-w">错在哪：<b>二项是有放回／独立重复，超几何是不放回</b>。看到「一次取 n 件」「不放回」就不能写 B(n,p)，0.25 这个概率在第 2 次就已经变了。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ X~B(5,0.8)，所以 D(X)=np=5×0.8=4。</p>
+<p class="er-v">✓ D(X)=np(1−p)=5×0.8×0.2=0.8，而 E(X)=np=4。</p>
+<p class="er-w">错在哪：<b>D(X)=np(1−p) 不是 np</b>。4 是期望不是方差；方差必须再乘失败概率 1−p。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ P(X=k)=C(n,k)(1−p)ᵏpⁿ⁻ᵏ，反正 p 和 1−p 换一下也一样。</p>
+<p class="er-v">✓ P(X=k)=C(n,k)pᵏ(1−p)ⁿ⁻ᵏ，p 是「成功」的概率，指数 k 对应成功次数。</p>
+<p class="er-w">错在哪：E 和 D 确实不变（对 p、1−p 对称），但<b>分布列整体错位</b>：P(X=0) 与 P(X=n) 会被互换，求具体某个 k 的概率时全错。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 超几何分布的方差就是 np(1−p)，直接代进去算。</p>
+<p class="er-v">✓ 超几何的方差比 np(1−p) 小；高中只要求理解，不要求记公式，答题时不必写。</p>
+<p class="er-w">错在哪：np(1−p) 只是二项分布的精确方差；用在超几何上是近似值而且偏大，题目要精确值就扣分。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 二项分布 B(n,p) 的图形一定左右对称，峰值在正中间。</p>
+<p class="er-v">✓ 只有 p=0.5 时才关于 np 对称；p≠0.5 时峰值偏在一侧，n 较小时尤其明显。</p>
+<p class="er-w">错在哪：把 p=0.5 的特例当成通例。峰值位置由 np 决定，未必是 n/2。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 二项分布和超几何分布的期望都等于 np，所以它们是一回事。</p>
+<p class="er-v">✓ <b>超几何的期望也是 nM/N</b>，与二项的 np 同形，但两者的分布列与方差不同，是两个不同模型。</p>
+<p class="er-w">错在哪：期望撞车不等于分布相同。判据永远是抽样方式，不是期望公式。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 题目说「抽取 5 件」，我就把 n 当作产品总数 N 算超几何。</p>
+<p class="er-v">✓ N 是产品总数（分母 C(N,n)），n 是抽出的样本容量，M 是其中的次品数，三者不能混。</p>
+<p class="er-w">错在哪：n 与 N 搞反会让 C(N,n) 直接算不出来（n>N）或概率全错；写分布列前先把 N、M、n 三个字母标在题干上。</p>
+</div>
+<div class="er">
+<p class="er-x">✗ 只要是不放回，就一定要用超几何，n 多大都一样。</p>
+<p class="er-v">✓ 不放回时超几何是精确模型；但当 N 远大于 n 时，p 变化极小，可用二项分布近似。</p>
+<p class="er-w">错在哪：忽略了「N 很大、n 很小」这个近似条件，反过来把该用超几何的题也近似成二项，属于另一头错。</p>
+</div>
+</div>
+</section>
+
+<footer class="gx-foot">
+对应 人教版（2019）高中数学选择性必修第三册 7.4 二项分布与超几何分布 · 生成自 <code>eli5-high</code> skill<br>
+数据口径：定义与定理表述按教材正文；互动模型（见「自己拖一下」的口径注释）为教学示意，不是实测数据。
+</footer>
+
+<div class="gx-zoom" id="gxZoom" hidden>
+<span class="gx-zoom-tip">双指放大 · 左右滑动看全图</span>
+<button class="gx-zoom-x" type="button" aria-label="关闭">✕</button>
+<div id="gxZoomInner"></div>
+</div>
+
+</div>
 </script>
 <script src="../../assets/page.js"></script>
+<script src="../../assets/gx.js"></script>
+<script src="../../assets/autopilot.js"></script>
+<script>
+/* 互动脚本本体（由 build-page.mjs 包进 <script> 里，所以这里不要写 <script> 标签） */
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+  var GX = window.GX, el = GX.el, tx = GX.tx, $ = GX.$;
+  var stage = $("gxStage");
+  if (!stage || !window.AutoPilot) return;
+
+  /* 两套坐标：宽屏 880×470，窄屏独立 360×700 */
+  var W = { vb: "0 0 880 470", left: { x: 16, y: 16, w: 424, h: 438 }, right: { x: 456, y: 16, w: 408, h: 438 } };
+  var N = { vb: "0 0 360 700", left: { x: 8, y: 8, w: 344, h: 300 }, right: { x: 8, y: 320, w: 344, h: 372 } };
+  var L = W, A = 10, G = null, P = 0.4;
+
+  function geom() { G = { ready: 1 }; return G; }
+
+  function comb(n, k) {
+    if (k < 0 || k > n) return 0;
+    var r = 1, i;
+    for (i = 0; i < k; i++) r = r * (n - i) / (i + 1);
+    return r;
+  }
+  function pmf(n, k) { return comb(n, k) * Math.pow(P, k) * Math.pow(1 - P, n - k); }
+
+  /* 纯函数：试验次数 n → 数值。render() 和 __model.cases 都用它 */
+  function calc(v) {
+    var n = Math.max(5, Math.min(20, Math.round(v)));
+    var e = n * P;
+    var d = n * P * (1 - P);
+    return { n: n, e: e, d: d, sd: Math.sqrt(d), peak: Math.round(e) };
+  }
+
+  function draw() {
+    var gA = $("gxA"), gB = $("gxB");
+    gA.textContent = ""; gB.textContent = "";
+    var s = calc(A), n = s.n, k, i;
+
+    /* ---------- 左：二项分布直方图 ---------- */
+    el("rect", { x: L.left.x, y: L.left.y, width: L.left.w, height: L.left.h, rx: 10, fill: "#f8fbfd", stroke: "#dbe7ef" }, gA);
+    tx(gA, L.left.x + 20, L.left.y + 30, "X~B(" + n + ", 0.4) 的概率直方图", "#151a21", "start", 11, 700);
+    tx(gA, L.left.x + 20, L.left.y + 49, "横轴 k＝成功次数，纵轴 P(X=k)", "#5a6472", "start", 9, 400);
+
+    var px0 = L.left.x + 50, pw = L.left.w - 72;
+    var base = L.left.y + L.left.h - 70, top = L.left.y + 64, hR = base - top;
+    var maxP = 0.37, slot = pw / (n + 1), bw = Math.max(3, slot * 0.66);
+
+    el("line", { x1: px0 - 6, y1: base, x2: px0 + pw + 8, y2: base, stroke: "#b9c6d2", "stroke-width": 1 }, gA);
+    el("line", { x1: px0 - 6, y1: base, x2: px0 - 6, y2: top - 10, stroke: "#b9c6d2", "stroke-width": 1 }, gA);
+    el("path", { d: "M" + (px0 - 6) + " " + (top - 12) + " L" + (px0 - 10) + " " + (top - 3) + " L" + (px0 - 2) + " " + (top - 3) + " Z", fill: "#b9c6d2" }, gA);
+    tx(gA, px0 - 14, top + 2, "P", "#5a6472", "end", 9, 700);
+
+    for (k = 0; k <= n; k++) {
+      var h = pmf(n, k) / maxP * hR;
+      if (h < 0.6) h = 0.6;
+      var bx = px0 + slot * k + (slot - bw) / 2;
+      var isPeak = (k === s.peak);
+      el("rect", {
+        x: bx, y: base - h, width: bw, height: h, rx: 1,
+        fill: isPeak ? "#2563eb" : "#9ec5f5", stroke: isPeak ? "#1e40af" : "#9db4cc"
+      }, gA);
+    }
+    var stp = n <= 12 ? 1 : 5;
+    for (k = 0; k <= n; k += stp) {
+      tx(gA, px0 + slot * k + slot / 2, base + 15, String(k), "#5a6472", "middle", 8.4, 400);
+    }
+    tx(gA, px0 + pw + 10, base + 15, "k", "#5a6472", "start", 9, 700);
+
+    var xe = px0 + slot * (s.e + 0.5);
+    el("line", { x1: xe, y1: top - 4, x2: xe, y2: base, stroke: "#b8402f", "stroke-width": 1, "stroke-dasharray": "4 3" }, gA);
+    tx(gA, xe + 4, top + 6, "np=" + s.e.toFixed(1), "#b8402f", "start", 8.6, 700);
+    tx(gA, L.left.x + 20, base + 34, "峰值在 k=" + s.peak + " 附近，n 越大柱子越多、越矮、越圆", "#3a3a35", "start", 8.6, 400);
+
+    /* ---------- 右：E、D 随 n 增长 ---------- */
+    el("rect", { x: L.right.x, y: L.right.y, width: L.right.w, height: L.right.h, rx: 10, fill: "#ffffff", stroke: "#e6e9ee" }, gB);
+    tx(gB, L.right.x + 20, L.right.y + 30, "E(X) 与 D(X) 随 n 同步增长", "#151a21", "start", 11, 700);
+    tx(gB, L.right.x + 20, L.right.y + 49, "p=0.4：E=0.4n 是直线，D=0.24n 也是直线", "#5a6472", "start", 9, 400);
+
+    var x0 = L.right.x + 48, xw = L.right.w - 76;
+    var y0 = L.right.y + L.right.h - 64, yh = L.right.h - 124, vmax = 9;
+    var fx = function (v) { return x0 + v / 20 * xw; };
+    var fy = function (v) { return y0 - v / vmax * yh; };
+
+    el("line", { x1: x0, y1: y0, x2: x0 + xw + 8, y2: y0, stroke: "#b9c6d2" }, gB);
+    el("line", { x1: x0, y1: y0, x2: x0, y2: y0 - yh - 12, stroke: "#b9c6d2" }, gB);
+    for (i = 0; i <= 20; i += 5) tx(gB, fx(i), y0 + 14, String(i), "#5a6472", "middle", 8.4, 400);
+    for (i = 2; i <= 8; i += 2) {
+      tx(gB, x0 - 6, fy(i) + 3, String(i), "#5a6472", "end", 8.4, 400);
+      el("line", { x1: x0 - 3, y1: fy(i), x2: x0, y2: fy(i), stroke: "#c8d4de" }, gB);
+    }
+    tx(gB, x0 + xw + 10, y0 + 14, "n", "#5a6472", "start", 9, 700);
+
+    el("line", { x1: fx(0), y1: fy(0), x2: fx(20), y2: fy(8), stroke: "#2563eb", "stroke-width": 2 }, gB);
+    el("line", { x1: fx(0), y1: fy(0), x2: fx(20), y2: fy(4.8), stroke: "#b8791f", "stroke-width": 2 }, gB);
+    tx(gB, fx(19.4), fy(8.3) + 2, "E=np", "#2563eb", "end", 9, 700);
+    tx(gB, fx(19.4), fy(4.9) + 4, "D=np(1−p)", "#b8791f", "end", 9, 700);
+
+    el("line", { x1: fx(s.n), y1: y0, x2: fx(s.n), y2: fy(s.e), stroke: "#b8402f", "stroke-dasharray": "3 3" }, gB);
+    el("circle", { cx: fx(s.n), cy: fy(s.e), r: 4.2, fill: "#2563eb", stroke: "#ffffff", "stroke-width": 1.5 }, gB);
+    el("circle", { cx: fx(s.n), cy: fy(s.d), r: 4.2, fill: "#b8791f", stroke: "#ffffff", "stroke-width": 1.5 }, gB);
+    tx(gB, L.right.x + 20, y0 + 36, "σ=√D=" + s.sd.toFixed(2) + "　D 始终在 E 下方", "#3a3a35", "start", 8.6, 400);
+    tx(gB, L.right.x + 20, y0 + 52, "p 固定 0.4，n 从 5 到 20：E、D 都按比例变", "#5a6472", "start", 8.4, 400);
+  }
+
+  function render() {
+    if (!G) { L = stage.parentElement.getBoundingClientRect().width >= 640 ? W : N; G = geom(); stage.setAttribute("viewBox", L.vb); }
+    var s = calc(A), st, col, bg, sn;
+    $("gxVa").textContent = String(s.n);
+    $("gxVb").textContent = s.e.toFixed(2);
+    $("gxVc").textContent = s.d.toFixed(2);
+    if (s.n <= 9) { st = "右偏"; col = "#b8791f"; bg = "#fdf3e0"; sn = "峰在左，右边拖尾"; }
+    else if (s.n <= 14) { st = "接近钟形"; col = "#2f8a5b"; bg = "#e6f6ee"; sn = "本页停留帧 n=10"; }
+    else { st = "钟形·柱更矮"; col = "#2563eb"; bg = "#e8f0fe"; sn = "轮廓最圆但峰值摊薄"; }
+    $("gxVs").textContent = st;
+    $("gxVsn").textContent = sn;
+    $("gxStBox").style.background = bg;
+    $("gxStBox").style.borderColor = col + "44";
+    $("gxVs").style.color = col;
+    draw();
+  }
+
+  function layout() {
+    L = stage.parentElement.getBoundingClientRect().width >= 640 ? W : N;
+    G = G || geom();
+    stage.setAttribute("viewBox", L.vb);
+    render();
+  }
+
+  var apBadge = $("gxAp"), apTxt = $("gxApTxt");
+  function setMode(m) {
+    if (!apBadge) return;
+    apBadge.classList.toggle("is-auto", m === "auto");
+    apBadge.classList.toggle("is-manual", m !== "auto");
+    if (apTxt) apTxt.textContent = m === "auto" ? "自动演示中" : "你接管了";
+  }
+
+  var ap = AutoPilot.create({
+    mount: stage,
+    follow: $("gxSl"),
+    loop: [{ t: 0, v: 5 }, { t: 1.2, v: 5 }, { t: 4, v: 10 }, { t: 6.5, v: 10 }, { t: 9, v: 20 }, { t: 11.5, v: 15 }, { t: 13.5, v: 5 }],
+    keys: [5, 10, 15, 20],
+    value: A, min: 5, max: 20, step: 1,
+    idle: 5000,
+    onChange: function (v) { A = v; render(); },
+    onMode: setMode
+  });
+  window.__ap = ap;
+  window.__model = { calc: calc, cases: [
+    { v: 5, eq: { e: 2, d: 1.2 } },
+    { v: 10, eq: { e: 4, d: 2.4 } },
+    { v: 20, eq: { e: 8, d: 4.8 } }
+  ] };
+
+  var tmr = null;
+  window.addEventListener("resize", function () { clearTimeout(tmr); tmr = setTimeout(layout, 150); });
+  layout();
+});
+</script>
 </body>
 </html>
