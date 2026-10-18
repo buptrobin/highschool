@@ -30,3 +30,13 @@ for (let i = from; i < files.length; i++) {
   console.log(`${f}  ${((Date.now() - t0) / 1000).toFixed(0)}s`);
 }
 appendFileSync(log, 'DONE\n', 'utf8');
+
+// 收尾：清掉本次体检留下的 Chrome 临时目录（按 pid 判断，不会误删别的进程正在跑的浏览器）
+try {
+  const out = execFileSync(process.execPath, [resolve(root, '.workbuddy/clean-temp.mjs')], { encoding: 'utf8' });
+  appendFileSync(log, out.trim() + '\n', 'utf8');
+  console.log(out.trim());
+} catch (e) {
+  appendFileSync(log, '（临时目录清理失败：' + e.message + '）\n', 'utf8');
+}
+
