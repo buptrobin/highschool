@@ -17,11 +17,12 @@ RULES = {
     "拓展": "bdg-ext",
     "背景": "bdg-ext",
     "方法": "bdg-ext",
+    "B 级": "bdg-ext",
 }
 
 pat = re.compile(r'<span class="bdg (bdg-[a-z]+)">([^<]+)</span>')
 total = 0
-for f in sorted(glob.glob("pages/geo/xx1-*.html") + glob.glob("pages/geo/xx2-*.html")):
+for f in sorted(glob.glob("pages/geo/xx1-*.html") + glob.glob("pages/geo/xx2-*.html") + glob.glob("pages/geo/xx3-*.html")):
     s = open(f, encoding="utf-8").read()
     changes = []
 

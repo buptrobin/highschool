@@ -5,7 +5,7 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-for f in sorted(glob.glob("pages/geo/xx1-*.html") + glob.glob("pages/geo/xx2-*.html")):
+for f in sorted(glob.glob("pages/geo/xx1-*.html") + glob.glob("pages/geo/xx2-*.html") + glob.glob("pages/geo/xx3-*.html")):
     s = open(f, encoding="utf-8").read()
     key = f.replace("\\", "/").split("pages/geo/")[1][:-5]
     issues = []
