@@ -1,7 +1,7 @@
-/* 页面自报的数值断言：每页把 __bio.cases 写成「参数值 → 该参数下应有的数值」，
+﻿/* 页面自报的数值断言：每页把 __bio.cases 写成「参数值 → 该参数下应有的数值」，
    与教材/公式的真值对账。这里只负责跑和比对，不改页面。 */
 (function () {
-  var b = window.__bio;
+  var b = window.__model || window.__bio;
   var out = { cases: [], has: !!b };
   if (!b || typeof b.calc !== 'function') return { cases: [], has: false, miss: 'no __bio.calc' };
   if (!b.cases || !b.cases.length) return { cases: [], has: true, miss: 'empty cases' };
