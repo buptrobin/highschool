@@ -1,11 +1,13 @@
-/* 清理 headless Chrome 体检留下的临时 profile。
+/* 清理 Chrome 体检留下的临时目录。
    用法：node tools/clean-temp.mjs
-   只删 %TEMP% 下 45 分钟前创建的 iso-drive-* 目录，正在跑的不动。 */
+   只删 %TEMP% 下 45 分钟前创建/修改的 iso-drive-*、scoped_dir*、chrome_* 目录，
+   正在跑的不动。 */
 import { readdirSync, statSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 const cutoff = Date.now() - 45 * 60 * 1000;
+const PATTERN = /^(iso-drive-|scoped_dir|chrome_)/;
 let removed = 0, bytes = 0, skipped = 0;
 
 function sizeOf(dir) {
@@ -21,7 +23,7 @@ function sizeOf(dir) {
 }
 
 for (const name of readdirSync(tmpdir())) {
-  if (!/^iso-drive-/.test(name)) continue;
+  if (!PATTERN.test(name)) continue;
   const p = join(tmpdir(), name);
   let st;
   try { st = statSync(p); } catch { continue; }
