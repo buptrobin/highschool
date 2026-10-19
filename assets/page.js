@@ -159,8 +159,66 @@
     paint();
   }
 
+  /* 旧版 geo 讲义页把「点图放大」写死成手机专用：它们的页内脚本里有
+     `if (window.innerWidth > 760) return;`。这些页面同样加载 page.js，
+     所以在这里补一个桌面端入口。新版页面的 gx.js / geo2.js 会先设
+     __GX_ZOOM_READY，避免重复绑定。 */
+  function setupLegacyZoom() {
+    if (window.__GX_ZOOM_READY) return;
+    var zoom = document.getElementById("gxZoom");
+    var inner = document.getElementById("gxZoomInner");
+    if (!zoom || !inner) return;
+    var tip = zoom.querySelector(".gx-zoom-tip");
+    var lastBox = null;
+
+    function open(box) {
+      var svg = box.querySelector("svg");
+      if (!svg) return;
+      inner.textContent = "";
+      inner.appendChild(svg.cloneNode(true));
+      zoom.hidden = false;
+      document.body.style.overflow = "hidden";
+      if (tip) tip.textContent = "点击空白处或按 Esc 关闭";
+      lastBox = box;
+      var btn = zoom.querySelector(".gx-zoom-x");
+      if (btn) btn.focus({ preventScroll: true });
+    }
+    function close() {
+      zoom.hidden = true;
+      document.body.style.overflow = "";
+      if (lastBox) lastBox.focus({ preventScroll: true });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".gx-svgbox"), function (box) {
+      var svg = box.querySelector("svg");
+      if (!svg || box.classList.contains("nozoom") || /stage$/i.test(svg.id)) return;
+      if (box.querySelector("input,button,.pick,.bar")) return;
+      box.style.cursor = "zoom-in";
+      box.setAttribute("role", "button");
+      box.setAttribute("tabindex", "0");
+      box.setAttribute("title", "点击放大");
+      box.addEventListener("click", function (e) {
+        if (window.innerWidth <= 760) return;   // 手机端交给页内原脚本
+        if (e.target.closest && e.target.closest("button, input, .bar")) return;
+        open(box);
+      });
+      box.addEventListener("keydown", function (e) {
+        if (window.innerWidth <= 760) return;
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(box); }
+      });
+    });
+
+    zoom.addEventListener("click", function (e) {
+      if (e.target === zoom || e.target.classList.contains("gx-zoom-x")) close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !zoom.hidden) close();
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     renderContent();
     setupDone();
+    setupLegacyZoom();
   });
 })();
