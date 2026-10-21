@@ -112,6 +112,7 @@ PAGE_TPL = """<!DOCTYPE html>
 <meta name="theme-color" content="{color}">
 <title>{h1} · {subject} · 俯瞰太阳系</title>
 <link rel="stylesheet" href="../../assets/app.css">
+<link rel="stylesheet" href="../../assets/print.css" media="print">
 </head>
 <body class="page" style="--accent:{color};--accent-soft:{soft}">
 
