@@ -52,6 +52,28 @@
 
 新科目要复用时，先按 `gk2.py` 的路子批量抽题建库，再按上面的优先级选题。
 
+## 精练页生成流水线（优先用这条，别让模型直接写整页）
+
+一页成品 300–600 KB，绝大部分是模板的 CSS/判分引擎/base64 图。让模型逐字写整页，
+每节要 10–15 分钟，还容易在写入途中耗尽上下文。正确做法是**只写数据**：
+
+1. `content/quiz/<科目>/<slug>.json` —— 只写题目与文案（约 10–20 KB），字段见
+   `tools/quizgen.py` 末尾的 `SPEC` 注释
+2. `python tools/quizgen.py content/quiz/geo/bx1-c4-s1.json out/bx1-c4-s1.html`（约 150 ms）
+3. `python tools/quiz-install.py <out.html> geo bx1-c4-s1 <题数> --build`
+   —— **题数必须显式给**：生成页 hero 里的 facts 不叫「题目总数」，install 读不到
+
+配图放 `content/quiz/figs/<slug>/`，spec 里用相对路径引用，quizgen 自动转 base64 内嵌
+（保持单文件）。示意图直接把 SVG 字符串写进 `figures`。
+
+模板 `tools/quiz-shell.html`（40 KB，含判分引擎与错题本）是从一份已验证成品页切出来的。
+换模板：
+
+    python tools/quizgen.py --make-shell quiz/geo/<任一成品页>.html tools/quiz-shell.html
+
+切片锚点见 `quizgen.py` 的 `ANCHORS`。改模板后必须重新生成，并跑一遍自检页
+（`content/quiz/geo/_selftest.json` 是回归样例，期望：2 题、3 关、点选项有反馈、零报错）。
+
 ## 其它约定
 
 - 改目录结构改 `content/*.txt`，然后 `python tools/build.py`
