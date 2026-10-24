@@ -867,7 +867,12 @@ window.SUBJECTS = [
         "label": "第二节",
         "title": "地貌的观察",
         "slug": "bx1-c4-s2",
-        "href": "pages/geo/bx1-c4-s2.html"
+        "href": "pages/geo/bx1-c4-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c4-s2.html",
+         "n": 15,
+         "title": "地貌的观察"
+        }
        },
        {
         "kind": "research",
@@ -886,14 +891,24 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "植被",
         "slug": "bx1-c5-s1",
-        "href": "pages/geo/bx1-c5-s1.html"
+        "href": "pages/geo/bx1-c5-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c5-s1.html",
+         "n": 17,
+         "title": "植被"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "土壤",
         "slug": "bx1-c5-s2",
-        "href": "pages/geo/bx1-c5-s2.html"
+        "href": "pages/geo/bx1-c5-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c5-s2.html",
+         "n": 18,
+         "title": "土壤"
+        }
        },
        {
         "kind": "research",
@@ -912,28 +927,48 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "气象灾害",
         "slug": "bx1-c6-s1",
-        "href": "pages/geo/bx1-c6-s1.html"
+        "href": "pages/geo/bx1-c6-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c6-s1.html",
+         "n": 15,
+         "title": "气象灾害"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "地质灾害",
         "slug": "bx1-c6-s2",
-        "href": "pages/geo/bx1-c6-s2.html"
+        "href": "pages/geo/bx1-c6-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c6-s2.html",
+         "n": 15,
+         "title": "地质灾害"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "防灾减灾",
         "slug": "bx1-c6-s3",
-        "href": "pages/geo/bx1-c6-s3.html"
+        "href": "pages/geo/bx1-c6-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c6-s3.html",
+         "n": 14,
+         "title": "防灾减灾"
+        }
        },
        {
         "kind": "section",
         "label": "第四节",
         "title": "地理信息技术在防灾减灾中的应用",
         "slug": "bx1-c6-s4",
-        "href": "pages/geo/bx1-c6-s4.html"
+        "href": "pages/geo/bx1-c6-s4.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c6-s4.html",
+         "n": 15,
+         "title": "地理信息技术在防灾减灾中的应用"
+        }
        },
        {
         "kind": "research",
@@ -1600,8 +1635,8 @@ window.SUBJECTS = [
    "research": 24,
    "extras": 8,
    "total": 101,
-   "quiz": 10,
-   "quizTotal": 166
+   "quiz": 17,
+   "quizTotal": 275
   }
  },
  {
