@@ -8,19 +8,23 @@
 
 ```
 index.html            首页（选科目）
-subject.html          科目目录页（?s=math|geo|bio|pol）
+subject.html          科目目录页（?s=math|geo|bio|pol，加 &quiz=1 切到精练）
 assets/
   app.css             全站样式
   data.js             目录数据（脚本自动生成，别手改）
+  quiz-map.js         哪些节有精练（脚本自动生成，别手改）
   site.js             首页 / 科目页逻辑
   page.js             内容页逻辑（把 Markdown 渲染成正文）
 pages/
   math/  geo/  bio/  pol/      每一节一个静态 html
+quiz/
+  geo/                         真题精练页（单文件，自带判分与错题本）
 content/
   math.txt  geo.txt  bio.txt  pol.txt        大纲（改这里）
   *.extra.txt                                特别知识点清单
 tools/
   build.py            读大纲 → 生成 data.js + 缺失的页面
+  quiz-install.py     把生成好的精练页落位到 quiz/ 并注入元数据
 ```
 
 ## 给某一节写内容
@@ -93,3 +97,40 @@ python tools/build.py
 
 > 注意：`extra-*.html` 是按序号命名的，**在清单中间插条目会导致后面的页面串位**。
 > 要插入就重新整理一遍清单，并把对应页面内容跟着挪；或者只在末尾追加。
+
+## 真题精练
+
+精练和解析共用同一套「科目 → 册 → 章 → 节」坐标，所以**不另起一棵导航树**：
+科目页上多一个切换，同一份目录换个指向。
+
+- `subject.html?s=geo` —— 课本解析（默认，行为和以前完全一样）
+- `subject.html?s=geo&quiz=1` —— 真题精练，只显示有题的册 / 章 / 节，整行点进去就是精练页
+- 解析模式下，有题的条目右侧会出现「精练 N」小药丸，直接跳过去
+- 解析页正文下方，有精练的节会出现「去刷题」按钮
+- 首页在有精练的科目下面会出现一条「真题精练」入口
+
+精练页是**自包含单文件**（内联 CSS/JS、判分引擎、错题本都在页面里），
+不改 `app.css` 的样式，双击单独打开也能用；站点只负责给它编目。
+
+### 加一节精练
+
+```bash
+# 1. 生成精练页（exam-practice-page 技能产出的单文件 HTML）
+# 2. 落位到 quiz/<科目>/<slug>.html + 重建目录，一条命令
+python tools/quiz-install.py C:/wangxp/script/geo-cosmic.html geo bx1-c1-s1 --build
+```
+
+题数默认从页面里的「题目总数」读，标题默认从 `content/*.txt` 按 slug 反查（保证和
+解析页同名）；两个都能用 `17` / `--title ...` 显式覆盖。覆盖已有精练页要加 `--force`。
+
+`<slug>` 与解析页同名（如 `bx1-c1-s1`），两边就自动对齐到同一节。
+
+`quiz-install.py` 注入的这行是唯一的约定，`build.py` 靠它知道「有没有题、几道」：
+
+```html
+<script>window.QUIZ_META = {"sid":"geo","slug":"bx1-c1-s1","n":17,"title":"地球的宇宙环境"};</script>
+```
+
+所以**新增精练页后要重跑一次 `build.py`**，列表上的「精练 17」徽标、首页的题数、
+解析页里的「去刷题」按钮才会一起出现。解析页本身不用改：`page.js` 会按
+`window.PAGE` 的 `sid/slug` 去查 `assets/quiz-map.js`，查到才插入按钮。

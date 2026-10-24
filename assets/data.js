@@ -687,7 +687,9 @@ window.SUBJECTS = [
    "sections": 73,
    "research": 0,
    "extras": 8,
-   "total": 81
+   "total": 81,
+   "quiz": 0,
+   "quizTotal": 0
   }
  },
  {
@@ -709,28 +711,48 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "地球的宇宙环境",
         "slug": "bx1-c1-s1",
-        "href": "pages/geo/bx1-c1-s1.html"
+        "href": "pages/geo/bx1-c1-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c1-s1.html",
+         "n": 17,
+         "title": "地球的宇宙环境"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "太阳对地球的影响",
         "slug": "bx1-c1-s2",
-        "href": "pages/geo/bx1-c1-s2.html"
+        "href": "pages/geo/bx1-c1-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c1-s2.html",
+         "n": 15,
+         "title": "太阳对地球的影响"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "地球的历史",
         "slug": "bx1-c1-s3",
-        "href": "pages/geo/bx1-c1-s3.html"
+        "href": "pages/geo/bx1-c1-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c1-s3.html",
+         "n": 16,
+         "title": "地球的历史"
+        }
        },
        {
         "kind": "section",
         "label": "第四节",
         "title": "地球的圈层结构",
         "slug": "bx1-c1-s4",
-        "href": "pages/geo/bx1-c1-s4.html"
+        "href": "pages/geo/bx1-c1-s4.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c1-s4.html",
+         "n": 12,
+         "title": "地球的圈层结构"
+        }
        },
        {
         "kind": "research",
@@ -749,14 +771,24 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "大气的组成和垂直分层",
         "slug": "bx1-c2-s1",
-        "href": "pages/geo/bx1-c2-s1.html"
+        "href": "pages/geo/bx1-c2-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c2-s1.html",
+         "n": 17,
+         "title": "大气的组成和垂直分层"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "大气受热过程和大气运动",
         "slug": "bx1-c2-s2",
-        "href": "pages/geo/bx1-c2-s2.html"
+        "href": "pages/geo/bx1-c2-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c2-s2.html",
+         "n": 19,
+         "title": "大气受热过程和大气运动"
+        }
        },
        {
         "kind": "research",
@@ -775,21 +807,36 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "水循环",
         "slug": "bx1-c3-s1",
-        "href": "pages/geo/bx1-c3-s1.html"
+        "href": "pages/geo/bx1-c3-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c3-s1.html",
+         "n": 19,
+         "title": "水循环"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "海水的性质",
         "slug": "bx1-c3-s2",
-        "href": "pages/geo/bx1-c3-s2.html"
+        "href": "pages/geo/bx1-c3-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c3-s2.html",
+         "n": 18,
+         "title": "海水的性质"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "海水的运动",
         "slug": "bx1-c3-s3",
-        "href": "pages/geo/bx1-c3-s3.html"
+        "href": "pages/geo/bx1-c3-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c3-s3.html",
+         "n": 18,
+         "title": "海水的运动"
+        }
        },
        {
         "kind": "research",
@@ -1547,7 +1594,9 @@ window.SUBJECTS = [
    "sections": 69,
    "research": 24,
    "extras": 8,
-   "total": 101
+   "total": 101,
+   "quiz": 9,
+   "quizTotal": 151
   }
  },
  {
@@ -2330,7 +2379,9 @@ window.SUBJECTS = [
    "sections": 82,
    "research": 0,
    "extras": 7,
-   "total": 89
+   "total": 89,
+   "quiz": 0,
+   "quizTotal": 0
   }
  },
  {
@@ -3281,7 +3332,9 @@ window.SUBJECTS = [
    "sections": 95,
    "research": 0,
    "extras": 7,
-   "total": 102
+   "total": 102,
+   "quiz": 0,
+   "quizTotal": 0
   }
  }
 ];

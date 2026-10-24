@@ -58,6 +58,11 @@
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
+  function param(name) {
+    var m = location.search.match(new RegExp("[?&]" + name + "=([^&]*)"));
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+
   /* ============================ 首页 ============================ */
 
   function renderHome() {
@@ -95,13 +100,43 @@
       foot.innerHTML = "共 " + window.SUBJECTS.length + " 科 · " + totalAll + " 个条目 · 已复习 " +
         doneAll + " 个（" + (totalAll ? Math.round(doneAll / totalAll * 100) : 0) + "%）";
     }
+
+    renderQuizLane();
+  }
+
+  /* --- 首页：真题精练车道（只有存在精练页的科目才出现） --- */
+  function renderQuizLane() {
+    var host = document.getElementById("quizLane");
+    if (!host || !window.SUBJECTS) return;
+    var rows = window.SUBJECTS.filter(function (s) { return s.stat && s.stat.quiz > 0; });
+    if (!rows.length) return;
+
+    document.body.classList.add("has-quiz");
+
+    var totalN = rows.reduce(function (a, s) { return a + (s.stat.quizTotal || 0); }, 0);
+    var html =
+      '<div class="lane-head">' +
+        "<h2>真题精练</h2>" +
+        '<span class="lane-sub">' + rows.length + " 科 · " + totalN + " 题 · 学完一节顺手刷完</span>" +
+      "</div>" +
+      '<div class="lane-list">';
+    rows.forEach(function (s) {
+      html +=
+        '<a class="lane-item" href="subject.html?s=' + encodeURIComponent(s.id) + "&amp;quiz=1" +
+          '" style="--accent:' + s.color + ";--accent-soft:" + s.soft + '">' +
+          '<span class="lane-badge">' + esc(s.name.charAt(0)) + "</span>" +
+          '<span class="lane-main"><b>' + esc(s.name) + "</b>" +
+            "<i>" + s.stat.quiz + " 节 · " + (s.stat.quizTotal || 0) + " 题</i></span>" +
+          '<span class="lane-go">›</span>' +
+        "</a>";
+    });
+    host.innerHTML = html + "</div>";
   }
 
   /* ============================ 科目页 ============================ */
 
   function getSubject() {
-    var m = location.search.match(/[?&]s=([^&]+)/);
-    var sid = m ? decodeURIComponent(m[1]) : "";
+    var sid = param("s");
     if (!window.SUBJECTS) return null;
     for (var i = 0; i < window.SUBJECTS.length; i++) {
       if (window.SUBJECTS[i].id === sid) return window.SUBJECTS[i];
@@ -109,32 +144,62 @@
     return null;
   }
 
+  /** 解析 / 精练 两条车道：同一棵目录树，只换条目指向 */
+  function renderSeg(s, quizMode) {
+    var host = document.getElementById("modeSeg");
+    if (!host) return;
+    if (!s.stat.quiz) { host.style.display = "none"; return; }
+    host.style.display = "flex";
+    host.innerHTML =
+      '<a class="seg-btn' + (quizMode ? "" : " on") + '" href="subject.html?s=' +
+        encodeURIComponent(s.id) + '">课本解析</a>' +
+      '<a class="seg-btn' + (quizMode ? " on" : "") + '" href="subject.html?s=' +
+        encodeURIComponent(s.id) + '&amp;quiz=1">真题精练<span class="seg-n">' +
+        s.stat.quiz + "</span></a>";
+  }
+
   function renderSubject(s) {
+    var quizMode = param("quiz") === "1" && s.stat.quiz > 0;
+    if (quizMode) document.body.classList.add("mode-quiz");
+
     var map = doneMap();
     var done = countDone(s.id, map);
 
     document.body.style.setProperty("--accent", s.color);
     document.body.style.setProperty("--accent-soft", s.soft);
-    document.title = s.name + " · 俯瞰太阳系";
+    document.title = (quizMode ? "真题精练 · " : "") + s.name + " · 俯瞰太阳系";
 
     document.getElementById("shBadge").textContent = s.name.charAt(0);
     document.getElementById("shName").textContent = s.name;
-    document.getElementById("shMeta").textContent =
-      s.stat.books + " 册 · " + s.stat.chapters + " 章 · " + s.stat.total + " 个条目 · " + s.desc;
+    document.getElementById("shMeta").textContent = quizMode
+      ? s.stat.quiz + " 节有真题 · " + s.stat.quizTotal + " 题 · " + s.desc
+      : s.stat.books + " 册 · " + s.stat.chapters + " 章 · " + s.stat.total + " 个条目 · " + s.desc;
+
+    renderSeg(s, quizMode);
 
     var prog = document.getElementById("shProgress");
-    var pct = s.stat.total ? Math.round(done / s.stat.total * 100) : 0;
+    var pct, label;
+    if (quizMode) {
+      pct = s.stat.total ? Math.round(s.stat.quiz / s.stat.total * 100) : 0;
+      label = "题库覆盖 " + s.stat.quiz + " / " + s.stat.total + " 节 · " + pct + "%";
+    } else {
+      pct = s.stat.total ? Math.round(done / s.stat.total * 100) : 0;
+      label = "已复习 " + done + " / " + s.stat.total + " · " + pct + "%";
+    }
     prog.innerHTML =
       '<div class="sh-bar"><i style="width:' + pct + '%"></i></div>' +
-      '<span class="sh-pct">已复习 ' + done + " / " + s.stat.total + " · " + pct + "%</span>";
+      '<span class="sh-pct">' + label + "</span>";
 
     /* --- 特别知识点 --- */
     if (s.extras && s.extras.length) {
       var box = el("section", "extras");
+      if (s.extras.some(function (e) { return e.quiz; })) box.className += " has-quiz";
       var head = '<h2>特别知识点 <span class="n">' + s.extras.length + "</span></h2>";
       var chips = s.extras.map(function (e) {
         var isDone = map[s.id + "/" + e.slug] ? " is-done" : "";
-        return '<a class="chip' + isDone + '" href="' + e.href + '" data-s="' + esc(e.title.toLowerCase()) + '">' + esc(e.title) + "</a>";
+        return '<a class="chip' + (e.quiz ? " has-quiz" : "") + isDone +
+          '" href="' + (quizMode && e.quiz ? e.quiz.href : e.href) +
+          '" data-s="' + esc(e.title.toLowerCase()) + '">' + esc(e.title) + "</a>";
       }).join("");
       box.innerHTML = head + '<div class="chips">' + chips + "</div>";
       document.getElementById("extrasHost").appendChild(box);
@@ -146,13 +211,18 @@
       var det = el("details", "book");
       if (bi === 0) det.open = true;
 
-      var nodeCount = 0;
-      b.chapters.forEach(function (c) { nodeCount += c.items.length; });
+      var nodeCount = 0, bookQuiz = 0;
+      b.chapters.forEach(function (c) {
+        nodeCount += c.items.length;
+        bookQuiz += c.items.filter(function (it) { return it.quiz; }).length;
+      });
+      if (bookQuiz) det.className += " has-quiz";
 
       var sum = el("summary");
       sum.innerHTML =
         '<span class="bk-title">' + esc(b.title) + "</span>" +
-        '<span class="bk-count">' + b.chapters.length + " 章 · " + nodeCount + " 节</span>" +
+        '<span class="bk-count">' + b.chapters.length + " 章 · " +
+          (quizMode ? bookQuiz + " 节有真题" : nodeCount + " 节") + "</span>" +
         '<span class="bk-arrow">›</span>';
       det.appendChild(sum);
 
@@ -160,20 +230,33 @@
       b.chapters.forEach(function (c) {
         var ch = el("div", "chapter");
         ch.dataset.t = c.title.toLowerCase();
+        if (c.items.some(function (it) { return it.quiz; })) ch.className += " has-quiz";
         var h = el("div", "ch-head");
         h.innerHTML = "<span>" + esc(c.title) + "</span>";
         ch.appendChild(h);
 
         c.items.forEach(function (it) {
-          var a = el("a", "item" + (it.kind === "research" ? " item--research" : ""));
-          if (map[s.id + "/" + it.slug]) a.className += " is-done";
-          a.href = it.href;
-          a.dataset.s = ((it.label || "") + " " + it.title).toLowerCase();
-          a.innerHTML =
+          var q = it.quiz || null;
+          var row = el("div", "item" + (it.kind === "research" ? " item--research" : "") + (q ? " has-quiz" : ""));
+          if (map[s.id + "/" + it.slug]) row.className += " is-done";
+          row.dataset.s = ((it.label || "") + " " + it.title).toLowerCase();
+
+          var main = el("a", "it-main");
+          main.href = quizMode && q ? q.href : it.href;
+          main.innerHTML =
             (it.label ? '<span class="it-label">' + esc(it.label) + "</span>" : "") +
             '<span class="it-title">' + esc(it.title) + "</span>" +
             '<span class="it-go">›</span>';
-          ch.appendChild(a);
+          row.appendChild(main);
+
+          if (q) {
+            var pill = el("a", "it-quiz");
+            pill.href = q.href;
+            pill.innerHTML = "精练" + (q.n ? " <b>" + q.n + "</b>" : "");
+            pill.title = "真题精练" + (q.n ? " · " + q.n + " 题" : "");
+            row.appendChild(pill);
+          }
+          ch.appendChild(row);
         });
         body.appendChild(ch);
       });

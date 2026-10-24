@@ -12,11 +12,13 @@
 """
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONTENT_DIR = os.path.join(ROOT, "content")
 PAGES_DIR = os.path.join(ROOT, "pages")
+QUIZ_DIR = os.path.join(ROOT, "quiz")
 ASSETS_DIR = os.path.join(ROOT, "assets")
 
 # id, 显示名, 主色, 浅色, 说明
@@ -101,6 +103,47 @@ def parse_extras(path):
         if line.startswith("- "):
             line = line[2:].strip()
         out.append({"title": line, "slug": "extra-%d" % (len(out) + 1)})
+    return out
+
+
+QUIZ_META_RE = re.compile(r"window\.QUIZ_META\s*=\s*(\{.*?\})\s*;", re.S)
+
+
+def scan_quiz(sid):
+    """扫 quiz/<sid>/*.html，读每页自报的 window.QUIZ_META。
+
+    精练页是自包含的单文件（内联样式、自带判分与错题本），build.py 不解析它的
+    正文，只认这一行元数据（由 tools/quiz-install.py 注入）：
+
+        window.QUIZ_META = {"sid":"geo","slug":"bx1-c1-s1","n":17,"title":"..."}
+
+    返回 {slug: {"href": "quiz/geo/bx1-c1-s1.html", "n": 17, "title": "..."}}；
+    没有 quiz/ 目录的科目返回空字典。
+    """
+    out = {}
+    page_dir = os.path.join(QUIZ_DIR, sid)
+    if not os.path.isdir(page_dir):
+        return out
+    for name in sorted(os.listdir(page_dir)):
+        if not name.endswith(".html"):
+            continue
+        meta = {}
+        try:
+            text = read_text(os.path.join(page_dir, name))
+        except OSError:
+            continue
+        m = QUIZ_META_RE.search(text)
+        if m:
+            try:
+                meta = json.loads(m.group(1))
+            except ValueError:
+                meta = {}
+        n = meta.get("n")
+        out[name[:-5]] = {
+            "href": "quiz/%s/%s" % (sid, name),
+            "n": n if isinstance(n, int) else 0,
+            "title": meta.get("title") or "",
+        }
     return out
 
 
@@ -197,6 +240,7 @@ def build_page(subj, color, soft, book, chapter, item, prev, nxt):
 
 def main():
     data = []
+    quiz_map = {}   # "sid/slug" -> {"n": 17, "title": "..."}，给内容页的「去刷题」用
     created = 0
     for sid, name, color, soft, desc in SUBJECTS:
         outline = os.path.join(CONTENT_DIR, sid + ".txt")
@@ -205,6 +249,7 @@ def main():
             continue
         books = parse_outline(outline)
         extras = parse_extras(os.path.join(CONTENT_DIR, sid + ".extra.txt"))
+        quizzes = scan_quiz(sid)
 
         # 扁平序列，用于上一节/下一节
         flat = []
@@ -257,17 +302,33 @@ def main():
             for ch in b["chapters"]:
                 for it in ch["items"]:
                     it["href"] = "pages/%s/%s.html" % (sid, it["slug"])
+                    q = quizzes.get(it["slug"])
+                    if q:
+                        it["quiz"] = q
         for e in extras:
             e["href"] = "pages/%s/%s.html" % (sid, e["slug"])
+            q = quizzes.get(e["slug"])
+            if q:
+                e["quiz"] = q
+
+        n_quiz = sum(1 for it in (i for b in books for ch in b["chapters"] for i in ch["items"]) if "quiz" in it)
+        n_quiz += sum(1 for e in extras if "quiz" in e)
+        n_quiz_total = sum(it["quiz"]["n"] for it in (i for b in books for ch in b["chapters"] for i in ch["items"]) if "quiz" in it)
+        n_quiz_total += sum(e["quiz"]["n"] for e in extras if "quiz" in e)
+
+        for slug, q in quizzes.items():
+            quiz_map["%s/%s" % (sid, slug)] = {"n": q["n"], "title": q["title"]}
 
         data.append({
             "id": sid, "name": name, "color": color, "soft": soft, "desc": desc,
             "books": books, "extras": extras,
             "stat": {"books": len(books), "chapters": n_ch, "sections": n_sec,
                      "research": n_res, "extras": len(extras),
-                     "total": n_sec + n_res + len(extras)},
+                     "total": n_sec + n_res + len(extras),
+                     "quiz": n_quiz, "quizTotal": n_quiz_total},
         })
-        print("  %s  册%d 章%d 节%d 探究%d 专题%d" % (name, len(books), n_ch, n_sec, n_res, len(extras)))
+        print("  %s  册%d 章%d 节%d 探究%d 专题%d · 精练%d 节/%d 题"
+              % (name, len(books), n_ch, n_sec, n_res, len(extras), n_quiz, n_quiz_total))
 
     os.makedirs(ASSETS_DIR, exist_ok=True)
     out = os.path.join(ASSETS_DIR, "data.js")
@@ -276,7 +337,17 @@ def main():
         f.write("window.SUBJECTS = ")
         f.write(json.dumps(data, ensure_ascii=False, indent=1))
         f.write(";\n")
-    print("已写出 assets/data.js，新建页面 %d 个。" % created)
+
+    # 内容页靠这个小文件决定要不要显示「去刷题」按钮（page.js 按需加载）
+    out_quiz = os.path.join(ASSETS_DIR, "quiz-map.js")
+    with open(out_quiz, "w", encoding="utf-8") as f:
+        f.write("/* 由 tools/build.py 自动生成，请勿手改；新增精练页后重新运行。 */\n")
+        f.write("window.QUIZ_MAP = ")
+        f.write(json.dumps(quiz_map, ensure_ascii=False, sort_keys=True, indent=0))
+        f.write(";\n")
+
+    print("已写出 assets/data.js、assets/quiz-map.js（%d 节有精练），新建页面 %d 个。"
+          % (len(quiz_map), created))
 
 
 if __name__ == "__main__":

@@ -23,6 +23,9 @@
     return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
+  /* 本文件的 URL，用来拼 assets/ 下的兄弟文件（页面在 pages/<科目>/ 里，深度不一） */
+  var SELF_SRC = (document.currentScript && document.currentScript.src) || "";
+
   function inline(t) {
     var codes = [];
     t = t.replace(/`([^`]+)`/g, function (_, c) {
@@ -216,9 +219,48 @@
     });
   }
 
+  /* ---------- 真题精练入口 ----------
+     内容页不在 HTML 里写死链接：build.py 生成 assets/quiz-map.js，
+     这里按 window.PAGE 的 sid/slug 查一次，有精练才插入按钮。
+     新增精练页后重跑 build.py 即可，373 个页面文件一个字都不用改。 */
+  function renderQuizCta(map) {
+    var page = window.PAGE;
+    if (!page || !map) return;
+    var q = map[page.sid + "/" + page.slug];
+    if (!q) return;
+    if (document.querySelector(".quiz-cta")) return;
+
+    var main = document.querySelector("main.page-wrap") || document.querySelector("main");
+    if (!main) return;
+
+    var a = document.createElement("a");
+    a.className = "quiz-cta";
+    a.href = "../../quiz/" + page.sid + "/" + page.slug + ".html";
+    a.innerHTML =
+      '<span class="qc-tag">真题精练</span>' +
+      '<span class="qc-main"><b>这一节有 ' + (q.n || 0) + " 道真题</b>" +
+        "<i>边做边判分 · 错题自动收录 · 可重做</i></span>" +
+      '<span class="qc-go">去刷题 ›</span>';
+
+    var pager = main.querySelector(".pager");
+    if (pager) main.insertBefore(a, pager); else main.appendChild(a);
+  }
+
+  function setupQuizCta() {
+    if (!window.PAGE) return;
+    if (window.QUIZ_MAP) { renderQuizCta(window.QUIZ_MAP); return; }
+    if (!SELF_SRC) return;
+    var base = SELF_SRC.replace(/[^\/]*$/, "");   // .../assets/
+    var s = document.createElement("script");
+    s.src = base + "quiz-map.js";
+    s.onload = function () { renderQuizCta(window.QUIZ_MAP); };
+    document.body.appendChild(s);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     renderContent();
     setupDone();
+    setupQuizCta();
     setupLegacyZoom();
   });
 })();
