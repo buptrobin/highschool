@@ -188,6 +188,11 @@ def render_data(sp):
             stem = ('<span style="display:block;margin:0 0 10px;padding:8px 10px;'
                     'background:#f7f9fc;border-left:3px solid #c9d6e8;border-radius:6px;'
                     'font-size:13.5px;line-height:1.8;color:#455267">%s</span>' % q["material"]) + stem
+        # 同组共用一张图：原卷只在组首印一次，后面的题不再重复画图，只标注出处
+        if q.get("samefig"):
+            stem = ('<span style="display:inline-block;margin:0 0 10px;padding:2px 10px;'
+                    'background:#eef6fb;color:#2050c8;border-radius:999px;font-size:12.5px;'
+                    'font-weight:600">配图同第 %02d 题 ↑</span><br>' % int(q["samefig"])) + stem
         lines.append('    {')
         lines.append('      ' + ", ".join(fields) + ",")
         lines.append('      stem:%s,' % js(stem))
