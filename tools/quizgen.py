@@ -69,6 +69,15 @@ def make_shell(src, dst):
     for i, j, ph in sorted(cuts, reverse=True):
         out = out[:i] + ph + out[j:]
 
+    # 模板来自一份已安装的成品页：剥掉 quiz-install 注入的反向链接与 QUIZ_META，
+    # 否则安装时会再注入一次，页面顶部长出两条「‹ 精练目录」。
+    for pat in (r"<style>\s*\.qz-back.*?</style>\s*",
+                r'<div class="qz-back">.*?</div>\s*',
+                r"<script>window\.QUIZ_META\s*=.*?</script>\s*"):
+        out, n = re.subn(pat, "", out, count=1, flags=re.S)
+        if not n:
+            print("提示：模板里没有可剥离的 %s" % pat[:26])
+
     io.open(dst, "w", encoding="utf-8").write(out)
     print("模板已写出：%s（%d 字符，原页 %d 字符）" % (dst, len(out), len(s)))
 
@@ -173,11 +182,15 @@ def render_data(sp):
                   'kind:%s' % js(q.get("kind", "orig")), 'star:%d' % q.get("star", 2)]
         if q.get("svg"):
             fields.append('svg:%s' % js(q["svg"]))
+        # 引擎没有渲染 material 的位置，材料折进题干（stem 走 innerHTML，允许标签）
+        stem = q["stem"]
         if q.get("material"):
-            fields.append('material:%s' % js(q["material"]))
+            stem = ('<span style="display:block;margin:0 0 10px;padding:8px 10px;'
+                    'background:#f7f9fc;border-left:3px solid #c9d6e8;border-radius:6px;'
+                    'font-size:13.5px;line-height:1.8;color:#455267">%s</span>' % q["material"]) + stem
         lines.append('    {')
         lines.append('      ' + ", ".join(fields) + ",")
-        lines.append('      stem:%s,' % js(q["stem"]))
+        lines.append('      stem:%s,' % js(stem))
         lines.append('      opts:[%s],' % ", ".join(js(o) for o in q["opts"]))
         lines.append('      ans:%d,' % q["ans"])
         lines.append('      why:%s,' % js(q["why"]))
@@ -215,7 +228,9 @@ def render_figs(sp):
             var = "IMG_" + re.sub(r"[^A-Za-z0-9]", "_", key).upper()
             out.append('  var %s = "%s";' % (var, uri))
             html = ('<img src="\'+%s+\'" alt="%s" style="width:100%%;height:auto;display:block;'
-                    'border-radius:10px">' % (var, f.get("alt", "")))
+                    'border-radius:10px%s">'
+                    % (var, f.get("alt", ""),
+                       (";max-width:%dpx;margin:0 auto" % f["maxw"]) if f.get("maxw") else ""))
             out.append('  function %s(host){ host.innerHTML = \'%s\'; }' % (fn, html))
         else:
             html = '<div class="svg-box">%s</div>' % f["svg"]

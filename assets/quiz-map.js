@@ -35,5 +35,9 @@ window.QUIZ_MAP = {
 "geo/bx1-c3-s3": {
 "n": 18,
 "title": "海水的运动"
+},
+"geo/bx1-c4-s1": {
+"n": 15,
+"title": "常见地貌类型"
 }
 };

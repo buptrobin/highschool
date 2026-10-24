@@ -855,7 +855,12 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "常见地貌类型",
         "slug": "bx1-c4-s1",
-        "href": "pages/geo/bx1-c4-s1.html"
+        "href": "pages/geo/bx1-c4-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx1-c4-s1.html",
+         "n": 15,
+         "title": "常见地貌类型"
+        }
        },
        {
         "kind": "section",
@@ -1595,8 +1600,8 @@ window.SUBJECTS = [
    "research": 24,
    "extras": 8,
    "total": 101,
-   "quiz": 9,
-   "quizTotal": 151
+   "quiz": 10,
+   "quizTotal": 166
   }
  },
  {
