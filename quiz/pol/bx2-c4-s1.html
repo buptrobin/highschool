@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我国的个人收入分配</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "pol", "slug": "bx2-c4-s1", "n": 12, "title": "我国的个人收入分配"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=pol&quiz=1">‹ 政治 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 必修2 经济与社会 · 第四课第一框</span>
+        <h1>我国的个人收入分配<span class="thin">北京真题 1 道 · 外地真题 5 道 · 原创 3 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一框的主线只有一句：<b>按劳分配为主体、多种分配方式并存</b>。往上接“做大蛋糕”（生产），往下接“分好蛋糕”（分配），最后落到<b>共同富裕</b>。高考考这一框，几乎都在考三件事——<b>四种收入来源怎么归类</b>、<b>初次分配 / 再分配 / 第三次分配怎么分</b>、<b>效率与公平怎么摆</b>。北京卷近五年只在 2022 年第 11 题正面考过最低工资与就业，所以本页的真题以外地卷为主，另配三道原创辨析题补齐易错点。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>6</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='16' y='16' width='268' height='250' rx='16' fill='#eef2ff'/><rect x='52' y='44' width='196' height='42' rx='10' fill='#fff' stroke='#6366f1' stroke-width='2.5'/><text x='150' y='70' font-size='13' fill='#3730a3' text-anchor='middle' font-weight='700'>个人收入分配</text><g font-size='10' fill='#3730a3' text-anchor='middle'><rect x='26' y='110' width='78' height='36' rx='8' fill='#e0e7ff'/><text x='65' y='132'>按劳分配</text><rect x='111' y='110' width='78' height='36' rx='8' fill='#e0e7ff'/><text x='150' y='132'>多种分配</text><rect x='196' y='110' width='78' height='36' rx='8' fill='#e0e7ff'/><text x='235' y='132'>要素参与</text></g><g font-size='10' fill='#4338ca' text-anchor='middle'><rect x='26' y='162' width='248' height='32' rx='8' fill='#c7d2fe'/><text x='150' y='183'>初次分配 · 再分配 · 第三次分配</text></g><rect x='58' y='208' width='184' height='34' rx='8' fill='#a5b4fc'/><text x='150' y='230' font-size='11' fill='#312e81' text-anchor='middle' font-weight='700'>共同富裕</text></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本框：按劳分配为主体、多种分配方式并存，先做大再分好</h2></div>
+  <p class="sec-sub">左图把“生产—分配—共享”的因果链摆清楚，右图是本框最常考的三次分配。答题时先判断题目问的是哪一层，再往上挂教材术语。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地 2022—2025</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 5 年北京 1 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 5 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 6 道真题</span><span style="background:#f4f1ff;color:#5b3ec8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">另配原创 3 道</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>本框在高考里<b>选择题多、大题少</b>，北京卷近五年只命中 <b>2022 年第 11 题</b>（最低工资标准的连锁反应），而且它问的是“哪种应对会导致就业减少”，落点在分配政策的市场后果；外地卷则爱用<b>收入构成表</b>考四种收入来源的归类。真正的大题通常不单独考“分配”，而是把它并进“共同富裕”“扩大内需”“乡村振兴”里一起考。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2022 年第 11 题</b>（最低工资标准提高后企业的四种应对，哪一项会导致社会就业减少）收入本页。北京 2024 年第 12 题、2025 年第 21 题考的是基本经济制度与共同富裕的整体表述，已在“公有制为主体 多种所有制经济共同发展”“推动高质量发展”两页收入。外地卷：<b>2022 年浙江 1 月第 12 题</b>（做大蛋糕与分好蛋糕）、<b>2023 年海南第 5 题</b>（2022 年全国居民收入构成）、<b>2024 年天津第 6 题</b>（农民增收的薪金与股金）、<b>2025 年云南第 4 题</b>（平台兼职收入的分配性质）、<b>2025 年黑吉辽蒙第 5 题</b>（城乡居民收入结构推断）收入本页。</p>
+</div><div class="panel"><p class="panel-title">① 分配制度的四层结构（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#3730a3'>分配制度的四层结构（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='46' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='63' font-weight='700'>做大蛋糕：生产决定分配</text><text x='38' y='80'>高质量发展是分配的物质基础</text><rect x='24' y='96' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='113' font-weight='700'>分好蛋糕：按劳分配为主体</text><text x='38' y='130'>多种分配方式并存，要素按贡献取酬</text><rect x='24' y='146' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='163' font-weight='700'>四种收入来源</text><text x='38' y='180'>劳动、经营、财产、转移</text><rect x='24' y='196' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='213' font-weight='700'>落脚点：共同富裕</text><text x='38' y='230'>共享发展成果，不是平均主义</text><text x='24' y='266' font-size='10' fill='#4338ca'>大题自上而下写，缺一层就少一层分</text><rect x='430' y='46' width='306' height='200' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='446' y='70' font-size='12' font-weight='700' fill='#9a3412'>三个常考判断</text><text x='446' y='96'>按劳分配 ≠ 平均分配</text><text x='446' y='120'>按劳分配只在公有制经济中</text><text x='446' y='144'>按劳分配 ≠ 按劳动要素分配</text><text x='446' y='174' font-size='12' font-weight='700' fill='#9a3412'>两个“看”</text><text x='446' y='198'>看主体：国家 / 市场 / 社会力量</text><text x='446' y='222'>看手段：税社保 / 要素报酬 / 自愿捐赠</text></g></svg></div></div><div class="panel"><p class="panel-title">② 三次分配各管什么（示意图，非原卷图）</p><div class="svg-box" id="map-fig-three"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#1e3a8a'>三次分配各管什么（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='50' width='222' height='96' rx='10' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='74' font-weight='700'>初次分配</text><text x='38' y='96'>主体：市场与企业</text><text x='38' y='116'>手段：工资、利润、租金</text><text x='38' y='136'>关键词：按要素贡献</text><rect x='269' y='50' width='222' height='96' rx='10' fill='#ecfdf5' stroke='#6ee7b7'/><text x='283' y='74' font-weight='700'>再分配</text><text x='283' y='96'>主体：国家</text><text x='283' y='116'>手段：税收、社保、转移支付</text><text x='283' y='136'>关键词：强制、调节差距</text><rect x='514' y='50' width='222' height='96' rx='10' fill='#fdf2f8' stroke='#f9a8d4'/><text x='528' y='74' font-weight='700'>第三次分配</text><text x='528' y='96'>主体：社会力量与个人</text><text x='528' y='116'>手段：慈善捐赠、志愿服务</text><text x='528' y='136'>关键词：自愿、道德力量</text><rect x='24' y='166' width='712' height='54' rx='10' fill='#f8fafc' stroke='#cbd5e1'/><text x='38' y='188' font-weight='700' fill='#0f172a'>答题句式：</text><text x='124' y='188'>初次分配讲“效率与要素报酬”，再分配讲“公平与兜底”，第三次分配讲“补充与自愿”。</text><text x='124' y='208'>凡是把慈善说成“再分配”、把社保说成“自愿”的选项，都在这张表上站不住。</text><text x='24' y='248' font-size='10' fill='#334155'>共同富裕 = 做大蛋糕（发展）+ 分好蛋糕（三次分配协调配套），缺一不可。</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把按劳分配等同于平均分配。</b>按劳分配是多劳多得、少劳少得，承认差别；平均主义恰恰是对按劳分配的否定。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把按劳分配与按劳动要素分配混为一谈。</b>按劳分配只存在于<b>公有制经济</b>中；私营、外资企业里的工资是按劳动要素分配，属于按生产要素分配。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>四种收入来源归错篮子。</b>工资奖金是劳动性收入，租金、利息、红利是财产性收入，养老金、补贴、救助是转移性收入，个体经营所得是经营性收入。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把第三次分配说成再分配。</b>再分配的主体是国家、手段是税和社保、具有强制性；第三次分配的主体是社会力量、基础是自愿，只起补充作用。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>看见“占比上升”就推“差距缩小”。</b>占比只反映结构，收入差距要看城乡收入比、基尼系数这类总量指标，两项不能直接互推。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把共同富裕理解成同步富裕、同等富裕。</b>共同富裕是全体人民共享发展成果，允许一部分人先富起来，靠制度安排逐步缩小差距，不是劫富济贫、更不是平均主义。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先用图 ① 默写分配制度的四句话：按劳分配为主体、多种分配方式并存、生产要素由市场评价贡献、三次分配协调配套。</li><li>第 1—4 题重点练“收入归类”：每看到一个数字，先问它属于工资、经营、财产、转移中的哪一类。</li><li>第 5 题是北京卷唯一正面考本框的题，做完要能一句话说出“为什么 C 会减少就业、其余三项不会”。</li><li>综合题写完对照要点，检查有没有写“做大蛋糕”这一层——只写“分好蛋糕”，论证是不完整的。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（1 道）：</b>2022 年第 11 题（最低工资标准提高后企业的四种应对，哪种会导致社会就业减少）。这是北京卷 2022—2026 年唯一一道正面考“个人收入分配”的选择题。</li><li><b>外地真题（5 道）：</b>2022 年浙江 1 月第 12 题（做大蛋糕与分好蛋糕）、2023 年海南第 5 题（2022 年全国居民收入构成）、2024 年天津第 6 题（农民增收中的薪金与股金）、2025 年云南第 4 题（平台兼职收入的分配性质）、2025 年黑吉辽蒙第 5 题（城乡居民收入结构推断）。</li><li><b>原创题（3 道）：</b>第 7 题（分配制度的四个易错表述）、第 8 题（第三次分配与慈善的定位）、第 9 题（一家五口收入的归类与占比计算），均标 <b>原创</b>。本框可用的真题偏少，故原创比例较高。</li><li><b>关于数据与配图：</b>2023 年海南第 5 题、2025 年黑吉辽蒙第 5 题原卷均为表格/统计图，本页把原卷解析中引用的关键数据改写为文字（全国居民四项收入及占比、城乡居民三项收入占比），题干设问与选项未改动。</li><li><b>综合题：</b>第 10、11 题为本页原创（标 <b>原创·综合题</b>），第 12 题为 2025 年河南第 18 题（第（2）问，材料已压缩，删去与本设问无关的第（1）问材料）。</li><li>本页不含北京合格考题目；页内两张示意图为手绘 SVG，已在标题标注“示意图，非原卷图”。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修2 经济与社会", chapter:"第四课 我国的个人收入分配与社会保障", section:"第一框 我国的个人收入分配"};
+  var TOPIC = {1:"做大蛋糕与分好蛋糕", 2:"居民收入的四种来源", 3:"初次分配与再分配", 4:"按劳分配与按生产要素分配", 5:"最低工资与就业", 6:"城乡收入结构与再分配依赖", 7:"分配制度的三个易错表述", 8:"第三次分配与慈善", 9:"劳动性收入与财产性收入辨析"};
+  var LEVELS = [
+    {id:1, name:"先把“分蛋糕”的框架立起来", sub:"生产决定分配、四种收入来源、劳动是主要来源", badge:"基础", color:"#4338ca", lcl:"#eef2ff"},
+    {id:2, name:"按劳分配与按要素分配", sub:"“按劳分配”只限公有制；薪金、股金、补贴各归哪一类", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"北京卷的分配视角与数据推断", sub:"2022 年第 11 题（最低工资与就业）、2025 年黑吉辽蒙第 5 题（城乡收入结构）", badge:"巩固", color:"#b45309", lcl:"#fffbeb"},
+    {id:4, name:"本节易错", sub:"分配制度不是“平均分配”、第三次分配不是再分配、劳动性收入不等于按劳分配", badge:"易错", color:"#be123c", lcl:"#fff1f2"},
+    {id:5, name:"综合题", sub:"“扩中提低”、三次分配、给骑手缴社保会不会压垮企业", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"2022·浙江1月 第12题", kind:"real", star:1,
+      stem:"如果把社会财富比作一个蛋糕，“做大蛋糕”和“分好蛋糕”就形象地表达了（　）\n①生产与分配的关系\n②生产与消费的关系\n③投入与产出的关系\n④发展与共享的关系",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:1,
+      why:"“做大蛋糕”说的是把社会财富总量做多，属于<b>生产</b>这一环节；“分好蛋糕”说的是财富怎么在人们之间划分，属于<b>分配</b>，所以①“生产与分配的关系”成立。“分好蛋糕”对应的是人人共享发展成果，④“发展与共享的关系”也成立，故选①④。②把“分蛋糕”说成消费，方向错了：分蛋糕是分配环节，不涉及消费。③“投入与产出”讲的是效率与成本收益，与“怎么分”不是同一个问题。",
+      tip:"蛋糕比喻题先分清两只手：<b>“做”=生产/发展</b>，<b>“分”=分配/共享</b>；凡是把“分”说成消费、把“做”说成收入的，一律排除。"
+    },
+    {
+      id:2, lv:1, src:"2023·海南 第5题", kind:"real", star:2,
+      stem:"2022 年全国居民人均可支配收入 36883 元，其中人均工资性收入 20590 元、占 55.8%，人均经营净收入 6175 元、占 16.7%，人均财产净收入 3446 元、占 9.3%，人均转移净收入 6892 元、占 18.7%；与上年相比，四项收入均有增长。对上表信息解读正确的是（　）\n①劳动性收入是我国居民收入的主要来源\n②人均经营净收入增长主要是依靠土地出租\n③人均转移净收入增长反映了国家大力促进社会公平正义\n④人均财产净收入增加表明城乡居民收入差距进一步缩小",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:0,
+      why:"工资性收入占比 55.8%，是四项中最高的一项，说明劳动性收入是我国居民收入的主要来源，①正确。土地出租得到的租金属于<b>财产性收入</b>，不是经营性收入，而且材料也没有反映土地出租，②错误。转移净收入来自养老金、社会救济和补助、政策性补贴等，它在增长，说明国家在再分配环节加大了调节力度、促进社会公平正义，③正确。财产净收入增加只能说明这一项收入在涨，城乡收入差距要看<b>城乡收入比</b>，从这一项推不出差距缩小，④错误。故选①③。",
+      tip:"四个“收入篮子”要背死：<b>工资（劳动）、经营、财产（租金/利息/红利）、转移（养老金/补贴/救助）</b>。归错篮子，后面全错。"
+    },
+    {
+      id:3, lv:2, src:"2024·天津 第6题", kind:"real", star:2,
+      stem:"增加农民收入是“三农”工作的中心任务。国家加大政策扶持，向实际种粮农民发放一次性补贴；某地成立村合作社，村民在家门口的种植基地务工，既有薪金，还有股金。农民从中获得的收入（　）\n①涉及初次分配和再分配\n②离不开国家货币政策的支持\n③具有完善社会保障制度的功能\n④主要包括劳动性收入和财产性收入",
+      opts:["①②", "①④", "②③", "③④"],
+      ans:1,
+      why:"一次性补贴是国家的转移性支付，属于<b>再分配</b>；薪金是劳动所得、股金是股份分红，二者都在生产环节按要素取得，属于<b>初次分配</b>，①正确。薪金属于劳动性收入，股金属于财产性收入，④正确。发放一次性补贴动用的是财政资金，属于<b>财政政策</b>，不是货币政策，②错误。完善社会保障制度的主体是国家，材料讲的是补贴与股份合作带来的增收，谈不上“具有完善社会保障制度的功能”，③错误。故选①④。",
+      tip:"看到“补贴、救助、养老金”先归<b>转移性收入 + 再分配</b>；看到“薪金、奖金”归<b>劳动性收入</b>；看到“股金、租金、利息”归<b>财产性收入</b>。"
+    },
+    {
+      id:4, lv:2, src:"2025·云南 第4题", kind:"real", star:2,
+      stem:"小明在某公众平台兼职从事法律咨询服务，兼职收入包括：一是通过法律咨询获得收入；二是达到一定粉丝量后，接广告获得收入，平台从中抽成 5%。由此可知（　）\n①小明的广告收入是按生产要素参与分配\n②小明从事法律咨询的收入属于按劳分配\n③小明从事法律咨询可以增加其收入来源\n④平台抽成补充了现有收入分配要素类型",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:0,
+      why:"广告收入与粉丝量直接挂钩，粉丝量背后是数据和影响力这类生产要素，所以属于按生产要素参与分配，①正确。按劳分配有严格前提——它只存在于<b>公有制经济</b>范围内，小明在公众平台兼职，不属于公有制经济，其咨询收入不是按劳分配，②错误。多一份兼职就多一条收入渠道，③正确。平台抽成是平台凭借资本、技术、数据等要素取得的经营收入，我国现阶段的分配要素类型仍是劳动、资本、土地、知识、技术、管理、数据等，并没有被“补充”出新类型，④错误。故选①③。",
+      tip:"判断“按劳分配”只问一句话：这份收入是不是在<b>公有制经济</b>里、按劳动贡献取得的？平台兼职、私营企业工资都不算。"
+    },
+    {
+      id:5, lv:3, src:"2022·北京 第11题", kind:"real", star:3,
+      stem:"确定和调整最低工资标准是政府调节收入分配的政策之一。最低工资标准的有效执行能提高低收入者的工资水平，缩小收入差距，同时也会影响企业用工成本和社会就业状况。当最低工资标准提高时，企业的下列应对方法将导致社会就业减少的是（　）",
+      opts:["提高产品价格，抵消用工成本的增加", "开拓国际市场，使出口利润高于用工成本增加额", "调整生产布局，将低附加值产品生产转移至国外", "提高管理水平，用节省的运营成本补偿用工成本"],
+      ans:2,
+      why:"A 提高产品价格会影响产品销量，但企业仍在国内生产、仍要用人，不会直接造成社会就业减少。B 开拓国际市场、用出口利润抵消成本上涨，企业反而可能扩大生产，对国内就业没有直接的减少作用。C 把低附加值产品的生产环节转移到国外，国内对应的岗位随之消失，国内用工减少，社会就业减少，符合题意。D 提高管理水平、用节省的运营成本消化成本上涨，企业不必减员，也不会减少就业。故选 C。",
+      tip:"问“就业减少”就找“<b>国内用工被替代或转移出去</b>”的那一环；涨价、开拓市场、提效率都属于“消化成本”，不减人。"
+    },
+    {
+      id:6, lv:3, src:"2025·黑吉辽蒙 第5题", kind:"real", star:3,
+      stem:"根据下图反映的经济信息（某省城乡居民人均可支配收入构成）：城镇居民工资性收入占 60.44%、转移净收入占 17.76%、财产净收入占 10.41%；农村居民工资性收入占 42.24%、转移净收入占 21.01%、财产净收入占 2.49%。以下推断合理的是（　）\n①农村居民收入比城镇居民收入更依赖于国民收入的再分配\n②城镇居民的按劳分配收入在收入分配中占比高于农村居民\n③城镇居民收入比农村居民收入更容易受到就业情况的影响\n④提高农村居民财产性收入占比可以缩小城乡居民收入差距",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:0,
+      why:"转移净收入是再分配的结果。农村居民转移净收入占比 21.01%，高于城镇居民的 17.76%，说明农村居民收入更依赖再分配，①合理。工资性收入受就业状况影响最大，城镇居民工资性收入占比 60.44%，远高于农村的 42.24%，所以城镇居民收入更容易受就业影响，③合理。②错在把“工资性收入”直接等同于“按劳分配收入”：工资性收入里既有公有制单位的按劳分配，也有私营企业的按要素分配，占比高低推不出按劳分配占比高低。④错在“可以缩小”：农村财产净收入占比只有 2.49%，提高它只是改变收入结构，城乡收入差距是总量差距，不等于结构一变差距就缩小。故选①③。",
+      tip:"“<b>占比高</b>”只能说明结构特征，不能直接推出“<b>差距缩小</b>”或“<b>更富裕</b>”；转移净收入占比高，恰恰说明对再分配依赖更强。"
+    },
+    {
+      id:7, lv:4, src:"原创", kind:"orig", star:2,
+      stem:"关于我国现阶段的个人收入分配，下列理解正确的是（　）",
+      opts:["按劳分配为主体意味着劳动者的收入应当大体平均", "按劳分配只存在于公有制经济中，在非公有制经济中主要按生产要素分配", "居民的财产性收入就是存款利息和股票红利，不包括房屋出租所得", "提高劳动报酬在初次分配中的比重，会削弱企业的竞争力，因此不宜提倡"],
+      ans:1,
+      why:"按劳分配为主体讲的是<b>分配方式</b>以按劳分配为主，多劳多得、少劳少得，绝不是平均分配，平均主义恰恰违背按劳分配，A 错。按劳分配的前提是生产资料公有制，所以它只存在于公有制经济中；非公有制经济中主要实行按生产要素分配，B 对。财产性收入包括存款利息、股票红利，也包括房屋出租所得，C 把房屋租金排除在外，错。提高劳动报酬在初次分配中的比重，有利于调动劳动者积极性、扩大消费，短期可能抬高用工成本，但“削弱竞争力、不宜提倡”的说法既不符合政策方向，也不符合长远利益，D 错。",
+      tip:"本框三个高频“绝对化”：<b>按劳分配=平均</b>、<b>按劳分配=按劳动要素分配</b>、<b>提高劳动报酬=损害企业</b>，见一个排除一个。"
+    },
+    {
+      id:8, lv:4, src:"原创", kind:"orig", star:2,
+      stem:"某地引导企业、社会组织和市民参与公益慈善：企业设立基金会资助乡村教育，市民通过志愿服务参与社区养老，一些高收入群体向高校捐赠奖学金。对这类行为认识正确的是（　）",
+      opts:["它属于国民收入的再分配，主体是国家，具有强制性", "它属于第三次分配，以自愿和道德力量为基础，是再分配的有益补充", "它能够替代社会保障制度，从根本上解决收入差距问题", "它表明我国已经形成了以慈善为主的收入分配格局"],
+      ans:1,
+      why:"慈善捐赠、志愿服务是在自愿基础上、依靠道德力量进行的财富流动，属于<b>第三次分配</b>，它是对初次分配和再分配的有益补充，B 对。再分配的主体是国家，靠税收、社会保障、转移支付等手段，具有强制性，慈善不具备这些特征，A 错。第三次分配只能起补充作用，社会保障才是保障基本生活、调节收入差距的主要制度安排，说“替代”“从根本上解决”都是夸大，C 错。我国坚持按劳分配为主体、多种分配方式并存，慈善只是补充，谈不上“以慈善为主”，D 错。",
+      tip:"三次分配各归其位：<b>初次分配靠市场（按要素）</b>、<b>再分配靠国家（税、社保、转移支付）</b>、<b>第三次分配靠自愿（慈善）</b>。"
+    },
+    {
+      id:9, lv:4, src:"原创", kind:"orig", star:3,
+      stem:"老李一家 2024 年的收入情况如下：老李在国有企业上班，全年工资和奖金 12 万元；妻子在民营企业做技术顾问，年收入 18 万元；家里闲置的一间门面房出租，全年租金 4 万元；购买银行理财获得收益 1 万元；因当地实施种粮补贴政策，承包地获得补贴 0.6 万元。下列判断正确的是（　）",
+      opts:["老李的工资奖金属于按劳分配，妻子的收入属于按生产要素分配", "老李妻子的 18 万元属于按劳分配，因为她也付出了劳动", "房租和理财收益属于转移性收入，补贴属于财产性收入", "老李一家的收入中，按劳分配收入占全部收入的比重超过一半"],
+      ans:0,
+      why:"老李在国有企业工作，工资奖金是在公有制经济中按劳动贡献取得的，属于<b>按劳分配</b>；妻子在民营企业做技术顾问，是按技术这一生产要素取得收入，属于<b>按生产要素分配</b>，A 对。按劳分配只存在于公有制经济中，民营企业里的劳动所得不属于按劳分配，B 错。房租和理财收益凭借的是财产（房屋、资本），属于<b>财产性收入</b>；种粮补贴是国家无偿转移给农户的，属于<b>转移性收入</b>，C 把两者说反了。全家收入合计 35.6 万元，按劳分配只有 12 万元，约占三分之一，不到一半，D 错。",
+      tip:"一道题里同时出现“国企工资、民企工资、房租、理财、补贴”时，按<b>公有制/非公有制</b>与<b>劳动/财产/转移</b>两个维度分别贴标签，别混着算。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"“扩中提低”为什么能推动共同富裕",
+      material:"浙江是全国首个共同富裕示范区。近年来，浙江实施“扩中提低”改革：一方面，把技术工人、高校毕业生、新型职业农民等群体作为“扩中”重点，通过技能培训、职称评定、股权激励，让他们的收入跟得上产业升级；另一方面，对低收入农户实行“一户一策”帮扶，提高低保标准，开发公益性岗位，推动山区 26 县发展特色产业。与此同时，浙江还引导企业建立工资正常增长机制，推动技术、数据等要素由市场评价贡献、按贡献决定报酬。2023 年，浙江城乡居民收入比降至 1.83，山区 26 县居民收入增速连续多年高于全省平均水平。",
+      asks:[{q:"结合材料，运用《经济与社会》中“个人收入分配”的知识，说明浙江“扩中提低”改革为什么有利于推动共同富裕。", pt:10}],
+      points:[
+        ["坚持按劳分配为主体、多种分配方式并存，让劳动、技术、数据等要素由市场评价贡献、按贡献决定报酬，能激发各类生产要素的活力，把“蛋糕”做大", "完善分配制度、提高劳动报酬在初次分配中的比重，使劳动者收入随产业升级同步增长，是“扩中”的制度基础", "再分配是调节收入差距的关键环节：提高低保标准、对低收入农户精准帮扶，是通过转移支付等手段保障基本生活，兜住底线", "开发公益性岗位属于以工代赈式的帮扶，把“输血”与“造血”结合起来，增强低收入群体的自我发展能力", "推动山区 26 县发展特色产业，是在做大总量中优化区域收入结构，缩小城乡、区域收入差距", "共同富裕不是同步富裕、平均分配，而是在高质量发展中由全体人民共享发展成果，浙江城乡收入比下降正是这一过程的体现"]
+      ],
+      tip:"“为什么有利于共同富裕”类设问，答法固定为三段：<b>做大（发展/要素活力）→ 分好（初次分配 + 再分配 + 第三次分配）→ 定性（共享发展成果，不是平均主义）</b>。每一段都要挂一条材料里的具体做法。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"第三次分配能干什么、不能干什么",
+      material:"某市民营企业家发起成立教育基金会，十年间募集资金 3.2 亿元，资助困难学生 1.8 万人；全市注册志愿者达 96 万人，社区养老、助残、应急救援等领域活跃着志愿服务队伍；一些互联网平台开设公益专区，网友每完成一次捐赠，平台按比例配捐。该市民政部门负责人说：“慈善不是万能的，困难群众的基本生活还要靠社会保障兜底。”也有人认为，既然要共同富裕，就应当主要靠高收入者捐赠来缩小差距。",
+      asks:[{q:"结合材料，运用《经济与社会》知识，评析“实现共同富裕应当主要靠高收入者捐赠”这一观点。", pt:8}],
+      points:[
+        ["合理性：慈善捐赠、志愿服务属于第三次分配，以自愿和道德力量为基础，能动员社会力量帮扶困难群体，是初次分配和再分配的有益补充", "材料中教育基金会资助困难学生、志愿者参与社区养老，确实起到了改善民生、促进社会公平的作用", "不合理性：共同富裕首先要把“蛋糕”做大，靠的是高质量发展和按劳分配为主体、多种分配方式并存的分配制度，不能把希望寄托在捐赠上", "调节收入差距主要靠再分配：税收、社会保障、转移支付是制度化、稳定性的安排，“主要靠捐赠”颠倒了主次，也把自愿行为变成了道德绑架", "正确做法：构建初次分配、再分配、第三次分配协调配套的制度体系，规范收入分配秩序，保护合法收入，取缔非法收入，增加低收入者收入，扩大中等收入群体"]
+      ],
+      tip:"评析题必须写“<b>合理性 + 不合理性 + 正确做法</b>”三层。只写“这个观点是错的”，最多拿一半分。"
+    },
+    {
+      id:12, lv:5, src:"2025·河南 第18题", star:3, title:"给骑手缴五险一金，会压垮企业吗",
+      material:"党的二十届三中全会提出，“支持和规范发展新就业形态”“完善劳动关系协商协调机制，加强劳动者权益保障”。快递员、外卖送餐员、网络主播……我国新就业形态劳动者已达 8400 万人，占职工总数的 21%。\n保障新就业形态劳动者权益，企业在行动。某平台企业率先为外卖骑手缴纳五险一金，为员工建设公寓及配套设施、提供购房无息贷款，还有一轮轮的涨薪……一系列提高员工工资福利待遇的举措赢来阵阵叫好，不少企业纷纷跟进。但也有人认为，“这样做会加重企业负担，不利于行业的长远发展”。",
+      asks:[{q:"结合材料，运用《经济与社会》知识，对“提高员工工资福利待遇会加重企业负担、不利于行业长远发展”这一观点进行评析。", pt:8}],
+      points:[
+        ["合理性：提高工资福利待遇短期内确实会增加企业用工成本，压缩当期利润，对经营困难的企业是不小的压力", "但劳动者是企业最重要的生产要素，待遇提高能调动劳动积极性、稳定队伍，减少流失和招工成本", "提高待遇会倒逼企业改进经营管理、加大科技投入、提高生产效率，推动产品结构优化升级", "劳动者收入增加→消费能力提升→为企业生产创造新的需求，从长远看有利于行业发展和扩大内需", "国家应完善社会保障和劳动关系协调机制，为企业依法用工提供制度保障，实现企业发展和劳动者权益保护的双赢"]
+      ],
+      tip:"“<b>会不会加重企业负担</b>”类评析，落点在“<b>短期成本 vs 长期竞争力</b>”：先承认短期成本上升，再用“积极性—效率—消费”链条把它翻过来。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "pol-bx2-c4-s1-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigFRAME(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#3730a3'>分配制度的四层结构（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='46' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='63' font-weight='700'>做大蛋糕：生产决定分配</text><text x='38' y='80'>高质量发展是分配的物质基础</text><rect x='24' y='96' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='113' font-weight='700'>分好蛋糕：按劳分配为主体</text><text x='38' y='130'>多种分配方式并存，要素按贡献取酬</text><rect x='24' y='146' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='163' font-weight='700'>四种收入来源</text><text x='38' y='180'>劳动、经营、财产、转移</text><rect x='24' y='196' width='352' height='42' rx='8' fill='#eef2ff' stroke='#a5b4fc'/><text x='38' y='213' font-weight='700'>落脚点：共同富裕</text><text x='38' y='230'>共享发展成果，不是平均主义</text><text x='24' y='266' font-size='10' fill='#4338ca'>大题自上而下写，缺一层就少一层分</text><rect x='430' y='46' width='306' height='200' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='446' y='70' font-size='12' font-weight='700' fill='#9a3412'>三个常考判断</text><text x='446' y='96'>按劳分配 ≠ 平均分配</text><text x='446' y='120'>按劳分配只在公有制经济中</text><text x='446' y='144'>按劳分配 ≠ 按劳动要素分配</text><text x='446' y='174' font-size='12' font-weight='700' fill='#9a3412'>两个“看”</text><text x='446' y='198'>看主体：国家 / 市场 / 社会力量</text><text x='446' y='222'>看手段：税社保 / 要素报酬 / 自愿捐赠</text></g></svg></div>"; }
+  function buildFigTHREE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#1e3a8a'>三次分配各管什么（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='50' width='222' height='96' rx='10' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='74' font-weight='700'>初次分配</text><text x='38' y='96'>主体：市场与企业</text><text x='38' y='116'>手段：工资、利润、租金</text><text x='38' y='136'>关键词：按要素贡献</text><rect x='269' y='50' width='222' height='96' rx='10' fill='#ecfdf5' stroke='#6ee7b7'/><text x='283' y='74' font-weight='700'>再分配</text><text x='283' y='96'>主体：国家</text><text x='283' y='116'>手段：税收、社保、转移支付</text><text x='283' y='136'>关键词：强制、调节差距</text><rect x='514' y='50' width='222' height='96' rx='10' fill='#fdf2f8' stroke='#f9a8d4'/><text x='528' y='74' font-weight='700'>第三次分配</text><text x='528' y='96'>主体：社会力量与个人</text><text x='528' y='116'>手段：慈善捐赠、志愿服务</text><text x='528' y='136'>关键词：自愿、道德力量</text><rect x='24' y='166' width='712' height='54' rx='10' fill='#f8fafc' stroke='#cbd5e1'/><text x='38' y='188' font-weight='700' fill='#0f172a'>答题句式：</text><text x='124' y='188'>初次分配讲“效率与要素报酬”，再分配讲“公平与兜底”，第三次分配讲“补充与自愿”。</text><text x='124' y='208'>凡是把慈善说成“再分配”、把社保说成“自愿”的选项，都在这张表上站不住。</text><text x='24' y='248' font-size='10' fill='#334155'>共同富裕 = 做大蛋糕（发展）+ 分好蛋糕（三次分配协调配套），缺一不可。</text></g></svg></div>"; }
+  var FIG = {
+    "frame": buildFigFRAME,
+    "three": buildFigTHREE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

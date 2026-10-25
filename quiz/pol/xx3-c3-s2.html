@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>理解质量互变</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "pol", "slug": "xx3-c3-s2", "n": 12, "title": "理解质量互变"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=pol&quiz=1">‹ 政治 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 选择性必修3 逻辑与思维 · 第三单元第九课</span>
+        <h1>理解质量互变<span class="thin">北京真题 1 道 · 外地真题 3 道 · 原创 5 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一课只有一条规律、三个概念：<b>量变—质变—新的量变</b>，以及把它们卡住的<b>度</b>与<b>关节点</b>。选择题最爱设的坑不是“不懂规律”，而是把“量变必然引起质变”“质变就是发展”“关节点就是度”当成常识。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>4</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='250' rx='18' fill='#ecfdf5'/><path d='M60 190h180' stroke='#065f46' stroke-width='2' stroke-dasharray='5 4'/><path d='M60 190c26-2 44-6 62-16s30-26 44-26 32 10 40 22 16 18 34 18' fill='none' stroke='#047857' stroke-width='3'/><circle cx='196' cy='148' r='5' fill='#b45309'/><g font-size='11' fill='#064e3b' text-anchor='middle'><text x='92' y='214' font-weight='700'>量变</text><text x='196' y='214' font-weight='700'>质变</text><text x='268' y='214' font-weight='700'>新的量变</text></g><g font-size='12' fill='#064e3b' text-anchor='middle' font-weight='700'><text x='150' y='244'>质量互变规律</text><text x='150' y='264' font-size='10' font-weight='400'>度 · 关节点 · 适度原则</text></g><g font-size='9.5' fill='#047857'><text x='24' y='44' font-weight='700'>质变点＝关节点</text><text x='24' y='60'>度：保持自身质的量的限度</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本课：量变是准备，质变是结果，度是闸门</h2></div>
+  <p class="sec-sub">左图把“量变—质变—新的量变”画成一个循环，并标出关节点；右图是三组最容易混淆的概念对照，考前扫一眼比刷十道题管用。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地 2023—2025</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 1 考，本页收 1 道</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地 2023—2025 收 3 道</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">原创 5 道</span><span style="background:#f3f0ff;color:#5b21b6;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">综合题 3 道（2 真题 + 1 原创）</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>本框在北京卷里通常<b>不作为独立考点，而是藏在“逻辑综合题”的一个选项里</b>——2024 年北京第 5 题四个选项分别考概念外延、属种关系、渐进性与飞跃性、对称关系，正确项恰好是“把握好渐进性和飞跃性的关系”。外地卷则常以“度、关节点、适度原则、连续性与间断性”直接命题，2024 山东第 13 题（欹器）是最典型的一道。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2024 年第 5 题</b>（长城，“接续努力、久久为功”指向渐进性与飞跃性的关系）收入本页；2026 年第 5 题（月季项链）同样含“量变—质变”表述，但该题已收入必修 4 哲学页，不重复收。外地卷：<b>2024 年山东第 13 题</b>（欹器“虚则欹、中则正、满则覆”考适度原则）、<b>2023 年重庆第 13 题</b>（人工智能发展是连续性与间断性的统一）、<b>2025 年安徽第 16 题</b>（智能家电迭代升级体现质量互变）收入。另：2024 年辽宁第 10 题（龟兔赛跑）虽含“量变—质变”干扰项，正确项落在“现象与本质”，未收。</p>
+</div><div class="panel"><p class="panel-title">① 量变质变循环与度的位置（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#065f46'>量变—质变—新的量变，以及“度”的位置（示意图，非原卷图）</text><rect x='24' y='46' width='352' height='206' rx='10' fill='#ecfdf5' stroke='#a7f3d0'/><g font-size='11' fill='#064e3b'><text x='38' y='70' font-size='12' font-weight='700'>一句话链条</text><text x='38' y='96'>量变是质变的必要准备</text><text x='38' y='118'>质变是量变的必然结果</text><text x='38' y='140'>质变又为新的量变开辟道路</text><text x='38' y='166' font-weight='700'>三个刻度</text><text x='38' y='188'>度：保持自身质的量的限度</text><text x='38' y='210'>关节点：引起质变的那个界限</text><text x='38' y='232'>适度：把量控制在度的范围内</text></g><rect x='396' y='46' width='340' height='206' rx='10' fill='#fef3c7' stroke='#fde68a'/><g font-size='11' fill='#1f2937'><text x='410' y='70' font-size='12' font-weight='700'>欹器：度在哪一格</text><text x='410' y='96'>空着时——斜（虚则欹）</text><text x='410' y='118'>注水六分——直立（中则正）</text><text x='410' y='140'>水逾七分——倾覆（满则覆）</text><text x='410' y='166'>六分到七分之间＝关节点</text><text x='410' y='188' font-weight='700'>迁移到考场</text><text x='410' y='210'>“火候、剂量、力度”＝度</text><text x='410' y='232'>“不足／过头”＝越过关节点</text></g><text x='24' y='280' font-size='11.5' fill='#334155'>注意：质变不等于发展——被淘汰、走向衰败也是质变，但不是前进上升的变化。</text></svg></div></div><div class="panel"><p class="panel-title">② 三组易混：量变质变 / 度与关节点 / 质变与发展（示意图，非原卷图）</p><div class="svg-box" id="map-fig-lzbh2"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#065f46'>三组易混对照（示意图，非原卷图）</text><rect x='24' y='46' width='352' height='206' rx='10' fill='#eef2ff' stroke='#c7d2fe'/><g font-size='11' fill='#1f2937'><text x='38' y='70' font-size='12' font-weight='700'>① 量变 vs 质变</text><text x='38' y='94'>量变：数量增减、场所变更</text><text x='38' y='114'>质变：根本性质变化、质态转变</text><text x='38' y='134'>标志：数量／性质</text><text x='38' y='160' font-size='12' font-weight='700'>② 度 vs 关节点</text><text x='38' y='184'>度：一段区间（限度、幅度）</text><text x='38' y='204'>关节点：一个点（临界点）</text><text x='38' y='224'>标志：范围／界限</text></g><rect x='396' y='46' width='340' height='206' rx='10' fill='#fef3c7' stroke='#fde68a'/><g font-size='11' fill='#1f2937'><text x='410' y='70' font-size='12' font-weight='700'>③ 质变 vs 发展</text><text x='410' y='94'>质变：性质变没变</text><text x='410' y='116'>发展：往哪个方向变</text><text x='410' y='138'>倒退的质变不是发展</text><text x='410' y='164' font-size='12' font-weight='700'>四组词一一对应</text><text x='410' y='188'>渐进性＝连续性＝量变</text><text x='410' y='210'>飞跃性＝间断性＝质变</text><text x='410' y='234' fill='#9a3412'>换词不换意，别被字面绕住</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">质量互变这一课的分，多半丢在概念混用上。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把“度”和“关节点”混为一谈。</b>度是保持自身质的稳定性的量的限度、幅度、范围（一段区间）；关节点是量变引起质变的界限（一个点）。问“100℃”答关节点，问“能容忍多大范围”答度。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>认为量变必然立即引起质变。</b>量变只有达到一定程度（越过关节点）才引起质变；还有“量变必然向好”的说法同样错，变化方向有前进也有倒退。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把质变等同于发展。</b>质变讲性质是否改变，发展讲是否前进上升；被淘汰、走向衰败也是质变，但不是发展。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“连续性与间断性”和“量变与质变”割成两套。</b>渐进性＝连续性＝量变，飞跃性＝间断性＝质变，四组词一一对应，题目换词不换意。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>认为量变过程中没有质变、质变过程中没有量变。</b>二者相互渗透：量变中包含部分质变，质变中有量的扩张，截然分开就违背了质量互变规律。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把共变法当求异法。</b>一个因素连续变化、被考察现象随之变化，是共变法；要求其他条件相同、某因素“有／无”两种场合对比的，才是求异法。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先看图 ①，把循环念一遍：量变是质变的必要准备，质变是量变的必然结果，质变又为新的量变开辟道路；再记住“度是区间、关节点是点”。第 1 关就考这两块。</li><li>第 2 关的北京 2024 第 5 题要当成“四选项四知识点”的样本：A 概念外延、B 整体与部分、C 渐进性与飞跃性、D 对称关系——把每个选项的知识点标签写在旁边，再做题就快了。</li><li>第 3、4 关的真题都有“绝对化干扰项”：2023 重庆第 13 题（彻底消失）、2025 安徽第 16 题（演绎推理、关系判断）。做题时先划掉绝对化表述，再验证正确项。</li><li>综合题第 10 题是开放性判断，选“是”或“否”都能得分；第 11 题务必把“时—度—效”三个字分别落到规律的三句话上。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（1 道）：</b>2024 年第 5 题（长城，“接续努力、久久为功”考渐进性与飞跃性的关系）。</li><li><b>外地真题（3 道）：</b>2024 年山东第 13 题、2023 年重庆第 13 题、2025 年安徽第 16 题。</li><li><b>原创题（5 道）：</b>第 1、2、4、8、9 题为本页自编，标 <b>orig</b>。主要是补“度与关节点”“质变不等于发展”这类教材原文题——题库里同类真题多把正确项落在必修四哲学，直接搬来会跑题。</li><li><b>综合题（3 道）：</b>2024 年浙江 1 月第 26 题第（1）问、2025 年山东第 20 题第（1）问为真题；“一份‘禁限放’政策的三年”为原创，标 <b>orig</b>。<b>提示：</b>2025 年山东第 20 题的第（2）问已收入必修 3 中国特色社会主义的页面，两道问法不同，本页只做第（1）问。</li><li>未收候选：2024 年辽宁第 10 题（龟兔赛跑，正确项落在现象与本质）、2022 年山东第 8 题（正确项落在社会存在与社会意识）。<b>本页不含北京合格考题，也不含带原卷漫画的题（如 2022 天津第 11 题）。</b></li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修3 逻辑与思维", chapter:"第三单元 运用辩证思维方法", section:"第九课 理解质量互变"};
+  var TOPIC = {1:"量变与质变的关系", 2:"度与关节点", 3:"渐进性与飞跃性（北京 2024 第5题）", 4:"适度原则", 5:"欹器之“度”（2024 山东第13题）", 6:"连续性与间断性（2023 重庆第13题）", 7:"质量互变与超前思维（2025 安徽第16题）", 8:"质变不等于发展", 9:"渐进性与飞跃性的统一"};
+  var LEVELS = [
+    {id:1, name:"先把三个概念分清", sub:"两道原创热身：一道判量变质变，一道判度与关节点", badge:"基础", color:"#047857", lcl:"#ecfdf5"},
+    {id:2, name:"北京真题校准：渐进性与飞跃性", sub:"2024 北京第 5 题（长城与“久久为功”）＋一道原创适度原则题", badge:"基础+", color:"#0369a1", lcl:"#f0f9ff"},
+    {id:3, name:"度在哪里：欹器、火候与临界点", sub:"2024 山东第 13 题（欹器）、2023 重庆第 13 题（人工智能的连续性与间断性）", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"本节易错", sub:"质量互变＋两处高频错认：把质变当发展、把量变当必然引起质变", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"千万工程到没到质变、改革的“时度效”、一份“禁限放”政策的评析", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创", kind:"orig", star:1,
+      stem:"某地治理沙化土地，最初在固定沙丘上成片种植耐旱灌木；三年后灌木连片成带，沙丘表层形成结皮，风蚀量下降约八成，流动沙丘转为固定沙地。从质量互变规律看，这一变化表明（　）",
+      opts:["量变是质变的必要准备，质变是量变的必然结果", "只要有量变，就一定会立即引起质变", "质变是量变的简单重复，不带来新质", "量变积累到一定程度，事物必然向好的方向变化"],
+      ans:0,
+      why:"A 正确：种灌木、连片成带是数量的增加和场所的变更，属量变；沙丘由流动转为固定、风蚀量骤降，是根本性质的变化，属质变。量变为质变作了必要准备，量变积累到一定程度必然引起质变。B 错：量变必须达到一定程度（度）才引起质变，不是“有量变就立即质变”。C 错：质变是事物根本性质的变化，是新质代替旧质，不是量变的重复。D 错：量变引起质变是必然的，但变化的方向有前进也有倒退，不能一概说“必然向好”。",
+      tip:"量变质变题先找两个动作：<b>“积累”对应量变，“转变性质”对应质变</b>。再排除“必然向好”“立即质变”两种绝对化说法。"
+    },
+    {
+      id:2, lv:1, src:"原创", kind:"orig", star:1,
+      stem:"在常压下，水加热到 100℃ 会沸腾；气压降低时，沸腾温度随之下降。在质量互变规律中，“100℃”这一数值指的是（　）",
+      opts:["关节点，即量变达到一定程度、引起质变时的量的界限", "度，即事物保持自身质的稳定性的量的限度、幅度、范围", "量变，即事物数量的增减和场所的变更", "质变，即事物根本性质的变化"],
+      ans:0,
+      why:"A 正确：100℃ 是水由液态转为气态的那一点，是量变引起质变的界限与临界点，教材称之为关节点（临界点）。B 错：度是“保持自身质的稳定性的量的限度、幅度、范围”，是一段区间（0℃—100℃ 之间水保持液态），不是某一个点；把 100℃ 说成度，是把“界限”当成“范围”。C 错：100℃ 是温度的一个量值，但题干问的是它在规律中的身份，不是“数量的增减”。D 错：沸腾才是质变，100℃ 只是质变发生的界限。",
+      tip:"一句话区分：<b>度是区间，关节点是界的那个点</b>。问“在哪一点变”答关节点，问“能容忍多大范围”答度。"
+    },
+    {
+      id:3, lv:2, src:"2024·北京 第5题", kind:"real", star:2,
+      stem:"长城是中华文明的重要象征。延庆区八达岭镇石峡村的乡亲们自发守护石峡关长城，传承长城文化。习近平总书记回信勉励他们接续努力、久久为功，带动更多人了解长城、保护长城。下列选项正确的是（　）",
+      opts:["“长城”和“中华文明的重要象征”在外延上是一致的", "“石峡关长城”和“长城”是属种关系", "“接续努力、久久为功”，说明要把握好事物发展过程中渐进性和飞跃性的关系", "“带动更多人了解长城、保护长城”，此处的“带动”关系为对称关系"],
+      ans:2,
+      why:"C 正确：“接续努力、久久为功”讲的是持续积累、不急于求成，对应量变阶段；而保护长城最终要见实效，需要量变积累到一定程度实现飞跃，因此要求把握好渐进性与飞跃性的关系，这是本框“量变与质变的统一”的直接运用。A 错：“长城”是“中华文明的重要象征”之一，二者是种属关系，前者的外延小于后者，不可能外延一致。B 错：“石峡关长城”是“长城”的一部分，二者是整体与部分的关系，不是属种（共性与个性）关系。D 错：对称关系要求甲对乙有某关系时乙对甲也有；“带动”是单向的，属非对称关系。",
+      tip:"北京这类“四个选项四块知识”的题，<b>先用一句话给每个选项贴知识点标签</b>，再看哪一块与本框吻合。"
+    },
+    {
+      id:4, lv:2, src:"原创", kind:"orig", star:2,
+      stem:"医生用药，剂量不足则无效，剂量过大则伤身；厨师做菜，火候不到则不熟，火候过头则焦。这给我们的启示是（　）",
+      opts:["要坚持适度原则，把量控制在度的范围内，防止事物向不利方向转化", "要抓住时机促成质变，因为质变比量变更重要", "要尽可能多地积累量，量越大效果越好", "要承认事物的质是固定不变的，量的变化无关紧要"],
+      ans:0,
+      why:"A 正确：用药、用火都有一个“度”，在度的范围内事物保持自身性质、发挥正常功能；超过关节点就会向不利方向转化，所以要坚持适度原则，“得中”而处之。B 错：材料强调的是“不要过头”，不是“赶快飞跃”；而且量变与质变各自地位不同，不能笼统说质变比量变更重要。C 错：材料恰恰说明量并非越多越好，超过度就会走向反面。D 错：质并非固定不变，量变积累到一定程度必然引起质变，说“量的变化无关紧要”违背质量互变规律。",
+      tip:"看到“不足……过头……”的对称表述，直接锁定<b>适度原则</b>；选项中凡出现“越多越好”“越少越好”，先排除。"
+    },
+    {
+      id:5, lv:3, src:"2024·山东 第13题", kind:"real", star:3,
+      stem:"古代有一种“欹器”，呈梭形，以绳穿之，悬于两杆之间。当里面空着时，器皿是斜的；注水至六分时，竖直而立；水逾七分，则发生倾覆。正所谓，“虚则欹、中则正、满则覆”。厨师恰当把握火候，才能烹饪出美味佳肴。医生准确把握剂量，才能让药品发挥效用。在工作中把握好“度”，才能掌握主动、取得实效。下列判断正确的是（　）<br>①探求注水量与欹器状态之间因果联系运用了求异法<br>②从把握火候、把握剂量到把握好“度”的推理属于或然推理<br>③“中则正”说明维持事物质的稳定性需要把持有度<br>④从事物个性中抽取“度”的共性，上升到了思维具体",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:2,
+      why:"②③正确：从火候、剂量两个具体场合概括出“把握好度”的一般结论，属不完全归纳推理，结论具有或然性；而“中则正”正是说注水到六分、恰在度的范围内，器皿才保持“正”这一性质，说明维持事物质的稳定性需要把持有度。①错：注水量从零到六分到七分，只有一个因素在连续变化、状态随之变化，这是共变法，不是求异法（求异法要求其他条件相同、某因素有与无两种场合对比）。④错：从个性中抽取共性属于思维抽象，不是思维具体；思维具体是在理性认识层次上把对象的多样性统一整体再现出来。",
+      tip:"共变法的标志是“随……变化而变化”，求异法的标志是“有它／没它”两组对照；材料里一个量连续变化，就选共变法。"
+    },
+    {
+      id:6, lv:3, src:"2023·重庆 第13题", kind:"real", star:2,
+      stem:"人工智能局部智能水平上超越人类，对此说法正确的是（　）",
+      opts:["说明意识的反复性决定了实践的曲折性", "体现了认识与实践之间的矛盾关系的彻底消失", "说明人工智能的发展是连续性与间断性的统一", "体现了从感性具体到思维具体，思维具体再到思维抽象"],
+      ans:2,
+      why:"C 正确：人工智能从弱到强、从局部突破到整体提升，是量的连续积累与阶段性跃升的统一，即连续性与间断性（渐进性与飞跃性）的统一，属质量互变规律在具体事物上的体现。A 错：实践决定认识，实践的曲折性有其客观根源，不能说是“意识的反复性决定”的，颠倒了决定关系。B 错：认识与实践的矛盾贯穿认识发展全过程，不可能“彻底消失”。D 错：认识发展的历程是“感性具体—思维抽象—思维具体”，该选项把顺序打乱，且与材料无关。",
+      tip:"凡是出现“彻底消失”“彻底解决”“完全一致”的选项，<b>先按绝对化表述排除</b>，再回头验证正确项。"
+    },
+    {
+      id:7, lv:4, src:"2025·安徽 第16题", kind:"real", star:3,
+      stem:"当燃气热水器不只是简单提供热水，而是拥有了“美肤”功效；当非遗旗袍在家通过智能洗衣机就能实现定制化洗涤、熨烫……诸多智能家电新品的悄然亮相已经改变人们的生活，未来还会给消费者带来更多舒适、便捷与高效的体验。据此，下列说法正确的是（　）<br>①人们对智能家电的已有体验是通过演绎推理得出的<br>②“燃气热水器具有美肤功效”这一判断是关系判断<br>③智能家电的迭代升级体现事物发展遵循了质量互变规律<br>④人们对智能家电发展趋势的预测体现超前思维的前瞻性",
+      opts:["①②", "①④", "②③", "③④"],
+      ans:3,
+      why:"③④正确：智能家电从“简单功能”到“美肤”“定制化洗涤”的新功能迭代，是功能积累到一定程度后的升级换代，体现量变引起质变、新质变又为新的量变开辟道路，即质量互变规律；人们对“未来还会带来更多舒适便捷”的判断，是从现实出发把握事物发展趋势，体现超前思维的前瞻性（预测性）。①错：由已有体验概括出一般结论，方向是“个别到一般”，属归纳推理而非演绎推理。②错：“燃气热水器具有美肤功效”断定的是对象具有某种性质，属性质判断，不是断定对象之间关系的关系判断。",
+      tip:"“迭代升级”“换代”“跃升”这些词出现时，<b>质量互变往往就是正确项</b>；同时留意同题里的“预测／趋势”往往是超前思维的送分项。"
+    },
+    {
+      id:8, lv:4, src:"原创", kind:"orig", star:3,
+      stem:"某行业三年内出现三种变化：①甲企业把产能扩大五倍；②乙企业放弃旧技术路线，转产全新的固态电池；③丙企业因技术落后被市场淘汰。对这三种变化的判断，正确的是（　）<br>①①属于量变，②属于质变<br>②②的变化必然带来发展<br>③③说明质变也可能是倒退的<br>④量变积累到一定程度必然引起质变，所以①必然走向②",
+      opts:["①③", "①②", "②④", "③④"],
+      ans:0,
+      why:"①③正确：扩大产能是数量与规模的增减，属量变；放弃旧技术路线、转产固态电池是根本性质的变化，属质变；被市场淘汰是向下的、倒退的性质变化，说明质变有两种方向，不必然等于发展。②错：质变是事物根本性质的变化，发展是前进的、上升的变化，倒退的质变不是发展。④错：量变必须积累到一定程度才引起质变，而且甲企业扩产并不必然导致转产，两者没有必然因果。",
+      tip:"<b>质变≠发展</b>：质变讲“性质变没变”，发展讲“往哪个方向变”，这是本课最贵的一条辨析。"
+    },
+    {
+      id:9, lv:4, src:"原创", kind:"orig", star:3,
+      stem:"从蒸汽机车到内燃机车、电力机车，再到高速动车组，我国轨道交通装备每一次代际更替，都伴随着长期的技术积累和阶段性的技术跃升。这说明（　）<br>①事物发展是渐进性与飞跃性的统一<br>②事物发展是连续性与间断性的统一<br>③量变过程中没有质变，质变过程中没有量变<br>④每一次技术跃升都是对前一阶段技术的全盘否定",
+      opts:["①②", "①③", "②④", "③④"],
+      ans:0,
+      why:"①②正确：长期技术积累是渐进性、连续性，阶段性的代际跃升是飞跃性、间断性，事物发展正是二者的统一。③错：量变与质变相互渗透，量变中包含部分质变，质变中也有量的扩张，把两者截然分开违背质量互变规律。④错：辩证否定是既克服又保留，技术跃升保留了原有技术的合理成分，不是全盘否定。",
+      tip:"渐进性＝连续性＝量变，飞跃性＝间断性＝质变；<b>四组词一一对应</b>，题目换词不换意。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"2024·浙江1月 第26题", star:3, title:"“千万工程”二十年：到底算不算质变",
+      material:"“千万工程”是习近平同志任浙江省委书记时在深入调查研究基础上启动、各级党委齐抓共管的重大工程。工程实施 20 年来，经历了从部分乡村到全省域乡村的扩展，从乡村环境治理到美丽乡村建设再到努力实现共同富裕的变化，如今正向全面打造乡村振兴浙江样板推进。工程的实施使浙江大地发生了美丽蝶变。",
+      asks:[{q:"判断“千万工程”实施以来浙江乡村是否发生了质变，并说明理由。", pt:4}],
+      points:[
+        ["答案一（是）：质变是事物根本性质的变化，是事物由一种质态向另一种质态的转变", "从美丽乡村建设看，实施 20 年后浙江乡村已完成环境整治、变成美丽乡村，乡村的性质、面貌发生了根本变化，已发生质变", "答案二（否）：判断质变的关键仍是“根本性质是否改变”", "从全面打造乡村振兴浙江样板（共同富裕）看，浙江乡村仍在向这一目标迈进，尚未完成这一根本转变，仍处于量变过程", "无论选“是”还是“否”，都要做到：先写质变的含义（根本性质的变化／由一种质态向另一种质态的转变），再对准材料中的具体阶段作判断", "这一问的评分点是“概念＋材料对应”，只表态不写含义、或只抄材料不作判断，都拿不到分"]
+      ],
+      tip:"判断类主观题的答题公式：<b>先亮概念（质变是什么）→ 再切材料（哪个阶段、哪一变化）→ 最后下判断</b>。选“是”或“否”都可能得分，关键在概念与材料是否对得上。"
+    },
+    {
+      id:11, lv:5, src:"2025·山东 第20题", star:3, title:"抓改革落实，为什么要“把握时度效”",
+      material:"在谈及抓改革落实时，习近平强调，“既要积极主动，更要扎实稳健，明确优先序，把握时度效，尽力而为、量力而行，不能脱离实际”。推出改革措施往往有着宝贵时间窗口，错过了时机就难以达到预期目的。对于一项改革，人民群众的呼声已经很高，各方面条件也比较成熟，就要尽快推出；各方面认识还不一致、条件不太具备的，可以循序渐进推动。落实改革措施要掌握“火候”，力度太小难以真正解决问题，力度过大又有可能引发其他负面效应。新时代全面深化改革关键在于抓部署、抓落实，取得实绩实效。如，在国有企业改革方面，中央出台了一系列政策方案，国有企业改革力度不断加大，国有资产大幅增值。",
+      asks:[{q:"抓改革落实，要把握时度效。结合材料，运用量变质变规律相关知识对此加以说明。", pt:6}],
+      points:[
+        ["量变是质变的必要准备，质变是量变的必然结果；要重视量的积累，又要不失时机促成质变", "“时”：改革有宝贵时间窗口，条件成熟时要尽快推出、抓住时机促成质变；条件不具备时要循序渐进积累量变，为质变奠基——因“时”定策", "量变只有达到一定程度才会引起质变，要坚持适度原则，把量控制在度的范围内", "“度”：落实改革要掌握“火候”，力度太小解决不了问题、力度过大引发负面效应，必须精准把握改革之“度”，使质变稳健可控", "事物发展是量变与质变的统一，量变引起质变、质变又为新的量变开辟道路", "“效”：国有企业从出台一系列政策方案（量的积累）到国有资产大幅增值（质的提升），正是量变到质变的转化，只有把握措施与实效的链条才能取得实绩"]
+      ],
+      tip:"答“时度效”要<b>把三个字分别落到规律的三句话上</b>：时→抓住时机促成质变；度→坚持适度原则；效→量变到质变的实绩。逐字对应，阅卷点一目了然。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"一份“禁限放”政策的三年：哪里越过了度",
+      material:"某市为治理大气污染，对烟花爆竹由“全面禁放”改为“分区分时限放”，几年间三次调整：<br>第一次，全市域全年禁放，节庆期间群众意见集中，违规燃放反而增多；<br>第二次，改为“主城区禁放、郊区限时燃放”，并同步增加公交运力、设置集中燃放点，违规现象明显下降；<br>第三次，根据空气质量监测数据，把限放时段从 7 天压缩到 3 天，同时保留集中燃放点。<br>该市负责人说：“管得太死，群众不接受、执行不了；放得太开，空气质量和安全又兜不住，关键是把住那个‘度’。”",
+      asks:[{q:"结合材料，运用“理解质量互变”的知识，说明该市三次调整所体现的道理。", pt:6}, {q:"有人认为：“既然要治理污染，就应当一步到位全面禁放，反复调整说明政策不坚定。”请对这一观点作简要评析。", pt:4}],
+      points:[
+        ["事物的发展总是从量变开始，量变是质变的必要准备，质变是量变的必然结果；该市在治理中不断积累监测数据、调整措施，属于量的积累与局部调整", "量变只有达到一定程度才会引起质变，必须坚持适度原则：第一次“全市域全年禁放”力度越过群众承受之“度”，执行反而失效；第二次增加运力、设集中燃放点，把力度调回度的范围内，效果明显好转", "度是保持事物质的稳定性的量的限度，关节点是量变引起质变的界限；限放时段由 7 天压缩到 3 天，是在监测数据支撑下逼近而非越过关节点", "质变又为新的量变开辟道路：每一轮调整都在新的政策质态上开始新的量变，体现量变与质变的统一"],
+        ["评析：该观点看到了治理污染的迫切性，但把“一步到位”等同于“政策坚定”，违背了量变质变规律", "治理效果受群众承受能力、执行条件制约，越过度的“一步到位”会像第一次禁放一样落空；反复调整不是不坚定，而是依据实践反馈在度的范围内优化，是尊重规律的表现"]
+      ],
+      tip:"评析“一步到位”“一刀切”类观点，<b>先承认其合理动机，再用“度／关节点／量变准备”指出其对规律的无视</b>，最后落到“调整是尊重规律而非不坚定”。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "pol-xx3-c3-s2-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigLZBH1(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#065f46'>量变—质变—新的量变，以及“度”的位置（示意图，非原卷图）</text><rect x='24' y='46' width='352' height='206' rx='10' fill='#ecfdf5' stroke='#a7f3d0'/><g font-size='11' fill='#064e3b'><text x='38' y='70' font-size='12' font-weight='700'>一句话链条</text><text x='38' y='96'>量变是质变的必要准备</text><text x='38' y='118'>质变是量变的必然结果</text><text x='38' y='140'>质变又为新的量变开辟道路</text><text x='38' y='166' font-weight='700'>三个刻度</text><text x='38' y='188'>度：保持自身质的量的限度</text><text x='38' y='210'>关节点：引起质变的那个界限</text><text x='38' y='232'>适度：把量控制在度的范围内</text></g><rect x='396' y='46' width='340' height='206' rx='10' fill='#fef3c7' stroke='#fde68a'/><g font-size='11' fill='#1f2937'><text x='410' y='70' font-size='12' font-weight='700'>欹器：度在哪一格</text><text x='410' y='96'>空着时——斜（虚则欹）</text><text x='410' y='118'>注水六分——直立（中则正）</text><text x='410' y='140'>水逾七分——倾覆（满则覆）</text><text x='410' y='166'>六分到七分之间＝关节点</text><text x='410' y='188' font-weight='700'>迁移到考场</text><text x='410' y='210'>“火候、剂量、力度”＝度</text><text x='410' y='232'>“不足／过头”＝越过关节点</text></g><text x='24' y='280' font-size='11.5' fill='#334155'>注意：质变不等于发展——被淘汰、走向衰败也是质变，但不是前进上升的变化。</text></svg></div>"; }
+  function buildFigLZBH2(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#065f46'>三组易混对照（示意图，非原卷图）</text><rect x='24' y='46' width='352' height='206' rx='10' fill='#eef2ff' stroke='#c7d2fe'/><g font-size='11' fill='#1f2937'><text x='38' y='70' font-size='12' font-weight='700'>① 量变 vs 质变</text><text x='38' y='94'>量变：数量增减、场所变更</text><text x='38' y='114'>质变：根本性质变化、质态转变</text><text x='38' y='134'>标志：数量／性质</text><text x='38' y='160' font-size='12' font-weight='700'>② 度 vs 关节点</text><text x='38' y='184'>度：一段区间（限度、幅度）</text><text x='38' y='204'>关节点：一个点（临界点）</text><text x='38' y='224'>标志：范围／界限</text></g><rect x='396' y='46' width='340' height='206' rx='10' fill='#fef3c7' stroke='#fde68a'/><g font-size='11' fill='#1f2937'><text x='410' y='70' font-size='12' font-weight='700'>③ 质变 vs 发展</text><text x='410' y='94'>质变：性质变没变</text><text x='410' y='116'>发展：往哪个方向变</text><text x='410' y='138'>倒退的质变不是发展</text><text x='410' y='164' font-size='12' font-weight='700'>四组词一一对应</text><text x='410' y='188'>渐进性＝连续性＝量变</text><text x='410' y='210'>飞跃性＝间断性＝质变</text><text x='410' y='234' fill='#9a3412'>换词不换意，别被字面绕住</text></g></svg></div>"; }
+  var FIG = {
+    "lzbh1": buildFigLZBH1,
+    "lzbh2": buildFigLZBH2
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

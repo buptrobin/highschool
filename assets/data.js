@@ -3553,14 +3553,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "原始社会的解体和阶级社会的演进",
         "slug": "bx1-c1-s1",
-        "href": "pages/pol/bx1-c1-s1.html"
+        "href": "pages/pol/bx1-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c1-s1.html",
+         "n": 12,
+         "title": "原始社会的解体和阶级社会的演进"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "科学社会主义的理论与实践",
         "slug": "bx1-c1-s2",
-        "href": "pages/pol/bx1-c1-s2.html"
+        "href": "pages/pol/bx1-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c1-s2.html",
+         "n": 12,
+         "title": "科学社会主义的理论与实践"
+        }
        }
       ]
      },
@@ -3572,14 +3582,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "新民主主义革命的胜利",
         "slug": "bx1-c2-s1",
-        "href": "pages/pol/bx1-c2-s1.html"
+        "href": "pages/pol/bx1-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c2-s1.html",
+         "n": 12,
+         "title": "新民主主义革命的胜利"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "社会主义制度在中国的确立",
         "slug": "bx1-c2-s2",
-        "href": "pages/pol/bx1-c2-s2.html"
+        "href": "pages/pol/bx1-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c2-s2.html",
+         "n": 12,
+         "title": "社会主义制度在中国的确立"
+        }
        }
       ]
      },
@@ -3591,14 +3611,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "伟大的改革开放",
         "slug": "bx1-c3-s1",
-        "href": "pages/pol/bx1-c3-s1.html"
+        "href": "pages/pol/bx1-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c3-s1.html",
+         "n": 12,
+         "title": "伟大的改革开放"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "中国特色社会主义的创立、发展和完善",
         "slug": "bx1-c3-s2",
-        "href": "pages/pol/bx1-c3-s2.html"
+        "href": "pages/pol/bx1-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c3-s2.html",
+         "n": 12,
+         "title": "中国特色社会主义的创立、发展和完善"
+        }
        }
       ]
      },
@@ -3610,21 +3640,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "中国特色社会主义进入新时代",
         "slug": "bx1-c4-s1",
-        "href": "pages/pol/bx1-c4-s1.html"
+        "href": "pages/pol/bx1-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c4-s1.html",
+         "n": 12,
+         "title": "中国特色社会主义进入新时代"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "实现中华民族伟大复兴的中国梦",
         "slug": "bx1-c4-s2",
-        "href": "pages/pol/bx1-c4-s2.html"
+        "href": "pages/pol/bx1-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c4-s2.html",
+         "n": 12,
+         "title": "实现中华民族伟大复兴的中国梦"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "习近平新时代中国特色社会主义思想",
         "slug": "bx1-c4-s3",
-        "href": "pages/pol/bx1-c4-s3.html"
+        "href": "pages/pol/bx1-c4-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx1-c4-s3.html",
+         "n": 12,
+         "title": "习近平新时代中国特色社会主义思想"
+        }
        }
       ]
      }
@@ -3642,14 +3687,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "公有制为主体 多种所有制经济共同发展",
         "slug": "bx2-c1-s1",
-        "href": "pages/pol/bx2-c1-s1.html"
+        "href": "pages/pol/bx2-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c1-s1.html",
+         "n": 12,
+         "title": "公有制为主体 多种所有制经济共同发展"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "坚持“两个毫不动摇”",
         "slug": "bx2-c1-s2",
-        "href": "pages/pol/bx2-c1-s2.html"
+        "href": "pages/pol/bx2-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c1-s2.html",
+         "n": 12,
+         "title": "坚持“两个毫不动摇”"
+        }
        }
       ]
      },
@@ -3661,14 +3716,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "使市场在资源配置中起决定性作用",
         "slug": "bx2-c2-s1",
-        "href": "pages/pol/bx2-c2-s1.html"
+        "href": "pages/pol/bx2-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c2-s1.html",
+         "n": 12,
+         "title": "使市场在资源配置中起决定性作用"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "更好发挥政府作用",
         "slug": "bx2-c2-s2",
-        "href": "pages/pol/bx2-c2-s2.html"
+        "href": "pages/pol/bx2-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c2-s2.html",
+         "n": 12,
+         "title": "更好发挥政府作用"
+        }
        }
       ]
      },
@@ -3680,14 +3745,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "贯彻新发展理念",
         "slug": "bx2-c3-s1",
-        "href": "pages/pol/bx2-c3-s1.html"
+        "href": "pages/pol/bx2-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c3-s1.html",
+         "n": 12,
+         "title": "贯彻新发展理念"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "推动高质量发展",
         "slug": "bx2-c3-s2",
-        "href": "pages/pol/bx2-c3-s2.html"
+        "href": "pages/pol/bx2-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c3-s2.html",
+         "n": 12,
+         "title": "推动高质量发展"
+        }
        }
       ]
      },
@@ -3699,14 +3774,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "我国的个人收入分配",
         "slug": "bx2-c4-s1",
-        "href": "pages/pol/bx2-c4-s1.html"
+        "href": "pages/pol/bx2-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c4-s1.html",
+         "n": 12,
+         "title": "我国的个人收入分配"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "我国的社会保障",
         "slug": "bx2-c4-s2",
-        "href": "pages/pol/bx2-c4-s2.html"
+        "href": "pages/pol/bx2-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx2-c4-s2.html",
+         "n": 12,
+         "title": "我国的社会保障"
+        }
        }
       ]
      }
@@ -3724,14 +3809,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "中华人民共和国成立前各种政治力量",
         "slug": "bx3-c1-s1",
-        "href": "pages/pol/bx3-c1-s1.html"
+        "href": "pages/pol/bx3-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c1-s1.html",
+         "n": 12,
+         "title": "中华人民共和国成立前各种政治力量"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "中国共产党领导人民站起来、富起来、强起来",
         "slug": "bx3-c1-s2",
-        "href": "pages/pol/bx3-c1-s2.html"
+        "href": "pages/pol/bx3-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c1-s2.html",
+         "n": 12,
+         "title": "中国共产党领导人民站起来、富起来、强起来"
+        }
        }
       ]
      },
@@ -3743,14 +3838,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "始终坚持以人民为中心",
         "slug": "bx3-c2-s1",
-        "href": "pages/pol/bx3-c2-s1.html"
+        "href": "pages/pol/bx3-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c2-s1.html",
+         "n": 12,
+         "title": "始终坚持以人民为中心"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "始终走在时代前列",
         "slug": "bx3-c2-s2",
-        "href": "pages/pol/bx3-c2-s2.html"
+        "href": "pages/pol/bx3-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c2-s2.html",
+         "n": 12,
+         "title": "始终走在时代前列"
+        }
        }
       ]
      },
@@ -3762,14 +3867,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "坚持党的领导",
         "slug": "bx3-c3-s1",
-        "href": "pages/pol/bx3-c3-s1.html"
+        "href": "pages/pol/bx3-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c3-s1.html",
+         "n": 12,
+         "title": "坚持党的领导"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "巩固党的执政地位",
         "slug": "bx3-c3-s2",
-        "href": "pages/pol/bx3-c3-s2.html"
+        "href": "pages/pol/bx3-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c3-s2.html",
+         "n": 12,
+         "title": "巩固党的执政地位"
+        }
        }
       ]
      },
@@ -3781,14 +3896,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "人民民主专政的本质：人民当家作主",
         "slug": "bx3-c4-s1",
-        "href": "pages/pol/bx3-c4-s1.html"
+        "href": "pages/pol/bx3-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c4-s1.html",
+         "n": 12,
+         "title": "人民民主专政的本质：人民当家作主"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "坚持人民民主专政",
         "slug": "bx3-c4-s2",
-        "href": "pages/pol/bx3-c4-s2.html"
+        "href": "pages/pol/bx3-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c4-s2.html",
+         "n": 12,
+         "title": "坚持人民民主专政"
+        }
        }
       ]
      },
@@ -3800,14 +3925,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "人民代表大会：我国的国家权力机关",
         "slug": "bx3-c5-s1",
-        "href": "pages/pol/bx3-c5-s1.html"
+        "href": "pages/pol/bx3-c5-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c5-s1.html",
+         "n": 12,
+         "title": "人民代表大会：我国的国家权力机关"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "人民代表大会制度：我国的根本政治制度",
         "slug": "bx3-c5-s2",
-        "href": "pages/pol/bx3-c5-s2.html"
+        "href": "pages/pol/bx3-c5-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c5-s2.html",
+         "n": 12,
+         "title": "人民代表大会制度：我国的根本政治制度"
+        }
        }
       ]
      },
@@ -3819,21 +3954,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "中国共产党领导的多党合作和政治协商制度",
         "slug": "bx3-c6-s1",
-        "href": "pages/pol/bx3-c6-s1.html"
+        "href": "pages/pol/bx3-c6-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c6-s1.html",
+         "n": 12,
+         "title": "中国共产党领导的多党合作和政治协商制度"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "民族区域自治制度",
         "slug": "bx3-c6-s2",
-        "href": "pages/pol/bx3-c6-s2.html"
+        "href": "pages/pol/bx3-c6-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c6-s2.html",
+         "n": 12,
+         "title": "民族区域自治制度"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "基层群众自治制度",
         "slug": "bx3-c6-s3",
-        "href": "pages/pol/bx3-c6-s3.html"
+        "href": "pages/pol/bx3-c6-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c6-s3.html",
+         "n": 12,
+         "title": "基层群众自治制度"
+        }
        }
       ]
      },
@@ -3845,14 +3995,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "我国法治建设的历程",
         "slug": "bx3-c7-s1",
-        "href": "pages/pol/bx3-c7-s1.html"
+        "href": "pages/pol/bx3-c7-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c7-s1.html",
+         "n": 12,
+         "title": "我国法治建设的历程"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "全面依法治国的总目标与原则",
         "slug": "bx3-c7-s2",
-        "href": "pages/pol/bx3-c7-s2.html"
+        "href": "pages/pol/bx3-c7-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c7-s2.html",
+         "n": 12,
+         "title": "全面依法治国的总目标与原则"
+        }
        }
       ]
      },
@@ -3864,21 +4024,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "法治国家",
         "slug": "bx3-c8-s1",
-        "href": "pages/pol/bx3-c8-s1.html"
+        "href": "pages/pol/bx3-c8-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c8-s1.html",
+         "n": 12,
+         "title": "法治国家"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "法治政府",
         "slug": "bx3-c8-s2",
-        "href": "pages/pol/bx3-c8-s2.html"
+        "href": "pages/pol/bx3-c8-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c8-s2.html",
+         "n": 12,
+         "title": "法治政府"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "法治社会",
         "slug": "bx3-c8-s3",
-        "href": "pages/pol/bx3-c8-s3.html"
+        "href": "pages/pol/bx3-c8-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c8-s3.html",
+         "n": 12,
+         "title": "法治社会"
+        }
        }
       ]
      },
@@ -3890,28 +4065,48 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "科学立法",
         "slug": "bx3-c9-s1",
-        "href": "pages/pol/bx3-c9-s1.html"
+        "href": "pages/pol/bx3-c9-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c9-s1.html",
+         "n": 12,
+         "title": "科学立法"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "严格执法",
         "slug": "bx3-c9-s2",
-        "href": "pages/pol/bx3-c9-s2.html"
+        "href": "pages/pol/bx3-c9-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c9-s2.html",
+         "n": 12,
+         "title": "严格执法"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "公正司法",
         "slug": "bx3-c9-s3",
-        "href": "pages/pol/bx3-c9-s3.html"
+        "href": "pages/pol/bx3-c9-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c9-s3.html",
+         "n": 12,
+         "title": "公正司法"
+        }
        },
        {
         "kind": "section",
         "label": "第四框",
         "title": "全民守法",
         "slug": "bx3-c9-s4",
-        "href": "pages/pol/bx3-c9-s4.html"
+        "href": "pages/pol/bx3-c9-s4.html",
+        "quiz": {
+         "href": "quiz/pol/bx3-c9-s4.html",
+         "n": 12,
+         "title": "全民守法"
+        }
        }
       ]
      }
@@ -3929,21 +4124,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "追求智慧的学问",
         "slug": "bx4-c1-s1",
-        "href": "pages/pol/bx4-c1-s1.html"
+        "href": "pages/pol/bx4-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c1-s1.html",
+         "n": 12,
+         "title": "追求智慧的学问"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "哲学的基本问题",
         "slug": "bx4-c1-s2",
-        "href": "pages/pol/bx4-c1-s2.html"
+        "href": "pages/pol/bx4-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c1-s2.html",
+         "n": 12,
+         "title": "哲学的基本问题"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "科学的世界观和方法论",
         "slug": "bx4-c1-s3",
-        "href": "pages/pol/bx4-c1-s3.html"
+        "href": "pages/pol/bx4-c1-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c1-s3.html",
+         "n": 12,
+         "title": "科学的世界观和方法论"
+        }
        }
       ]
      },
@@ -3955,14 +4165,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "世界的物质性",
         "slug": "bx4-c2-s1",
-        "href": "pages/pol/bx4-c2-s1.html"
+        "href": "pages/pol/bx4-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c2-s1.html",
+         "n": 12,
+         "title": "世界的物质性"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "运动的规律性",
         "slug": "bx4-c2-s2",
-        "href": "pages/pol/bx4-c2-s2.html"
+        "href": "pages/pol/bx4-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c2-s2.html",
+         "n": 12,
+         "title": "运动的规律性"
+        }
        }
       ]
      },
@@ -3974,21 +4194,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "世界是普遍联系的",
         "slug": "bx4-c3-s1",
-        "href": "pages/pol/bx4-c3-s1.html"
+        "href": "pages/pol/bx4-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c3-s1.html",
+         "n": 12,
+         "title": "世界是普遍联系的"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "世界是永恒发展的",
         "slug": "bx4-c3-s2",
-        "href": "pages/pol/bx4-c3-s2.html"
+        "href": "pages/pol/bx4-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c3-s2.html",
+         "n": 12,
+         "title": "世界是永恒发展的"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "唯物辩证法的实质与核心",
         "slug": "bx4-c3-s3",
-        "href": "pages/pol/bx4-c3-s3.html"
+        "href": "pages/pol/bx4-c3-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c3-s3.html",
+         "n": 12,
+         "title": "唯物辩证法的实质与核心"
+        }
        }
       ]
      },
@@ -4000,14 +4235,24 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "人的认识从何而来",
         "slug": "bx4-c4-s1",
-        "href": "pages/pol/bx4-c4-s1.html"
+        "href": "pages/pol/bx4-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c4-s1.html",
+         "n": 12,
+         "title": "人的认识从何而来"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "在实践中追求和发展真理",
         "slug": "bx4-c4-s2",
-        "href": "pages/pol/bx4-c4-s2.html"
+        "href": "pages/pol/bx4-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c4-s2.html",
+         "n": 12,
+         "title": "在实践中追求和发展真理"
+        }
        }
       ]
      },
@@ -4019,21 +4264,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "社会历史的本质",
         "slug": "bx4-c5-s1",
-        "href": "pages/pol/bx4-c5-s1.html"
+        "href": "pages/pol/bx4-c5-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c5-s1.html",
+         "n": 12,
+         "title": "社会历史的本质"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "社会历史的发展",
         "slug": "bx4-c5-s2",
-        "href": "pages/pol/bx4-c5-s2.html"
+        "href": "pages/pol/bx4-c5-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c5-s2.html",
+         "n": 12,
+         "title": "社会历史的发展"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "社会历史的主体",
         "slug": "bx4-c5-s3",
-        "href": "pages/pol/bx4-c5-s3.html"
+        "href": "pages/pol/bx4-c5-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c5-s3.html",
+         "n": 12,
+         "title": "社会历史的主体"
+        }
        }
       ]
      },
@@ -4045,21 +4305,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "价值与价值观",
         "slug": "bx4-c6-s1",
-        "href": "pages/pol/bx4-c6-s1.html"
+        "href": "pages/pol/bx4-c6-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c6-s1.html",
+         "n": 12,
+         "title": "价值与价值观"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "价值判断与价值选择",
         "slug": "bx4-c6-s2",
-        "href": "pages/pol/bx4-c6-s2.html"
+        "href": "pages/pol/bx4-c6-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c6-s2.html",
+         "n": 12,
+         "title": "价值判断与价值选择"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "价值的创造和实现",
         "slug": "bx4-c6-s3",
-        "href": "pages/pol/bx4-c6-s3.html"
+        "href": "pages/pol/bx4-c6-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c6-s3.html",
+         "n": 12,
+         "title": "价值的创造和实现"
+        }
        }
       ]
      },
@@ -4071,21 +4346,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "文化的内涵与功能",
         "slug": "bx4-c7-s1",
-        "href": "pages/pol/bx4-c7-s1.html"
+        "href": "pages/pol/bx4-c7-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c7-s1.html",
+         "n": 12,
+         "title": "文化的内涵与功能"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "正确认识中华传统文化",
         "slug": "bx4-c7-s2",
-        "href": "pages/pol/bx4-c7-s2.html"
+        "href": "pages/pol/bx4-c7-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c7-s2.html",
+         "n": 12,
+         "title": "正确认识中华传统文化"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "弘扬中华优秀传统文化与民族精神",
         "slug": "bx4-c7-s3",
-        "href": "pages/pol/bx4-c7-s3.html"
+        "href": "pages/pol/bx4-c7-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c7-s3.html",
+         "n": 12,
+         "title": "弘扬中华优秀传统文化与民族精神"
+        }
        }
       ]
      },
@@ -4097,21 +4387,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "文化的民族性与多样性",
         "slug": "bx4-c8-s1",
-        "href": "pages/pol/bx4-c8-s1.html"
+        "href": "pages/pol/bx4-c8-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c8-s1.html",
+         "n": 12,
+         "title": "文化的民族性与多样性"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "文化交流与文化交融",
         "slug": "bx4-c8-s2",
-        "href": "pages/pol/bx4-c8-s2.html"
+        "href": "pages/pol/bx4-c8-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c8-s2.html",
+         "n": 12,
+         "title": "文化交流与文化交融"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "正确对待外来文化",
         "slug": "bx4-c8-s3",
-        "href": "pages/pol/bx4-c8-s3.html"
+        "href": "pages/pol/bx4-c8-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c8-s3.html",
+         "n": 12,
+         "title": "正确对待外来文化"
+        }
        }
       ]
      },
@@ -4123,21 +4428,36 @@ window.SUBJECTS = [
         "label": "第一框",
         "title": "文化发展的必然选择",
         "slug": "bx4-c9-s1",
-        "href": "pages/pol/bx4-c9-s1.html"
+        "href": "pages/pol/bx4-c9-s1.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c9-s1.html",
+         "n": 12,
+         "title": "文化发展的必然选择"
+        }
        },
        {
         "kind": "section",
         "label": "第二框",
         "title": "文化发展的基本路径",
         "slug": "bx4-c9-s2",
-        "href": "pages/pol/bx4-c9-s2.html"
+        "href": "pages/pol/bx4-c9-s2.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c9-s2.html",
+         "n": 12,
+         "title": "文化发展的基本路径"
+        }
        },
        {
         "kind": "section",
         "label": "第三框",
         "title": "文化强国与文化自信",
         "slug": "bx4-c9-s3",
-        "href": "pages/pol/bx4-c9-s3.html"
+        "href": "pages/pol/bx4-c9-s3.html",
+        "quiz": {
+         "href": "quiz/pol/bx4-c9-s3.html",
+         "n": 12,
+         "title": "文化强国与文化自信"
+        }
        }
       ]
      }
@@ -4155,14 +4475,24 @@ window.SUBJECTS = [
         "label": "第一课",
         "title": "国体与政体",
         "slug": "xx1-c1-s1",
-        "href": "pages/pol/xx1-c1-s1.html"
+        "href": "pages/pol/xx1-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c1-s1.html",
+         "n": 12,
+         "title": "国体与政体"
+        }
        },
        {
         "kind": "section",
         "label": "第二课",
         "title": "国家的结构形式",
         "slug": "xx1-c1-s2",
-        "href": "pages/pol/xx1-c1-s2.html"
+        "href": "pages/pol/xx1-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c1-s2.html",
+         "n": 12,
+         "title": "国家的结构形式"
+        }
        }
       ]
      },
@@ -4174,14 +4504,24 @@ window.SUBJECTS = [
         "label": "第三课",
         "title": "多极化趋势",
         "slug": "xx1-c2-s1",
-        "href": "pages/pol/xx1-c2-s1.html"
+        "href": "pages/pol/xx1-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c2-s1.html",
+         "n": 12,
+         "title": "多极化趋势"
+        }
        },
        {
         "kind": "section",
         "label": "第四课",
         "title": "和平与发展",
         "slug": "xx1-c2-s2",
-        "href": "pages/pol/xx1-c2-s2.html"
+        "href": "pages/pol/xx1-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c2-s2.html",
+         "n": 12,
+         "title": "和平与发展"
+        }
        }
       ]
      },
@@ -4193,14 +4533,24 @@ window.SUBJECTS = [
         "label": "第五课",
         "title": "经济全球化",
         "slug": "xx1-c3-s1",
-        "href": "pages/pol/xx1-c3-s1.html"
+        "href": "pages/pol/xx1-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c3-s1.html",
+         "n": 12,
+         "title": "经济全球化"
+        }
        },
        {
         "kind": "section",
         "label": "第六课",
         "title": "对外开放",
         "slug": "xx1-c3-s2",
-        "href": "pages/pol/xx1-c3-s2.html"
+        "href": "pages/pol/xx1-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c3-s2.html",
+         "n": 12,
+         "title": "对外开放"
+        }
        }
       ]
      },
@@ -4212,21 +4562,36 @@ window.SUBJECTS = [
         "label": "第七课",
         "title": "国际组织",
         "slug": "xx1-c4-s1",
-        "href": "pages/pol/xx1-c4-s1.html"
+        "href": "pages/pol/xx1-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c4-s1.html",
+         "n": 12,
+         "title": "国际组织"
+        }
        },
        {
         "kind": "section",
         "label": "第八课",
         "title": "主要的国际组织",
         "slug": "xx1-c4-s2",
-        "href": "pages/pol/xx1-c4-s2.html"
+        "href": "pages/pol/xx1-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c4-s2.html",
+         "n": 12,
+         "title": "主要的国际组织"
+        }
        },
        {
         "kind": "section",
         "label": "第九课",
         "title": "中国与国际组织",
         "slug": "xx1-c4-s3",
-        "href": "pages/pol/xx1-c4-s3.html"
+        "href": "pages/pol/xx1-c4-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx1-c4-s3.html",
+         "n": 12,
+         "title": "中国与国际组织"
+        }
        }
       ]
      }
@@ -4244,28 +4609,48 @@ window.SUBJECTS = [
         "label": "第一课",
         "title": "民事权利与义务",
         "slug": "xx2-c1-s1",
-        "href": "pages/pol/xx2-c1-s1.html"
+        "href": "pages/pol/xx2-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c1-s1.html",
+         "n": 12,
+         "title": "民事权利与义务"
+        }
        },
        {
         "kind": "section",
         "label": "第二课",
         "title": "依法有效保护财产权",
         "slug": "xx2-c1-s2",
-        "href": "pages/pol/xx2-c1-s2.html"
+        "href": "pages/pol/xx2-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c1-s2.html",
+         "n": 12,
+         "title": "依法有效保护财产权"
+        }
        },
        {
         "kind": "section",
         "label": "第三课",
         "title": "订约履约 诚信为本",
         "slug": "xx2-c1-s3",
-        "href": "pages/pol/xx2-c1-s3.html"
+        "href": "pages/pol/xx2-c1-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c1-s3.html",
+         "n": 12,
+         "title": "订约履约 诚信为本"
+        }
        },
        {
         "kind": "section",
         "label": "第四课",
         "title": "侵权责任与权利界限",
         "slug": "xx2-c1-s4",
-        "href": "pages/pol/xx2-c1-s4.html"
+        "href": "pages/pol/xx2-c1-s4.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c1-s4.html",
+         "n": 12,
+         "title": "侵权责任与权利界限"
+        }
        }
       ]
      },
@@ -4277,14 +4662,24 @@ window.SUBJECTS = [
         "label": "第五课",
         "title": "在和睦家庭中成长",
         "slug": "xx2-c2-s1",
-        "href": "pages/pol/xx2-c2-s1.html"
+        "href": "pages/pol/xx2-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c2-s1.html",
+         "n": 12,
+         "title": "在和睦家庭中成长"
+        }
        },
        {
         "kind": "section",
         "label": "第六课",
         "title": "珍惜婚姻关系",
         "slug": "xx2-c2-s2",
-        "href": "pages/pol/xx2-c2-s2.html"
+        "href": "pages/pol/xx2-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c2-s2.html",
+         "n": 12,
+         "title": "珍惜婚姻关系"
+        }
        }
       ]
      },
@@ -4296,14 +4691,24 @@ window.SUBJECTS = [
         "label": "第七课",
         "title": "做个明白的劳动者",
         "slug": "xx2-c3-s1",
-        "href": "pages/pol/xx2-c3-s1.html"
+        "href": "pages/pol/xx2-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c3-s1.html",
+         "n": 12,
+         "title": "做个明白的劳动者"
+        }
        },
        {
         "kind": "section",
         "label": "第八课",
         "title": "自主创业 公平竞争",
         "slug": "xx2-c3-s2",
-        "href": "pages/pol/xx2-c3-s2.html"
+        "href": "pages/pol/xx2-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c3-s2.html",
+         "n": 12,
+         "title": "自主创业 公平竞争"
+        }
        }
       ]
      },
@@ -4315,7 +4720,12 @@ window.SUBJECTS = [
         "label": "第九课",
         "title": "纠纷的多元解决方式",
         "slug": "xx2-c4-s1",
-        "href": "pages/pol/xx2-c4-s1.html"
+        "href": "pages/pol/xx2-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx2-c4-s1.html",
+         "n": 12,
+         "title": "纠纷的多元解决方式"
+        }
        }
       ]
      }
@@ -4333,21 +4743,36 @@ window.SUBJECTS = [
         "label": "第一课",
         "title": "走进思维世界",
         "slug": "xx3-c1-s1",
-        "href": "pages/pol/xx3-c1-s1.html"
+        "href": "pages/pol/xx3-c1-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c1-s1.html",
+         "n": 12,
+         "title": "走进思维世界"
+        }
        },
        {
         "kind": "section",
         "label": "第二课",
         "title": "把握逻辑要义",
         "slug": "xx3-c1-s2",
-        "href": "pages/pol/xx3-c1-s2.html"
+        "href": "pages/pol/xx3-c1-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c1-s2.html",
+         "n": 12,
+         "title": "把握逻辑要义"
+        }
        },
        {
         "kind": "section",
         "label": "第三课",
         "title": "领会科学思维",
         "slug": "xx3-c1-s3",
-        "href": "pages/pol/xx3-c1-s3.html"
+        "href": "pages/pol/xx3-c1-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c1-s3.html",
+         "n": 12,
+         "title": "领会科学思维"
+        }
        }
       ]
      },
@@ -4359,28 +4784,48 @@ window.SUBJECTS = [
         "label": "第四课",
         "title": "准确把握概念",
         "slug": "xx3-c2-s1",
-        "href": "pages/pol/xx3-c2-s1.html"
+        "href": "pages/pol/xx3-c2-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c2-s1.html",
+         "n": 12,
+         "title": "准确把握概念"
+        }
        },
        {
         "kind": "section",
         "label": "第五课",
         "title": "正确运用判断",
         "slug": "xx3-c2-s2",
-        "href": "pages/pol/xx3-c2-s2.html"
+        "href": "pages/pol/xx3-c2-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c2-s2.html",
+         "n": 12,
+         "title": "正确运用判断"
+        }
        },
        {
         "kind": "section",
         "label": "第六课",
         "title": "掌握演绎推理方法",
         "slug": "xx3-c2-s3",
-        "href": "pages/pol/xx3-c2-s3.html"
+        "href": "pages/pol/xx3-c2-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c2-s3.html",
+         "n": 12,
+         "title": "掌握演绎推理方法"
+        }
        },
        {
         "kind": "section",
         "label": "第七课",
         "title": "学会归纳与类比推理",
         "slug": "xx3-c2-s4",
-        "href": "pages/pol/xx3-c2-s4.html"
+        "href": "pages/pol/xx3-c2-s4.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c2-s4.html",
+         "n": 12,
+         "title": "学会归纳与类比推理"
+        }
        }
       ]
      },
@@ -4392,21 +4837,36 @@ window.SUBJECTS = [
         "label": "第八课",
         "title": "把握辩证分合",
         "slug": "xx3-c3-s1",
-        "href": "pages/pol/xx3-c3-s1.html"
+        "href": "pages/pol/xx3-c3-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c3-s1.html",
+         "n": 12,
+         "title": "把握辩证分合"
+        }
        },
        {
         "kind": "section",
         "label": "第九课",
         "title": "理解质量互变",
         "slug": "xx3-c3-s2",
-        "href": "pages/pol/xx3-c3-s2.html"
+        "href": "pages/pol/xx3-c3-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c3-s2.html",
+         "n": 12,
+         "title": "理解质量互变"
+        }
        },
        {
         "kind": "section",
         "label": "第十课",
         "title": "推动认识发展",
         "slug": "xx3-c3-s3",
-        "href": "pages/pol/xx3-c3-s3.html"
+        "href": "pages/pol/xx3-c3-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c3-s3.html",
+         "n": 12,
+         "title": "推动认识发展"
+        }
        }
       ]
      },
@@ -4418,21 +4878,36 @@ window.SUBJECTS = [
         "label": "第十一课",
         "title": "创新思维要善于联想",
         "slug": "xx3-c4-s1",
-        "href": "pages/pol/xx3-c4-s1.html"
+        "href": "pages/pol/xx3-c4-s1.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c4-s1.html",
+         "n": 12,
+         "title": "创新思维要善于联想"
+        }
        },
        {
         "kind": "section",
         "label": "第十二课",
         "title": "创新思维要多路探索",
         "slug": "xx3-c4-s2",
-        "href": "pages/pol/xx3-c4-s2.html"
+        "href": "pages/pol/xx3-c4-s2.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c4-s2.html",
+         "n": 12,
+         "title": "创新思维要多路探索"
+        }
        },
        {
         "kind": "section",
         "label": "第十三课",
         "title": "创新思维要力求超前",
         "slug": "xx3-c4-s3",
-        "href": "pages/pol/xx3-c4-s3.html"
+        "href": "pages/pol/xx3-c4-s3.html",
+        "quiz": {
+         "href": "quiz/pol/xx3-c4-s3.html",
+         "n": 12,
+         "title": "创新思维要力求超前"
+        }
        }
       ]
      }
@@ -4443,37 +4918,72 @@ window.SUBJECTS = [
    {
     "title": "主观题答题模板（经济 / 政治 / 文化 / 哲学）",
     "slug": "extra-1",
-    "href": "pages/pol/extra-1.html"
+    "href": "pages/pol/extra-1.html",
+    "quiz": {
+     "href": "quiz/pol/extra-1.html",
+     "n": 12,
+     "title": "主观题答题模板（经济 / 政治 / 文化 / 哲学）"
+    }
    },
    {
     "title": "传导类选择题的解法",
     "slug": "extra-2",
-    "href": "pages/pol/extra-2.html"
+    "href": "pages/pol/extra-2.html",
+    "quiz": {
+     "href": "quiz/pol/extra-2.html",
+     "n": 12,
+     "title": "传导类选择题的解法"
+    }
    },
    {
     "title": "必修一至四核心原理汇总",
     "slug": "extra-3",
-    "href": "pages/pol/extra-3.html"
+    "href": "pages/pol/extra-3.html",
+    "quiz": {
+     "href": "quiz/pol/extra-3.html",
+     "n": 12,
+     "title": "必修一至四核心原理汇总"
+    }
    },
    {
     "title": "时政热词与教材术语对照",
     "slug": "extra-4",
-    "href": "pages/pol/extra-4.html"
+    "href": "pages/pol/extra-4.html",
+    "quiz": {
+     "href": "quiz/pol/extra-4.html",
+     "n": 12,
+     "title": "时政热词与教材术语对照"
+    }
    },
    {
     "title": "哲学原理与方法论对应表",
     "slug": "extra-5",
-    "href": "pages/pol/extra-5.html"
+    "href": "pages/pol/extra-5.html",
+    "quiz": {
+     "href": "quiz/pol/extra-5.html",
+     "n": 12,
+     "title": "哲学原理与方法论对应表"
+    }
    },
    {
     "title": "法律与生活常见案例",
     "slug": "extra-6",
-    "href": "pages/pol/extra-6.html"
+    "href": "pages/pol/extra-6.html",
+    "quiz": {
+     "href": "quiz/pol/extra-6.html",
+     "n": 12,
+     "title": "法律与生活常见案例"
+    }
    },
    {
     "title": "逻辑与思维推理规则速查",
     "slug": "extra-7",
-    "href": "pages/pol/extra-7.html"
+    "href": "pages/pol/extra-7.html",
+    "quiz": {
+     "href": "quiz/pol/extra-7.html",
+     "n": 12,
+     "title": "逻辑与思维推理规则速查"
+    }
    }
   ],
   "stat": {
@@ -4483,8 +4993,8 @@ window.SUBJECTS = [
    "research": 0,
    "extras": 7,
    "total": 102,
-   "quiz": 0,
-   "quizTotal": 0
+   "quiz": 102,
+   "quizTotal": 1224
   }
  }
 ];

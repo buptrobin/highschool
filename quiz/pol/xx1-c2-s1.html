@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多极化趋势</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "pol", "slug": "xx1-c2-s1", "n": 12, "title": "多极化趋势"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=pol&quiz=1">‹ 政治 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 选择性必修1 当代国际政治与经济 · 第二单元 世界多极化 · 第三课</span>
+        <h1>多极化趋势<span class="thin">北京 3 道 · 外地 9 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一课只做一件事：把<b>“世界多极化深入发展”</b>这句话拆成三条线——力量对比怎么变（多极、全球南方、综合国力）、国际关系怎么定（国家利益是决定性因素）、中国怎么处（新型国际关系、命运共同体）。会拆，国际新闻类材料题就不会只写口号。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>9</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='246' rx='18' fill='#f5f3ff'/><circle cx='150' cy='128' r='56' fill='#fff' stroke='#7c3aed' stroke-width='3'/><text x='150' y='122' font-size='14' font-weight='700' fill='#5b21b6' text-anchor='middle'>多极化</text><text x='150' y='142' font-size='9.5' fill='#6d28d9' text-anchor='middle'>趋势 · 不是定局</text><circle cx='60' cy='70' r='13' fill='#ddd6fe'/><circle cx='240' cy='70' r='13' fill='#ddd6fe'/><circle cx='52' cy='190' r='13' fill='#ddd6fe'/><circle cx='248' cy='190' r='13' fill='#ddd6fe'/><g stroke='#a78bfa' stroke-width='2'><line x1='70' y1='79' x2='112' y2='102'/><line x1='230' y1='79' x2='188' y2='102'/><line x1='64' y1='180' x2='108' y2='154'/><line x1='236' y1='180' x2='192' y2='154'/></g><text x='150' y='232' font-size='10' fill='#5b21b6' text-anchor='middle'>国家利益决定国际关系</text><text x='150' y='252' font-size='10' fill='#5b21b6' text-anchor='middle'>共同利益是合作的基础</text></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住第三课：极在变多，利益没变</h2></div>
+  <p class="sec-sub">左图把“多极”画成几个力量中心——多极化是趋势，不是已经定型的格局；右图把国际关系的决定因素拆成“共同利益—利益对立”两条岔路，所有合作与冲突题都从这里分。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地 2023—2025</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 5 年北京选择题 1 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京主观题 2 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地 2022—2025 9 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 12 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京近 5 年直接考“多极化”的选择题只有 <b>2024 年第 14 题</b>（区域国别学研究），2024 年第 20 题、2025 年第 20 题两道主观题都落在“新型国际关系/命运共同体”，已全部收入；其余靠外地真题补。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷收入：<b>2024 年第 14 题</b>（区域国别学研究）、<b>2024 年第 20 题</b>（中非智库论坛，全球南方与现代化合作）、<b>2025 年第 20 题</b>（中拉“五大工程”如何扩大利益汇合点）。外地卷收入：<b>2024 年安徽第 11 题</b>（平等有序的世界多极化）、<b>2025 年广东第 13 题</b>（全球南方）、<b>2025 年山东第 11 题</b>（中国与东盟）、<b>2024 年贵州第 13 题</b>（中法关系）、<b>2023 年湖南第 12 题</b>（“一带一路”）、<b>2025 年安徽第 11 题</b>（周边命运共同体）、<b>2022 年湖南第 9 题</b>（中国青年与命运共同体）、<b>2025 年河北第 10 题</b>（综合国力）、<b>2025 年广东第 20 题</b>（国与国正确相处之道）。</p>
+</div><div class="panel"><p class="panel-title">① 世界多极化的力量中心（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#5b21b6'>世界多极化的力量中心（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='90' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>美国</text><text x='90' y='94' text-anchor='middle'>唯一超级大国</text><rect x='172' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='238' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>中国</text><text x='238' y='94' text-anchor='middle'>最大发展中国家</text><rect x='320' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='386' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>欧盟</text><text x='386' y='94' text-anchor='middle'>一体化程度最高</text><rect x='468' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='534' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>俄罗斯</text><text x='534' y='94' text-anchor='middle'>军事与能源大国</text><rect x='616' y='52' width='120' height='56' rx='9' fill='#ede9fe' stroke='#a78bfa'/><text x='676' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>新兴市场</text><text x='676' y='94' text-anchor='middle'>与发展中国家</text><text x='24' y='148' font-size='12' font-weight='700' fill='#5b21b6'>多极化的三个“不是”</text><text x='24' y='172'>不是已经定型的格局，而是深入发展的趋势</text><text x='24' y='196'>不是各国实力平均化，而是力量对比更趋平衡</text><text x='24' y='220'>不是没有斗争，单极与多极、称霸与反霸长期存在</text><rect x='24' y='240' width='712' height='44' rx='9' fill='#fff7ed' stroke='#fdba74'/><text x='40' y='267' font-size='11' fill='#9a3412'>全球南方群体性崛起，是推动世界多极化的重要力量；但公正合理的国际新秩序尚未建立。</text></g></svg></div></div><div class="panel"><p class="panel-title">② 国家利益怎样决定国际关系（示意图，非原卷图）</p><div class="svg-box" id="map-fig-guojia"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#5b21b6'>国家利益怎样决定国际关系（示意图，非原卷图）</text><rect x='30' y='52' width='210' height='64' rx='10' fill='#f5f3ff' stroke='#a78bfa' stroke-width='2'/><text x='135' y='78' font-size='13' font-weight='700' fill='#5b21b6' text-anchor='middle'>国家利益</text><text x='135' y='100' font-size='10.5' fill='#1f2937' text-anchor='middle'>国际关系的决定性因素</text><rect x='430' y='40' width='300' height='82' rx='9' fill='#ecfdf5' stroke='#6ee7b7'/><text x='446' y='64' font-size='11.5' font-weight='700' fill='#065f46'>共同利益 → 合作</text><text x='446' y='86' font-size='10.5' fill='#1f2937'>共同利益是国家合作的基础</text><text x='446' y='106' font-size='10.5' fill='#1f2937'>例：中拉五大工程、中马贸易投资</text><rect x='430' y='142' width='300' height='82' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='446' y='166' font-size='11.5' font-weight='700' fill='#991b1b'>利益对立 → 冲突</text><text x='446' y='188' font-size='10.5' fill='#1f2937'>利益对立是国家冲突的根源</text><text x='446' y='208' font-size='10.5' fill='#1f2937'>例：贸易保护主义、霸权主义</text><line x1='240' y1='84' x2='428' y2='82' stroke='#7c3aed' stroke-width='2' marker-end='url(#ar2)'/><line x1='240' y1='96' x2='428' y2='180' stroke='#dc2626' stroke-width='2' marker-end='url(#ar3)'/><defs><marker id='ar2' markerWidth='9' markerHeight='9' refX='7' refY='4.5' orient='auto'><path d='M0,0 L9,4.5 L0,9 z' fill='#7c3aed'/></marker><marker id='ar3' markerWidth='9' markerHeight='9' refX='7' refY='4.5' orient='auto'><path d='M0,0 L9,4.5 L0,9 z' fill='#dc2626'/></marker></defs><text x='30' y='152' font-size='12' font-weight='700' fill='#5b21b6'>中国的选择</text><text x='30' y='176'>· 维护本国主权、安全、发展利益</text><text x='30' y='198'>· 兼顾他国合理关切，不搞零和博弈</text><text x='30' y='220'>· 构建相互尊重、公平正义、合作共赢的</text><text x='30' y='240'>  新型国际关系</text><text x='30' y='262'>· 推动构建人类命运共同体</text><text x='30' y='286' font-size='10.5' fill='#6b7280'>注意：共同利益不是“国家利益一致”，各国出发点仍是本国利益。</text></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把“多极化趋势”说成“多极格局已经形成”。</b>多极化是深入发展的趋势，世界格局仍在演变，单极与多极、称霸与反霸的斗争长期存在。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“国家利益”当成“共同利益”。</b>国家利益是国际关系的决定性因素，但国家间的共同利益才是合作的基础；各国对外活动的出发点仍是本国国家利益。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>以为国家之间“结盟”才能深化关系。</b>我国奉行独立自主的和平外交政策，坚持不结盟原则；结盟选项在政治题里基本都错。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“综合国力”等同于“经济实力”。</b>综合国力包括经济、科技、军事、文化、组织能力等；政体、社会制度形式不能直接决定国家实力。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“全球南方崛起”说成“国际新秩序已经建立”。</b>全球南方是推进全球治理体系改革的重要力量，但公正合理的国际新秩序尚未建立。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“国际关系民主化”理解成“各国立场一致”。</b>民主化指国家不分大小一律平等、共同参与国际事务，不等于各国没有各自利益和立场。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先用图 ① 记住多极化的几个力量中心，再用图 ② 分清“共同利益—合作”“利益对立—冲突”。</li><li>第 1 关两道综合国力题，要能各举一个“经济/科技/文化”的例子。</li><li>第 2、3 关做完后，把每道题的“国家利益”落点用一句话写出来。</li><li>综合题三小道分别练：中拉五大工程、中非现代化合作、中马命运共同体，注意分点作答。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（3 道）：</b>2024 年第 14 题（区域国别学）、2024 年第 20 题（中非智库论坛）、2025 年第 20 题（中拉“五大工程”）。</li><li><b>外地真题（9 道）：</b>2025 年河北第 10 题、2022 年湖南第 9 题、2024 年安徽第 11 题、2025 年广东第 13 题、2025 年山东第 11 题、2024 年贵州第 13 题、2023 年湖南第 12 题、2025 年安徽第 11 题、2025 年广东第 20 题。</li><li><b>原创题（0 道）：</b>本页 12 道题全部来自真题，无原创题。</li><li><b>未收的北京题及原因：</b>2023 年第 15 题（中国与中亚、中吉乌公路）以“一带一路”开放合作为主线，已调整到第六课（对外开放）页，避免跨页重复；2026 年第 15 题原卷材料为两则新闻，题库未抽到材料原文，无法完整还原，故未收；2022 年第 12 题归国际组织页。页内两张示意图为原创手绘 SVG，已在标题标注“示意图，非原卷图”。本页<b>不含北京合格考题目</b>。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修1 当代国际政治与经济", chapter:"第二单元 世界多极化", section:"第三课 多极化趋势"};
+  var TOPIC = {1:"综合国力：国际竞争的核心", 2:"中国青年与命运共同体", 3:"平等有序的世界多极化", 4:"全球南方：世界经济增长的引擎", 5:"中国与东盟：新型国际关系", 6:"中法关系：相互尊重、合作共赢", 7:"“一带一路”：主权国家权利与共同利益", 8:"区域国别学：立足时代需要认识世界", 9:"周边命运共同体：义利相兼"};
+  var LEVELS = [
+    {id:1, name:"综合国力", sub:"两道题：综合国力由哪些力量构成、中国青年怎样参与全球治理", badge:"基础", color:"#7c3aed", lcl:"#f5f3ff"},
+    {id:2, name:"多极化的表现", sub:"平等有序的多极化、全球南方群体性崛起", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"国际关系与国家利益", sub:"中国东盟、中法、“一带一路”，三道题都落在国家利益上", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"中国与周边", sub:"区域国别研究、周边命运共同体，别把研究目的说窄、别把合作说成结盟", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"中拉五大工程、中非智库论坛、中马命运共同体各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"2025·河北 第10题", kind:"real", star:1,
+      stem:"综合国力是指一个国家生存和发展所拥有的各方面力量的总和。据此，下列表述错误的是",
+      opts:["巴西承办奥运会的背后是综合国力的不断增强", "英国和意大利政体不同决定了两国不同的国家实力", "“中国天眼”等大科学装置向全球开放是科技实力的体现", "抗日战争伟大胜利形成的抗战精神是文化实力的重要构成"],
+      ans:1,
+      why:"A 正确：承办奥运会需要场馆、交通、安保、组织能力等支撑，背后是经济、科技、组织能力等综合国力的增强。B 错误：政体是政治制度形式，不能决定国家实力；国家实力由经济、科技、军事、文化等综合国力构成。C 正确：大科学装置是科技实力的直接体现。D 正确：抗战精神属于精神文化层面，是文化软实力的重要构成。本题选错误项，故选 B。",
+      tip:"综合国力=经济+科技+军事+文化+组织能力等，政治制度形式不直接等于国家实力。"
+    },
+    {
+      id:2, lv:1, src:"2022·湖南 第9题", kind:"real", star:1,
+      stem:"新时代的中国青年，在多个国际机制青年领域合作文件的制定过程中，积极贡献智慧、提出主张；在全球20多个国家，开展医疗卫生、农业技术、经济管理等志愿服务；在北京冬奥会、冬残奥会上，超越语言的障碍、文化的差异，搭建起“一起向未来”的桥梁。一系列行动展示出中国青年（ ）①立足各国国家利益，践行共商共建共享理念 ②顺应世界多极化趋势，建立国际政治经济新秩序 ③具有全球视野，为世界和平发展贡献智慧与力量 ④不负未来之托，担当构建人类命运共同体的青春使命",
+      opts:["①②", "①③", "②④", "③④"],
+      ans:3,
+      why:"①错误：中国青年应立足我国国家利益、维护我国国家利益，不是“立足各国国家利益”。②错误：建立国际政治经济新秩序的主体是国家，不是青年；青年可以参与，但不能说“青年建立”。③正确：参与国际机制、开展志愿服务，体现中国青年具有全球视野，为世界和平发展贡献智慧与力量。④正确：冬奥舞台、跨国志愿服务，展现中国青年担当构建人类命运共同体的青春使命。",
+      tip:"主体题先看“谁来做”：建立国际新秩序是国家的事，青年是参与者和贡献者。"
+    },
+    {
+      id:3, lv:2, src:"2024·安徽 第11题", kind:"real", star:2,
+      stem:"多极化已成为当今世界的基本趋势，中国倡导平等有序的世界多极化。平等的多极化，要体现各国权利平等、机会平等、规则平等，要确保国家不分大小、强弱，都能在多极化进程中平等参与、享受权利、发挥作用。为此，中国主张世界各国（ ）①同等地享有主权国家权利，同等地承担国际责任 ②恪守国家主权平等的原则，推动国际关系民主化 ③立足国家共同利益开展外交，共同掌握人类命运 ④坚持共商共建共享的治理观，完善全球治理体系",
+      opts:["①②", "①③", "②④", "③④"],
+      ans:2,
+      why:"①错误：主权国家享有的权利和承担的责任依据国际法和自身实际情况而定，并非“同等”，大国与小国的责任不能简单画等号。②正确：恪守国家主权平等原则，才能确保各国平等参与，推动国际关系民主化。③错误：主权国家对外活动的出发点和落脚点是维护本国国家利益，“立足国家共同利益开展外交”表述不准确。④正确：坚持共商共建共享的全球治理观，完善全球治理体系，才能实现平等有序的多极化。",
+      tip:"“共同利益”不是“共同立场”：各国合作的基点是共同利益，但出发点仍是本国国家利益。"
+    },
+    {
+      id:4, lv:2, src:"2025·广东 第13题", kind:"real", star:2,
+      stem:"截至2024年底，全球南方国家对世界经济增长的贡献率已达80%，其国内生产总值占世界的份额超过40%。同时，全球南方国家对全球治理体系的改革呼声取得一定效果，在新兴多边体系中的影响力明显上升。对此，理解正确的是（ ）①全球治理体系改革已取得突破性进展 ②全球南方国家是世界经济增长的引擎 ③全球南方国家是新兴多边体系发展的决定性因素 ④全球南方国家成为推进全球治理体系改革的重要力量",
+      opts:["①②", "①③", "②④", "③④"],
+      ans:2,
+      why:"①错误：材料只说“改革呼声取得一定效果”，不能夸大为“突破性进展”。②正确：全球南方国家对世界经济增长贡献率达 80%，是世界经济增长的引擎。③错误：全球南方国家影响力上升，但不是新兴多边体系发展的“决定性因素”，多边体系发展是多种力量共同作用的结果。④正确：全球南方国家推动治理体系改革并产生影响，是推进改革的重要力量。",
+      tip:"材料里的“一定效果”“影响力上升”不能读成“已经完成”“决定性”。"
+    },
+    {
+      id:5, lv:3, src:"2025·山东 第11题", kind:"real", star:2,
+      stem:"某学习小组围绕“中国与东盟关系”开展探究活动，搜集到以下资料：1955年4月，第一次亚非会议在印尼万隆举行，形成了以“团结、友谊、合作”为核心的万隆精神；此后，万隆精神被嵌入东盟创立与发展的进程中。2024年10月，中国—东盟自贸区3.0版升级谈判实质性结束，标志着双方在数字经济、绿色经济等新兴领域的合作将进一步深化。材料表明，中国与东盟（ ）①积极弘扬万隆精神，推动建设合作共赢的新型国际关系 ②通过深化南南合作，不断提升在国际多边机制的话语权 ③始终坚持共同立场，为正确处理国际关系贡献亚洲智慧 ④共同维护自由贸易体制，积极推进区域经济一体化进程",
+      opts:["①②", "①④", "②③", "③④"],
+      ans:1,
+      why:"①正确：弘扬万隆精神、深化自贸区合作，体现建设合作共赢的新型国际关系。②错误：中国与东盟同属发展中国家，合作属于南南合作，但材料没有体现“提升在国际多边机制的话语权”。③错误：中国与东盟有广泛共同利益，但在一些具体问题上也有各自立场，“始终坚持共同立场”过于绝对。④正确：自贸区 3.0 版升级、新兴领域合作深化，体现共同维护自由贸易体制、推进区域经济一体化。",
+      tip:"“始终坚持共同立场”这类绝对化表述，通常是错项。"
+    },
+    {
+      id:6, lv:3, src:"2024·贵州 第13题", kind:"real", star:2,
+      stem:"2024年5月，国家主席习近平在访问法国时指出，“60年来，中法关系始终走在中国同西方国家关系前列，为国际社会树立了不同社会制度国家之间和平共处、合作共赢的典型。”“希望通过这次访问，巩固两国传统友谊、增进政治互信、凝聚战略共识、深化各领域交流合作……”对此理解正确的是（ ）①国家结盟是深化国家关系的主要手段 ②中法两国互相尊重彼此对社会制度的选择 ③主场外交有助于维护我国国家利益及世界和平 ④我国致力于构建以合作共赢为核心的新型国际关系",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:3,
+      why:"①错误：我国奉行独立自主的和平外交政策，坚持不结盟原则。②正确：中法“不同社会制度国家之间和平共处”，说明双方相互尊重彼此对社会制度的选择。③错误：材料是国家主席访问法国，属于出访外交，不是“主场外交”。④正确：中法合作共赢的典型，体现我国致力于构建以合作共赢为核心的新型国际关系。",
+      tip:"“结盟”是我国外交题的高频错项；我国是不结盟国家。"
+    },
+    {
+      id:7, lv:3, src:"2023·湖南 第12题", kind:"real", star:2,
+      stem:"2023年是“一带一路”倡议提出十周年，世界大多数国家认可“一带一路”倡议并签署了合作协议。十年间，“一带一路”打造了可靠的“朋友圈”，强化了全球互联互通网络，助力全球治理体系的建设与改革，极大提升了我国对外开放的广度与深度。这体现出（ ）①主权国家具有独立权和平等权 ②国家利益是国家合作的基础 ③中国方案在全球治理中发挥重要作用 ④公共外交是解决全球发展失衡问题的首要手段",
+      opts:["①③", "①④", "②③", "②④"],
+      ans:0,
+      why:"①正确：各国自主决定是否认可、签署合作协议，体现主权国家的独立权；国家不分大小强弱都能参与，体现平等权。②错误：国家间的共同利益是国家合作的基础，不是笼统的“国家利益”。③正确：“一带一路”助力全球治理体系建设与改革，说明中国方案在全球治理中发挥重要作用。④错误：材料未涉及公共外交，且公共外交不是解决全球发展失衡的“首要手段”。",
+      tip:"“国家利益是合作基础”是错的，正确表述是“国家间的共同利益是合作基础”。"
+    },
+    {
+      id:8, lv:4, src:"2024·北京 第14题", kind:"real", star:2,
+      stem:"区域国别学是一门对世界不同国家和区域的政治、经济、文化、社会、军事、人文、地理、资源等进行全面研究的交叉学科。当前，世界之变、时代之变、历史之变正以前所未有的方式展开，新形势新任务推动着我国区域国别学研究向纵深发展。我国的区域国别学研究（ ）①立足时代需要，与国家发展紧密相连 ②有助于增进对其他国家和区域的了解 ③旨在研究发达国家的经济、文化、风俗人情 ④可以开创我国与区域性国际组织合作的新局面",
+      opts:["①②", "①④", "②③", "③④"],
+      ans:0,
+      why:"①正确：世界之变、时代之变、历史之变推动研究向纵深发展，说明它立足时代需要、与国家发展紧密相连。②正确：区域国别学本身对各国各区域的政治、经济、文化等作全面研究，自然有助于增进对其他国家和区域的了解。③错误：研究发达国家只是研究内容的一部分，我国的研究面向世界各国；“旨在”把研究目的说窄了，目的是服务国家发展和对外交往。④错误：材料没有涉及国际组织，推不出“开创我国与区域性国际组织合作的新局面”。",
+      tip:"“旨在”“就是”后面常藏“缩小范围”的陷阱：区域国别学面向世界各个国家和地区，不只研究发达国家。"
+    },
+    {
+      id:9, lv:4, src:"2025·安徽 第11题", kind:"real", star:2,
+      stem:"同周边国家相向而行，以行动传递爱的力量，中国认真书写睦邻友好的时代新篇。中老铁路创造“钢铁丝路效应”，带动沿线产业园区经济显著增长；中巴经济走廊拉动250多亿美元直接投资，创造超过23万个就业岗位；中欧（中亚）班列成为支撑国际合作的“钢铁驼队”，让多国共享中国市场红利。由此可见，中国在推动构建周边命运共同体过程中坚持（ ）①以心相交，给周边国家提供可复制的发展方案 ②以义为先，以促进周边国家繁荣为首要目标 ③以行践诺，在区域经济的共振中实现联动发展 ④以友为桥，为地区和平与发展注入更多确定性",
+      opts:["①②", "①④", "②③", "③④"],
+      ans:3,
+      why:"①错误：各国国情不同，发展方案不能简单复制，中国不会给周边国家提供“可复制的发展方案”。②错误：维护本国国家利益是主权国家对外活动的出发点和落脚点，中国促进周边国家繁荣，但首要目标不是“促进周边国家繁荣”。③正确：中老铁路、中巴经济走廊、中欧班列等行动，在区域经济联动中实现共同发展。④正确：以友好关系为桥梁，为地区和平与发展注入更多确定性。",
+      tip:"“首要目标”要落到维护本国国家利益；对外合作是互利共赢，不是单向让利。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"2025·北京 第20题", star:3, title:"“五大工程”怎样扩大中拉利益汇合点",
+      material:"2025年5月13日，国家主席习近平在中国—拉美和加勒比国家共同体论坛第四届部长级会议开幕式上宣布，中方愿同拉方携手启动团结、发展、文明、和平、民心“五大工程”。团结工程：坚定维护以联合国为核心的国际体系和以国际法为基础的国际秩序，在国际和地区事务中发出共同声音。发展工程：共同落实全球发展倡议，坚定维护多边贸易体制，维护全球产业链供应链稳定畅通。文明工程：共同落实全球文明倡议，树立平等、互鉴、对话、包容的文明观。和平工程：共同落实全球安全倡议，加强灾害治理、网络安全、反恐等合作。民心工程：未来3年向拉共体成员国提供多项教育培训计划，实施300个“小而美”民生项目。",
+      asks:[{q:"党的二十大报告提出，中国推动构建新型国际关系，致力于扩大同各国利益的汇合点。结合材料，运用《当代国际政治与经济》知识，阐释“五大工程”如何扩大中拉利益汇合点。", pt:8}],
+      points:[
+        ["团结工程：维护以联合国为核心的国际体系和以国际法为基础的国际秩序，中拉共同发声", "有利于维护国际公平正义，扩大政治互信与共同话语权", "为双方发展营造稳定国际环境，扩大政治利益汇合点", "发展工程：落实全球发展倡议，维护多边贸易体制和产业链供应链稳定", "促进中拉贸易投资自由化便利化，深化经济互补性", "实现互利共赢、共享发展机遇，扩大经济利益汇合点", "文明工程：落实全球文明倡议，倡导平等包容的文明观，弘扬全人类共同价值", "促进文明交流互鉴，增进相互理解与信任，减少文化误解", "为各领域合作筑牢人文基础，扩大文化利益汇合点", "和平工程：落实全球安全倡议，共同应对非传统安全威胁", "维护地区稳定与共同安全，为双方发展筑牢安全屏障", "扩大安全利益汇合点", "民心工程：教育培训和“小而美”民生项目直接惠及拉美民众", "改善当地民众生活，深化民间友好，夯实民意基础", "巩固长期合作的社会根基，扩大社会利益汇合点"]
+      ],
+      tip:"“五大工程”类题按“政治—经济—文化—安全—民心”五条分点，每条都写“做法+作用+扩大哪类利益”。"
+    },
+    {
+      id:11, lv:5, src:"2024·北京 第20题", star:3, title:"中非怎样共同树立现代化发展合作典范",
+      material:"“全球南方”是新兴市场国家和发展中国家的集合体。中国在推动自身发展进程中始终坚持同南方国家相互支持、取长补短，携手打造现代化全球南方。全球发展和南南合作基金已支持实施200多个项目，覆盖60多个国家。中国还同联合国南南合作办公室开展了跨境电商能力建设研修项目，近百个国家的上千名学员参加。2024年3月，中非智库论坛第十三届会议在坦桑尼亚举行，代表们就“中国与非洲共同树立现代化发展合作典范”等议题深入探讨。论坛发表《中非智库关于深化全球发展合作的共识》，呼吁国际社会本着相互尊重、团结合作、开放共赢、共同繁荣原则，深化发展合作，推动各国携手走向现代化，共筑人类命运共同体。",
+      asks:[{q:"“中非智库论坛”是经中国外交部、商务部批准设立的中非学术交流高端平台。假如你是论坛的中方参会代表，参与“中国与非洲共同树立现代化发展合作典范”议题的讨论，运用《当代国际政治与经济》知识，阐述你的观点。", pt:8}],
+      points:[
+        ["顺应和平与发展的时代主题，与非洲一道共同树立现代化发展合作典范", "推动建立公正合理的国际政治经济新秩序", "中国作为负责任大国，在追求本国利益的同时兼顾他国合理关切", "维护世界人民共同利益，深化南南合作，推动共同发展", "世界多极化是当今国际形势的突出特点，全球南方群体性崛起", "中国愿意与各国携手走向现代化，共筑人类命运共同体", "坚持相互尊重、团结合作、开放共赢、共同繁荣", "以智库交流凝聚共识，为深化中非合作提供智力支持"]
+      ],
+      tip:"“阐述观点”类题先亮主题句，再按“时代主题—国家利益—多极化—命运共同体”分层。"
+    },
+    {
+      id:12, lv:5, src:"2025·广东 第20题", star:3, title:"国与国正确相处之道",
+      material:"2023年3月，习近平主席同来访的马来西亚总理安瓦尔就构建中马命运共同体达成重要共识。2025年4月，习近平主席对马来西亚进行国事访问，双方一致同意构建高水平战略性中马命运共同体。中国连续16年保持马来西亚最大贸易伙伴地位，连续多年是马来西亚主要投资来源国。马来西亚是中国在东盟第二大贸易伙伴和第一大进口来源国，马方鲜食榴莲等特色产品深受中国老百姓喜爱，共建“一带一路”旗舰项目“东海岸铁路工程”正加紧推进。中马两国将以签署互免签证协定为契机，深化旅游、文化、教育等领域合作，进一步夯实中马关系新的“黄金50年”民意基础。",
+      asks:[{q:"结合材料，运用《当代国际政治与经济》知识，探究当今世界国与国正确相处之道。", pt:8}],
+      points:[
+        ["国家利益是国际关系的决定性因素，国家间的共同利益是国家合作的基础", "中马在贸易、投资等领域存在广泛共同利益，应寻求共同利益、兼顾他国合理关切", "和平与发展是当今时代的主题，国与国相处应顺应时代潮流", "反对霸权主义和强权政治，通过和平方式解决国际争端，加强合作、推动共同繁荣", "建立以和平共处五项原则为基础的国际新秩序", "推动建设相互尊重、公平正义、合作共赢的新型国际关系", "秉持人类命运共同体理念，共同应对全球性挑战", "加强各领域交流合作，推动世界和平与发展"]
+      ],
+      tip:"“国与国相处之道”固定四层：共同利益—时代主题—新型国际关系—命运共同体。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "pol-xx1-c2-s1-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigDUOJI(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#5b21b6'>世界多极化的力量中心（示意图，非原卷图）</text><g font-size='11' fill='#1f2937'><rect x='24' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='90' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>美国</text><text x='90' y='94' text-anchor='middle'>唯一超级大国</text><rect x='172' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='238' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>中国</text><text x='238' y='94' text-anchor='middle'>最大发展中国家</text><rect x='320' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='386' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>欧盟</text><text x='386' y='94' text-anchor='middle'>一体化程度最高</text><rect x='468' y='52' width='132' height='56' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='534' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>俄罗斯</text><text x='534' y='94' text-anchor='middle'>军事与能源大国</text><rect x='616' y='52' width='120' height='56' rx='9' fill='#ede9fe' stroke='#a78bfa'/><text x='676' y='75' font-size='12' font-weight='700' fill='#5b21b6' text-anchor='middle'>新兴市场</text><text x='676' y='94' text-anchor='middle'>与发展中国家</text><text x='24' y='148' font-size='12' font-weight='700' fill='#5b21b6'>多极化的三个“不是”</text><text x='24' y='172'>不是已经定型的格局，而是深入发展的趋势</text><text x='24' y='196'>不是各国实力平均化，而是力量对比更趋平衡</text><text x='24' y='220'>不是没有斗争，单极与多极、称霸与反霸长期存在</text><rect x='24' y='240' width='712' height='44' rx='9' fill='#fff7ed' stroke='#fdba74'/><text x='40' y='267' font-size='11' fill='#9a3412'>全球南方群体性崛起，是推动世界多极化的重要力量；但公正合理的国际新秩序尚未建立。</text></g></svg></div>"; }
+  function buildFigGUOJIA(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#5b21b6'>国家利益怎样决定国际关系（示意图，非原卷图）</text><rect x='30' y='52' width='210' height='64' rx='10' fill='#f5f3ff' stroke='#a78bfa' stroke-width='2'/><text x='135' y='78' font-size='13' font-weight='700' fill='#5b21b6' text-anchor='middle'>国家利益</text><text x='135' y='100' font-size='10.5' fill='#1f2937' text-anchor='middle'>国际关系的决定性因素</text><rect x='430' y='40' width='300' height='82' rx='9' fill='#ecfdf5' stroke='#6ee7b7'/><text x='446' y='64' font-size='11.5' font-weight='700' fill='#065f46'>共同利益 → 合作</text><text x='446' y='86' font-size='10.5' fill='#1f2937'>共同利益是国家合作的基础</text><text x='446' y='106' font-size='10.5' fill='#1f2937'>例：中拉五大工程、中马贸易投资</text><rect x='430' y='142' width='300' height='82' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='446' y='166' font-size='11.5' font-weight='700' fill='#991b1b'>利益对立 → 冲突</text><text x='446' y='188' font-size='10.5' fill='#1f2937'>利益对立是国家冲突的根源</text><text x='446' y='208' font-size='10.5' fill='#1f2937'>例：贸易保护主义、霸权主义</text><line x1='240' y1='84' x2='428' y2='82' stroke='#7c3aed' stroke-width='2' marker-end='url(#ar2)'/><line x1='240' y1='96' x2='428' y2='180' stroke='#dc2626' stroke-width='2' marker-end='url(#ar3)'/><defs><marker id='ar2' markerWidth='9' markerHeight='9' refX='7' refY='4.5' orient='auto'><path d='M0,0 L9,4.5 L0,9 z' fill='#7c3aed'/></marker><marker id='ar3' markerWidth='9' markerHeight='9' refX='7' refY='4.5' orient='auto'><path d='M0,0 L9,4.5 L0,9 z' fill='#dc2626'/></marker></defs><text x='30' y='152' font-size='12' font-weight='700' fill='#5b21b6'>中国的选择</text><text x='30' y='176'>· 维护本国主权、安全、发展利益</text><text x='30' y='198'>· 兼顾他国合理关切，不搞零和博弈</text><text x='30' y='220'>· 构建相互尊重、公平正义、合作共赢的</text><text x='30' y='240'>  新型国际关系</text><text x='30' y='262'>· 推动构建人类命运共同体</text><text x='30' y='286' font-size='10.5' fill='#6b7280'>注意：共同利益不是“国家利益一致”，各国出发点仍是本国利益。</text></svg></div>"; }
+  var FIG = {
+    "duoji": buildFigDUOJI,
+    "guojia": buildFigGUOJIA
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>
