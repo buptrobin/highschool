@@ -822,7 +822,7 @@ window.SUBJECTS = [
         "href": "pages/geo/bx1-c3-s2.html",
         "quiz": {
          "href": "quiz/geo/bx1-c3-s2.html",
-         "n": 18,
+         "n": 14,
          "title": "海水的性质"
         }
        },
@@ -834,7 +834,7 @@ window.SUBJECTS = [
         "href": "pages/geo/bx1-c3-s3.html",
         "quiz": {
          "href": "quiz/geo/bx1-c3-s3.html",
-         "n": 18,
+         "n": 17,
          "title": "海水的运动"
         }
        },
@@ -1706,7 +1706,7 @@ window.SUBJECTS = [
    "extras": 8,
    "total": 101,
    "quiz": 31,
-   "quizTotal": 507
+   "quizTotal": 502
   }
  },
  {

@@ -29,11 +29,11 @@ window.QUIZ_MAP = {
 "title": "水循环"
 },
 "geo/bx1-c3-s2": {
-"n": 18,
+"n": 14,
 "title": "海水的性质"
 },
 "geo/bx1-c3-s3": {
-"n": 18,
+"n": 17,
 "title": "海水的运动"
 },
 "geo/bx1-c4-s1": {
