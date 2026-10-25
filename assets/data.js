@@ -993,21 +993,36 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "人口分布",
         "slug": "bx2-c1-s1",
-        "href": "pages/geo/bx2-c1-s1.html"
+        "href": "pages/geo/bx2-c1-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c1-s1.html",
+         "n": 16,
+         "title": "人口分布"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "人口迁移",
         "slug": "bx2-c1-s2",
-        "href": "pages/geo/bx2-c1-s2.html"
+        "href": "pages/geo/bx2-c1-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c1-s2.html",
+         "n": 18,
+         "title": "人口迁移"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "人口容量",
         "slug": "bx2-c1-s3",
-        "href": "pages/geo/bx2-c1-s3.html"
+        "href": "pages/geo/bx2-c1-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c1-s3.html",
+         "n": 13,
+         "title": "人口容量"
+        }
        },
        {
         "kind": "research",
@@ -1026,21 +1041,36 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "乡村和城镇空间结构",
         "slug": "bx2-c2-s1",
-        "href": "pages/geo/bx2-c2-s1.html"
+        "href": "pages/geo/bx2-c2-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c2-s1.html",
+         "n": 17,
+         "title": "乡村和城镇空间结构"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "城镇化",
         "slug": "bx2-c2-s2",
-        "href": "pages/geo/bx2-c2-s2.html"
+        "href": "pages/geo/bx2-c2-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c2-s2.html",
+         "n": 16,
+         "title": "城镇化"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "地域文化与城乡景观",
         "slug": "bx2-c2-s3",
-        "href": "pages/geo/bx2-c2-s3.html"
+        "href": "pages/geo/bx2-c2-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c2-s3.html",
+         "n": 17,
+         "title": "地域文化与城乡景观"
+        }
        },
        {
         "kind": "research",
@@ -1059,21 +1089,36 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "农业区位因素及其变化",
         "slug": "bx2-c3-s1",
-        "href": "pages/geo/bx2-c3-s1.html"
+        "href": "pages/geo/bx2-c3-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c3-s1.html",
+         "n": 18,
+         "title": "农业区位因素及其变化"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "工业区位因素及其变化",
         "slug": "bx2-c3-s2",
-        "href": "pages/geo/bx2-c3-s2.html"
+        "href": "pages/geo/bx2-c3-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c3-s2.html",
+         "n": 18,
+         "title": "工业区位因素及其变化"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "服务业区位因素及其变化",
         "slug": "bx2-c3-s3",
-        "href": "pages/geo/bx2-c3-s3.html"
+        "href": "pages/geo/bx2-c3-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c3-s3.html",
+         "n": 17,
+         "title": "服务业区位因素及其变化"
+        }
        },
        {
         "kind": "research",
@@ -1092,14 +1137,24 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "区域发展对交通运输布局的影响",
         "slug": "bx2-c4-s1",
-        "href": "pages/geo/bx2-c4-s1.html"
+        "href": "pages/geo/bx2-c4-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c4-s1.html",
+         "n": 17,
+         "title": "区域发展对交通运输布局的影响"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "交通运输布局对区域发展的影响",
         "slug": "bx2-c4-s2",
-        "href": "pages/geo/bx2-c4-s2.html"
+        "href": "pages/geo/bx2-c4-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c4-s2.html",
+         "n": 18,
+         "title": "交通运输布局对区域发展的影响"
+        }
        },
        {
         "kind": "research",
@@ -1118,21 +1173,36 @@ window.SUBJECTS = [
         "label": "第一节",
         "title": "人类面临的主要环境问题",
         "slug": "bx2-c5-s1",
-        "href": "pages/geo/bx2-c5-s1.html"
+        "href": "pages/geo/bx2-c5-s1.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c5-s1.html",
+         "n": 18,
+         "title": "人类面临的主要环境问题"
+        }
        },
        {
         "kind": "section",
         "label": "第二节",
         "title": "走向人地协调——可持续发展",
         "slug": "bx2-c5-s2",
-        "href": "pages/geo/bx2-c5-s2.html"
+        "href": "pages/geo/bx2-c5-s2.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c5-s2.html",
+         "n": 14,
+         "title": "走向人地协调——可持续发展"
+        }
        },
        {
         "kind": "section",
         "label": "第三节",
         "title": "中国国家发展战略举例",
         "slug": "bx2-c5-s3",
-        "href": "pages/geo/bx2-c5-s3.html"
+        "href": "pages/geo/bx2-c5-s3.html",
+        "quiz": {
+         "href": "quiz/geo/bx2-c5-s3.html",
+         "n": 15,
+         "title": "中国国家发展战略举例"
+        }
        },
        {
         "kind": "research",
@@ -1635,8 +1705,8 @@ window.SUBJECTS = [
    "research": 24,
    "extras": 8,
    "total": 101,
-   "quiz": 17,
-   "quizTotal": 275
+   "quiz": 31,
+   "quizTotal": 507
   }
  },
  {
