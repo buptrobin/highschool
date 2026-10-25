@@ -4996,5 +4996,2567 @@ window.SUBJECTS = [
    "quiz": 102,
    "quizTotal": 1224
   }
+ },
+ {
+  "id": "phy",
+  "name": "物理",
+  "color": "#7c3aed",
+  "soft": "#f5f3ff",
+  "desc": "人教版 · 必修 + 选择性必修",
+  "books": [
+   {
+    "key": "bx1",
+    "title": "必修第一册",
+    "chapters": [
+     {
+      "title": "第一章 运动的描述",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 质点 参考系",
+        "slug": "bx1-c1-s1",
+        "href": "pages/phy/bx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 时间 位移",
+        "slug": "bx1-c1-s2",
+        "href": "pages/phy/bx1-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 位置变化快慢的描述——速度",
+        "slug": "bx1-c1-s3",
+        "href": "pages/phy/bx1-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 速度变化快慢的描述——加速度",
+        "slug": "bx1-c1-s4",
+        "href": "pages/phy/bx1-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 匀变速直线运动的研究",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 实验：探究小车速度随时间变化的规律",
+        "slug": "bx1-c2-s1",
+        "href": "pages/phy/bx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 匀变速直线运动的速度与时间的关系",
+        "slug": "bx1-c2-s2",
+        "href": "pages/phy/bx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 匀变速直线运动的位移与时间的关系",
+        "slug": "bx1-c2-s3",
+        "href": "pages/phy/bx1-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 自由落体运动",
+        "slug": "bx1-c2-s4",
+        "href": "pages/phy/bx1-c2-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 相互作用——力",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 重力与弹力",
+        "slug": "bx1-c3-s1",
+        "href": "pages/phy/bx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 摩擦力",
+        "slug": "bx1-c3-s2",
+        "href": "pages/phy/bx1-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 牛顿第三定律",
+        "slug": "bx1-c3-s3",
+        "href": "pages/phy/bx1-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 力的合成和分解",
+        "slug": "bx1-c3-s4",
+        "href": "pages/phy/bx1-c3-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 共点力的平衡",
+        "slug": "bx1-c3-s5",
+        "href": "pages/phy/bx1-c3-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 运动和力的关系",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 牛顿第一定律",
+        "slug": "bx1-c4-s1",
+        "href": "pages/phy/bx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 实验：探究加速度与力、质量的关系",
+        "slug": "bx1-c4-s2",
+        "href": "pages/phy/bx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 牛顿第二定律",
+        "slug": "bx1-c4-s3",
+        "href": "pages/phy/bx1-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 力学单位制",
+        "slug": "bx1-c4-s4",
+        "href": "pages/phy/bx1-c4-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 牛顿运动定律的应用",
+        "slug": "bx1-c4-s5",
+        "href": "pages/phy/bx1-c4-s5.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "6. 超重和失重",
+        "slug": "bx1-c4-s6",
+        "href": "pages/phy/bx1-c4-s6.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "bx2",
+    "title": "必修第二册",
+    "chapters": [
+     {
+      "title": "第五章 抛体运动",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 曲线运动",
+        "slug": "bx2-c1-s1",
+        "href": "pages/phy/bx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 运动的合成与分解",
+        "slug": "bx2-c1-s2",
+        "href": "pages/phy/bx2-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 实验：探究平抛运动的特点",
+        "slug": "bx2-c1-s3",
+        "href": "pages/phy/bx2-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 抛体运动的规律",
+        "slug": "bx2-c1-s4",
+        "href": "pages/phy/bx2-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第六章 圆周运动",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 圆周运动",
+        "slug": "bx2-c2-s1",
+        "href": "pages/phy/bx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 向心力",
+        "slug": "bx2-c2-s2",
+        "href": "pages/phy/bx2-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 向心加速度",
+        "slug": "bx2-c2-s3",
+        "href": "pages/phy/bx2-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 生活中的圆周运动",
+        "slug": "bx2-c2-s4",
+        "href": "pages/phy/bx2-c2-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第七章 万有引力与宇宙航行",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 行星的运动",
+        "slug": "bx2-c3-s1",
+        "href": "pages/phy/bx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 万有引力定律",
+        "slug": "bx2-c3-s2",
+        "href": "pages/phy/bx2-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 万有引力理论的成就",
+        "slug": "bx2-c3-s3",
+        "href": "pages/phy/bx2-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 宇宙航行",
+        "slug": "bx2-c3-s4",
+        "href": "pages/phy/bx2-c3-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 相对论时空观与牛顿力学的局限性",
+        "slug": "bx2-c3-s5",
+        "href": "pages/phy/bx2-c3-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第八章 机械能守恒定律",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 功与功率",
+        "slug": "bx2-c4-s1",
+        "href": "pages/phy/bx2-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 重力势能",
+        "slug": "bx2-c4-s2",
+        "href": "pages/phy/bx2-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 动能和动能定理",
+        "slug": "bx2-c4-s3",
+        "href": "pages/phy/bx2-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 机械能守恒定律",
+        "slug": "bx2-c4-s4",
+        "href": "pages/phy/bx2-c4-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 实验：验证机械能守恒定律",
+        "slug": "bx2-c4-s5",
+        "href": "pages/phy/bx2-c4-s5.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "bx3",
+    "title": "必修第三册",
+    "chapters": [
+     {
+      "title": "第九章 静电场及其应用",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 电荷",
+        "slug": "bx3-c1-s1",
+        "href": "pages/phy/bx3-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 库仑定律",
+        "slug": "bx3-c1-s2",
+        "href": "pages/phy/bx3-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 电场 电场强度",
+        "slug": "bx3-c1-s3",
+        "href": "pages/phy/bx3-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 静电的防止与利用",
+        "slug": "bx3-c1-s4",
+        "href": "pages/phy/bx3-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第十章 静电场中的能量",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 电势能和电势",
+        "slug": "bx3-c2-s1",
+        "href": "pages/phy/bx3-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 电势差",
+        "slug": "bx3-c2-s2",
+        "href": "pages/phy/bx3-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 电势差与电场强度的关系",
+        "slug": "bx3-c2-s3",
+        "href": "pages/phy/bx3-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 电容器的电容",
+        "slug": "bx3-c2-s4",
+        "href": "pages/phy/bx3-c2-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 带电粒子在电场中的运动",
+        "slug": "bx3-c2-s5",
+        "href": "pages/phy/bx3-c2-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第十一章 电路及其应用",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 电源和电流",
+        "slug": "bx3-c3-s1",
+        "href": "pages/phy/bx3-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 导体的电阻",
+        "slug": "bx3-c3-s2",
+        "href": "pages/phy/bx3-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 导体电阻率的测量",
+        "slug": "bx3-c3-s3",
+        "href": "pages/phy/bx3-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 串联电路和并联电路",
+        "slug": "bx3-c3-s4",
+        "href": "pages/phy/bx3-c3-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 实验：练习使用多用电表",
+        "slug": "bx3-c3-s5",
+        "href": "pages/phy/bx3-c3-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第十二章 电能 能量守恒定律",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 电路中的能量转化",
+        "slug": "bx3-c4-s1",
+        "href": "pages/phy/bx3-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 闭合电路的欧姆定律",
+        "slug": "bx3-c4-s2",
+        "href": "pages/phy/bx3-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 电池电动势和内阻的测量",
+        "slug": "bx3-c4-s3",
+        "href": "pages/phy/bx3-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 能源与可持续发展",
+        "slug": "bx3-c4-s4",
+        "href": "pages/phy/bx3-c4-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第十三章 电磁感应与电磁波初步",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 磁场 磁感线",
+        "slug": "bx3-c5-s1",
+        "href": "pages/phy/bx3-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 磁感应强度 磁通量",
+        "slug": "bx3-c5-s2",
+        "href": "pages/phy/bx3-c5-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 电磁感应现象及应用",
+        "slug": "bx3-c5-s3",
+        "href": "pages/phy/bx3-c5-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 电磁波的发现及应用",
+        "slug": "bx3-c5-s4",
+        "href": "pages/phy/bx3-c5-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 能量量子化",
+        "slug": "bx3-c5-s5",
+        "href": "pages/phy/bx3-c5-s5.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx1",
+    "title": "选择性必修第一册",
+    "chapters": [
+     {
+      "title": "第一章 动量守恒定律",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 动量",
+        "slug": "xx1-c1-s1",
+        "href": "pages/phy/xx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 动量定理",
+        "slug": "xx1-c1-s2",
+        "href": "pages/phy/xx1-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 动量守恒定律",
+        "slug": "xx1-c1-s3",
+        "href": "pages/phy/xx1-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 实验：验证动量守恒定律",
+        "slug": "xx1-c1-s4",
+        "href": "pages/phy/xx1-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 机械振动",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 简谐运动",
+        "slug": "xx1-c2-s1",
+        "href": "pages/phy/xx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 简谐运动的描述",
+        "slug": "xx1-c2-s2",
+        "href": "pages/phy/xx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 简谐运动的回复力和能量",
+        "slug": "xx1-c2-s3",
+        "href": "pages/phy/xx1-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 单摆",
+        "slug": "xx1-c2-s4",
+        "href": "pages/phy/xx1-c2-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 实验：用单摆测量重力加速度",
+        "slug": "xx1-c2-s5",
+        "href": "pages/phy/xx1-c2-s5.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "6. 受迫振动 共振",
+        "slug": "xx1-c2-s6",
+        "href": "pages/phy/xx1-c2-s6.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 机械波",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 波的形成",
+        "slug": "xx1-c3-s1",
+        "href": "pages/phy/xx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 波的描述",
+        "slug": "xx1-c3-s2",
+        "href": "pages/phy/xx1-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 波的反射、折射和衍射",
+        "slug": "xx1-c3-s3",
+        "href": "pages/phy/xx1-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 波的干涉",
+        "slug": "xx1-c3-s4",
+        "href": "pages/phy/xx1-c3-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 多普勒效应",
+        "slug": "xx1-c3-s5",
+        "href": "pages/phy/xx1-c3-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 光",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 光的折射",
+        "slug": "xx1-c4-s1",
+        "href": "pages/phy/xx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 全反射",
+        "slug": "xx1-c4-s2",
+        "href": "pages/phy/xx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 光的干涉",
+        "slug": "xx1-c4-s3",
+        "href": "pages/phy/xx1-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 光的衍射",
+        "slug": "xx1-c4-s4",
+        "href": "pages/phy/xx1-c4-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 光的偏振 激光",
+        "slug": "xx1-c4-s5",
+        "href": "pages/phy/xx1-c4-s5.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx2",
+    "title": "选择性必修第二册",
+    "chapters": [
+     {
+      "title": "第一章 安培力与洛伦兹力",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 磁场对通电导线的作用力",
+        "slug": "xx2-c1-s1",
+        "href": "pages/phy/xx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 磁场对运动电荷的作用力",
+        "slug": "xx2-c1-s2",
+        "href": "pages/phy/xx2-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 带电粒子在匀强磁场中的运动",
+        "slug": "xx2-c1-s3",
+        "href": "pages/phy/xx2-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 质谱仪与回旋加速器",
+        "slug": "xx2-c1-s4",
+        "href": "pages/phy/xx2-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 电磁感应",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 楞次定律",
+        "slug": "xx2-c2-s1",
+        "href": "pages/phy/xx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 法拉第电磁感应定律",
+        "slug": "xx2-c2-s2",
+        "href": "pages/phy/xx2-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 涡流、电磁阻尼和电磁驱动",
+        "slug": "xx2-c2-s3",
+        "href": "pages/phy/xx2-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 互感和自感",
+        "slug": "xx2-c2-s4",
+        "href": "pages/phy/xx2-c2-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 交变电流",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 交变电流",
+        "slug": "xx2-c3-s1",
+        "href": "pages/phy/xx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 交变电流的描述",
+        "slug": "xx2-c3-s2",
+        "href": "pages/phy/xx2-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 变压器",
+        "slug": "xx2-c3-s3",
+        "href": "pages/phy/xx2-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 电能的输送",
+        "slug": "xx2-c3-s4",
+        "href": "pages/phy/xx2-c3-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 电磁振荡与电磁波",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 电磁振荡",
+        "slug": "xx2-c4-s1",
+        "href": "pages/phy/xx2-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 电磁场与电磁波",
+        "slug": "xx2-c4-s2",
+        "href": "pages/phy/xx2-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 无线电波的发射和接收",
+        "slug": "xx2-c4-s3",
+        "href": "pages/phy/xx2-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 电磁波谱",
+        "slug": "xx2-c4-s4",
+        "href": "pages/phy/xx2-c4-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第五章 传感器",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 认识传感器",
+        "slug": "xx2-c5-s1",
+        "href": "pages/phy/xx2-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 常见传感器的工作原理及应用",
+        "slug": "xx2-c5-s2",
+        "href": "pages/phy/xx2-c5-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 利用传感器制作简单的自动控制装置",
+        "slug": "xx2-c5-s3",
+        "href": "pages/phy/xx2-c5-s3.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx3",
+    "title": "选择性必修第三册",
+    "chapters": [
+     {
+      "title": "第一章 分子动理论",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 分子动理论的基本内容",
+        "slug": "xx3-c1-s1",
+        "href": "pages/phy/xx3-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 实验：用油膜法估测油酸分子的大小",
+        "slug": "xx3-c1-s2",
+        "href": "pages/phy/xx3-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 分子运动速率分布规律",
+        "slug": "xx3-c1-s3",
+        "href": "pages/phy/xx3-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 分子动能和分子势能",
+        "slug": "xx3-c1-s4",
+        "href": "pages/phy/xx3-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 气体、固体和液体",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 温度和温标",
+        "slug": "xx3-c2-s1",
+        "href": "pages/phy/xx3-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 气体的等温变化",
+        "slug": "xx3-c2-s2",
+        "href": "pages/phy/xx3-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 气体的等压变化和等容变化",
+        "slug": "xx3-c2-s3",
+        "href": "pages/phy/xx3-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 固体",
+        "slug": "xx3-c2-s4",
+        "href": "pages/phy/xx3-c2-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 液体",
+        "slug": "xx3-c2-s5",
+        "href": "pages/phy/xx3-c2-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 热力学定律",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 功、热和内能的改变",
+        "slug": "xx3-c3-s1",
+        "href": "pages/phy/xx3-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 热力学第一定律",
+        "slug": "xx3-c3-s2",
+        "href": "pages/phy/xx3-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 能量守恒定律",
+        "slug": "xx3-c3-s3",
+        "href": "pages/phy/xx3-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 热力学第二定律",
+        "slug": "xx3-c3-s4",
+        "href": "pages/phy/xx3-c3-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 原子结构和波粒二象性",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 普朗克黑体辐射理论",
+        "slug": "xx3-c4-s1",
+        "href": "pages/phy/xx3-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 光电效应",
+        "slug": "xx3-c4-s2",
+        "href": "pages/phy/xx3-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 原子的核式结构模型",
+        "slug": "xx3-c4-s3",
+        "href": "pages/phy/xx3-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 氢原子光谱和玻尔的原子模型",
+        "slug": "xx3-c4-s4",
+        "href": "pages/phy/xx3-c4-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. 粒子的波动性和量子力学的建立",
+        "slug": "xx3-c4-s5",
+        "href": "pages/phy/xx3-c4-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第五章 原子核",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "1. 原子核的组成",
+        "slug": "xx3-c5-s1",
+        "href": "pages/phy/xx3-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "2. 放射性元素的衰变",
+        "slug": "xx3-c5-s2",
+        "href": "pages/phy/xx3-c5-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "3. 核力与结合能",
+        "slug": "xx3-c5-s3",
+        "href": "pages/phy/xx3-c5-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "4. 核裂变与核聚变",
+        "slug": "xx3-c5-s4",
+        "href": "pages/phy/xx3-c5-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "",
+        "title": "5. “基本”粒子",
+        "slug": "xx3-c5-s5",
+        "href": "pages/phy/xx3-c5-s5.html"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "extras": [],
+  "stat": {
+   "books": 6,
+   "chapters": 27,
+   "sections": 122,
+   "research": 0,
+   "extras": 0,
+   "total": 122,
+   "quiz": 0,
+   "quizTotal": 0
+  }
+ },
+ {
+  "id": "chem",
+  "name": "化学",
+  "color": "#ea580c",
+  "soft": "#fff7ed",
+  "desc": "人教版 · 必修 + 选择性必修",
+  "books": [
+   {
+    "key": "bx1",
+    "title": "必修第一册",
+    "chapters": [
+     {
+      "title": "第一章 物质及其变化",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "物质的分类及转化",
+        "slug": "bx1-c1-s1",
+        "href": "pages/chem/bx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "离子反应",
+        "slug": "bx1-c1-s2",
+        "href": "pages/chem/bx1-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "氧化还原反应",
+        "slug": "bx1-c1-s3",
+        "href": "pages/chem/bx1-c1-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 海水中的重要元素——钠和氯",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "钠及其化合物",
+        "slug": "bx1-c2-s1",
+        "href": "pages/chem/bx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "氯及其化合物",
+        "slug": "bx1-c2-s2",
+        "href": "pages/chem/bx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "物质的量",
+        "slug": "bx1-c2-s3",
+        "href": "pages/chem/bx1-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 铁 金属材料",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "铁及其化合物",
+        "slug": "bx1-c3-s1",
+        "href": "pages/chem/bx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "金属材料",
+        "slug": "bx1-c3-s2",
+        "href": "pages/chem/bx1-c3-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 物质结构 元素周期律",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "原子结构与元素周期表",
+        "slug": "bx1-c4-s1",
+        "href": "pages/chem/bx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "元素周期律",
+        "slug": "bx1-c4-s2",
+        "href": "pages/chem/bx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "化学键",
+        "slug": "bx1-c4-s3",
+        "href": "pages/chem/bx1-c4-s3.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "bx2",
+    "title": "必修第二册",
+    "chapters": [
+     {
+      "title": "第五章 化工生产中的重要非金属元素",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "硫及其化合物",
+        "slug": "bx2-c1-s1",
+        "href": "pages/chem/bx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "氮及其化合物",
+        "slug": "bx2-c1-s2",
+        "href": "pages/chem/bx2-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "无机非金属材料",
+        "slug": "bx2-c1-s3",
+        "href": "pages/chem/bx2-c1-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第六章 化学反应与能量",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "化学反应与能量变化",
+        "slug": "bx2-c2-s1",
+        "href": "pages/chem/bx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "化学反应的速率与限度",
+        "slug": "bx2-c2-s2",
+        "href": "pages/chem/bx2-c2-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第七章 有机化合物",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "认识有机化合物",
+        "slug": "bx2-c3-s1",
+        "href": "pages/chem/bx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "乙烯与有机高分子材料",
+        "slug": "bx2-c3-s2",
+        "href": "pages/chem/bx2-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "乙醇与乙酸",
+        "slug": "bx2-c3-s3",
+        "href": "pages/chem/bx2-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第四节",
+        "title": "基本营养物质",
+        "slug": "bx2-c3-s4",
+        "href": "pages/chem/bx2-c3-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第八章 化学与可持续发展",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "自然资源的开发利用",
+        "slug": "bx2-c4-s1",
+        "href": "pages/chem/bx2-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "化学品的合理使用",
+        "slug": "bx2-c4-s2",
+        "href": "pages/chem/bx2-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "环境保护与绿色化学",
+        "slug": "bx2-c4-s3",
+        "href": "pages/chem/bx2-c4-s3.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx1",
+    "title": "选择性必修1 化学反应原理",
+    "chapters": [
+     {
+      "title": "第一章 化学反应的热效应",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "反应热",
+        "slug": "xx1-c1-s1",
+        "href": "pages/chem/xx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "反应热的计算",
+        "slug": "xx1-c1-s2",
+        "href": "pages/chem/xx1-c1-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 化学反应速率与化学平衡",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "化学反应速率",
+        "slug": "xx1-c2-s1",
+        "href": "pages/chem/xx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "化学平衡",
+        "slug": "xx1-c2-s2",
+        "href": "pages/chem/xx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "化学反应的方向",
+        "slug": "xx1-c2-s3",
+        "href": "pages/chem/xx1-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第四节",
+        "title": "化学反应的调控",
+        "slug": "xx1-c2-s4",
+        "href": "pages/chem/xx1-c2-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 水溶液中的离子反应与平衡",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "电离平衡",
+        "slug": "xx1-c3-s1",
+        "href": "pages/chem/xx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "水的电离和溶液的pH",
+        "slug": "xx1-c3-s2",
+        "href": "pages/chem/xx1-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "盐类的水解",
+        "slug": "xx1-c3-s3",
+        "href": "pages/chem/xx1-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第四节",
+        "title": "沉淀溶解平衡",
+        "slug": "xx1-c3-s4",
+        "href": "pages/chem/xx1-c3-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 化学反应与电能",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "原电池",
+        "slug": "xx1-c4-s1",
+        "href": "pages/chem/xx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "电解池",
+        "slug": "xx1-c4-s2",
+        "href": "pages/chem/xx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "金属的腐蚀与防护",
+        "slug": "xx1-c4-s3",
+        "href": "pages/chem/xx1-c4-s3.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx2",
+    "title": "选择性必修2 物质结构与性质",
+    "chapters": [
+     {
+      "title": "第一章 原子结构与性质",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "原子结构",
+        "slug": "xx2-c1-s1",
+        "href": "pages/chem/xx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "原子结构与元素的性质",
+        "slug": "xx2-c1-s2",
+        "href": "pages/chem/xx2-c1-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 分子结构与性质",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "共价键",
+        "slug": "xx2-c2-s1",
+        "href": "pages/chem/xx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "分子的空间结构",
+        "slug": "xx2-c2-s2",
+        "href": "pages/chem/xx2-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "分子结构与物质的性质",
+        "slug": "xx2-c2-s3",
+        "href": "pages/chem/xx2-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 晶体结构与性质",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "物质的聚集状态与晶体的常识",
+        "slug": "xx2-c3-s1",
+        "href": "pages/chem/xx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "分子晶体与共价晶体",
+        "slug": "xx2-c3-s2",
+        "href": "pages/chem/xx2-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "金属晶体与离子晶体",
+        "slug": "xx2-c3-s3",
+        "href": "pages/chem/xx2-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第四节",
+        "title": "配合物与超分子",
+        "slug": "xx2-c3-s4",
+        "href": "pages/chem/xx2-c3-s4.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx3",
+    "title": "选择性必修3 有机化学基础",
+    "chapters": [
+     {
+      "title": "第一章 有机化合物的结构特点与研究方法",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "有机化合物的结构特点",
+        "slug": "xx3-c1-s1",
+        "href": "pages/chem/xx3-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "研究有机化合物的一般方法",
+        "slug": "xx3-c1-s2",
+        "href": "pages/chem/xx3-c1-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第二章 烃",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "烷烃",
+        "slug": "xx3-c2-s1",
+        "href": "pages/chem/xx3-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "烯烃 炔烃",
+        "slug": "xx3-c2-s2",
+        "href": "pages/chem/xx3-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "芳香烃",
+        "slug": "xx3-c2-s3",
+        "href": "pages/chem/xx3-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三章 烃的衍生物",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "卤代烃",
+        "slug": "xx3-c3-s1",
+        "href": "pages/chem/xx3-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "醇酚",
+        "slug": "xx3-c3-s2",
+        "href": "pages/chem/xx3-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "醛酮",
+        "slug": "xx3-c3-s3",
+        "href": "pages/chem/xx3-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第四节",
+        "title": "羧酸 羧酸衍生物",
+        "slug": "xx3-c3-s4",
+        "href": "pages/chem/xx3-c3-s4.html"
+       },
+       {
+        "kind": "section",
+        "label": "第五节",
+        "title": "有机合成",
+        "slug": "xx3-c3-s5",
+        "href": "pages/chem/xx3-c3-s5.html"
+       }
+      ]
+     },
+     {
+      "title": "第四章 生物大分子",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "糖类",
+        "slug": "xx3-c4-s1",
+        "href": "pages/chem/xx3-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "蛋白质",
+        "slug": "xx3-c4-s2",
+        "href": "pages/chem/xx3-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第三节",
+        "title": "核酸",
+        "slug": "xx3-c4-s3",
+        "href": "pages/chem/xx3-c4-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第五章 合成高分子",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第一节",
+        "title": "合成高分子的基本方法",
+        "slug": "xx3-c5-s1",
+        "href": "pages/chem/xx3-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第二节",
+        "title": "高分子材料",
+        "slug": "xx3-c5-s2",
+        "href": "pages/chem/xx3-c5-s2.html"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "extras": [],
+  "stat": {
+   "books": 5,
+   "chapters": 20,
+   "sections": 60,
+   "research": 0,
+   "extras": 0,
+   "total": 60,
+   "quiz": 0,
+   "quizTotal": 0
+  }
+ },
+ {
+  "id": "his",
+  "name": "历史",
+  "color": "#a16207",
+  "soft": "#fdf8e8",
+  "desc": "人教/统编版 · 必修 + 选择性必修",
+  "books": [
+   {
+    "key": "bx1",
+    "title": "必修 中外历史纲要（上）",
+    "chapters": [
+     {
+      "title": "第一单元 从中华文明起源到秦汉统一多民族封建国家的建立与巩固",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第1课",
+        "title": "中华文明的起源与早期国家",
+        "slug": "bx1-c1-s1",
+        "href": "pages/his/bx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第2课",
+        "title": "诸侯纷争与变法运动",
+        "slug": "bx1-c1-s2",
+        "href": "pages/his/bx1-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第3课",
+        "title": "秦统一多民族封建国家的建立",
+        "slug": "bx1-c1-s3",
+        "href": "pages/his/bx1-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第4课",
+        "title": "西汉与东汉——统一多民族封建国家的巩固",
+        "slug": "bx1-c1-s4",
+        "href": "pages/his/bx1-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二单元 三国两晋南北朝的民族交融与隋唐统一多民族封建国家的发展",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第5课",
+        "title": "三国两晋南北朝的政权更迭与民族交融",
+        "slug": "bx1-c2-s1",
+        "href": "pages/his/bx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第6课",
+        "title": "从隋唐盛世到五代十国",
+        "slug": "bx1-c2-s2",
+        "href": "pages/his/bx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第7课",
+        "title": "隋唐制度的变化与创新",
+        "slug": "bx1-c2-s3",
+        "href": "pages/his/bx1-c2-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第8课",
+        "title": "三国至隋唐的文化",
+        "slug": "bx1-c2-s4",
+        "href": "pages/his/bx1-c2-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第三单元 辽宋夏金多民族政权的并立与元朝的统一",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第9课",
+        "title": "两宋的政治和军事",
+        "slug": "bx1-c3-s1",
+        "href": "pages/his/bx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第10课",
+        "title": "辽夏金元的统治",
+        "slug": "bx1-c3-s2",
+        "href": "pages/his/bx1-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第11课",
+        "title": "辽宋夏金元的经济与社会",
+        "slug": "bx1-c3-s3",
+        "href": "pages/his/bx1-c3-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第12课",
+        "title": "辽宋夏金元的文化",
+        "slug": "bx1-c3-s4",
+        "href": "pages/his/bx1-c3-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第四单元 明清中国版图的奠定与面临的挑战",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第13课",
+        "title": "从明朝建立到清军入关",
+        "slug": "bx1-c4-s1",
+        "href": "pages/his/bx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第14课",
+        "title": "清朝前中期的鼎盛与危机",
+        "slug": "bx1-c4-s2",
+        "href": "pages/his/bx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第15课",
+        "title": "明至清中叶的经济与文化",
+        "slug": "bx1-c4-s3",
+        "href": "pages/his/bx1-c4-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第五单元 晚清时期的内忧外患与救亡图存",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第16课",
+        "title": "两次鸦片战争",
+        "slug": "bx1-c5-s1",
+        "href": "pages/his/bx1-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第17课",
+        "title": "国家出路的探索与列强侵略的加剧",
+        "slug": "bx1-c5-s2",
+        "href": "pages/his/bx1-c5-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第18课",
+        "title": "挽救民族危亡的斗争",
+        "slug": "bx1-c5-s3",
+        "href": "pages/his/bx1-c5-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第六单元 辛亥革命与中华民国的建立",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第19课",
+        "title": "辛亥革命",
+        "slug": "bx1-c6-s1",
+        "href": "pages/his/bx1-c6-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第20课",
+        "title": "北洋军阀统治时期的政治、经济与文化",
+        "slug": "bx1-c6-s2",
+        "href": "pages/his/bx1-c6-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第七单元 中国共产党成立与新民主主义革命兴起",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第21课",
+        "title": "五四运动与中国共产党的诞生",
+        "slug": "bx1-c7-s1",
+        "href": "pages/his/bx1-c7-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第22课",
+        "title": "南京国民政府的统治和中国共产党开辟革命新道路",
+        "slug": "bx1-c7-s2",
+        "href": "pages/his/bx1-c7-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第八单元 中华民族的抗日战争和人民解放战争",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第23课",
+        "title": "从局部抗战到全面抗战",
+        "slug": "bx1-c8-s1",
+        "href": "pages/his/bx1-c8-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第24课",
+        "title": "全民族浴血奋战与抗日战争的胜利",
+        "slug": "bx1-c8-s2",
+        "href": "pages/his/bx1-c8-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第25课",
+        "title": "人民解放战争",
+        "slug": "bx1-c8-s3",
+        "href": "pages/his/bx1-c8-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第九单元 中华人民共和国成立和社会主义革命与建设",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第26课",
+        "title": "中华人民共和国成立和向社会主义的过渡",
+        "slug": "bx1-c9-s1",
+        "href": "pages/his/bx1-c9-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第27课",
+        "title": "社会主义建设在探索中曲折发展",
+        "slug": "bx1-c9-s2",
+        "href": "pages/his/bx1-c9-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第十单元 改革开放与社会主义现代化建设新时期",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第28课",
+        "title": "中国特色社会主义道路的开辟与发展",
+        "slug": "bx1-c10-s1",
+        "href": "pages/his/bx1-c10-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第29课",
+        "title": "改革开放以来的巨大成就",
+        "slug": "bx1-c10-s2",
+        "href": "pages/his/bx1-c10-s2.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "bx2",
+    "title": "必修 中外历史纲要（下）",
+    "chapters": [
+     {
+      "title": "第一单元 古代文明的产生与发展",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第1课",
+        "title": "文明的产生与早期发展",
+        "slug": "bx2-c1-s1",
+        "href": "pages/his/bx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第2课",
+        "title": "古代世界的帝国与文明的交流",
+        "slug": "bx2-c1-s2",
+        "href": "pages/his/bx2-c1-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第二单元 中古时期的世界",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第3课",
+        "title": "中古时期的欧洲",
+        "slug": "bx2-c2-s1",
+        "href": "pages/his/bx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第4课",
+        "title": "中古时期的亚洲",
+        "slug": "bx2-c2-s2",
+        "href": "pages/his/bx2-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第5课",
+        "title": "古代非洲与美洲",
+        "slug": "bx2-c2-s3",
+        "href": "pages/his/bx2-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三单元 走向整体的世界",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第6课",
+        "title": "全球航路的开辟",
+        "slug": "bx2-c3-s1",
+        "href": "pages/his/bx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第7课",
+        "title": "全球联系的初步建立与世界格局的演变",
+        "slug": "bx2-c3-s2",
+        "href": "pages/his/bx2-c3-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第四单元 资本主义制度的确立",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第8课",
+        "title": "欧洲的思想解放运动",
+        "slug": "bx2-c4-s1",
+        "href": "pages/his/bx2-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第9课",
+        "title": "资产阶级革命与资本主义制度的确立",
+        "slug": "bx2-c4-s2",
+        "href": "pages/his/bx2-c4-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第五单元 工业革命与马克思主义的诞生",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第10课",
+        "title": "影响世界的工业革命",
+        "slug": "bx2-c5-s1",
+        "href": "pages/his/bx2-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第11课",
+        "title": "马克思主义的诞生与传播",
+        "slug": "bx2-c5-s2",
+        "href": "pages/his/bx2-c5-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第六单元 世界殖民体系与亚非拉民族独立运动",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第12课",
+        "title": "资本主义世界殖民体系的形成",
+        "slug": "bx2-c6-s1",
+        "href": "pages/his/bx2-c6-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第13课",
+        "title": "亚非拉民族独立运动",
+        "slug": "bx2-c6-s2",
+        "href": "pages/his/bx2-c6-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第七单元 两次世界大战、十月革命与国际秩序的演变",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第14课",
+        "title": "第一次世界大战与战后国际秩序",
+        "slug": "bx2-c7-s1",
+        "href": "pages/his/bx2-c7-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第15课",
+        "title": "十月革命的胜利与苏联的社会主义实践",
+        "slug": "bx2-c7-s2",
+        "href": "pages/his/bx2-c7-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第16课",
+        "title": "亚非拉民族民主运动的高涨",
+        "slug": "bx2-c7-s3",
+        "href": "pages/his/bx2-c7-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第17课",
+        "title": "第二次世界大战与战后国际秩序的形成",
+        "slug": "bx2-c7-s4",
+        "href": "pages/his/bx2-c7-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第八单元 20世纪下半叶世界的新变化",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第18课",
+        "title": "冷战与国际格局的演变",
+        "slug": "bx2-c8-s1",
+        "href": "pages/his/bx2-c8-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第19课",
+        "title": "资本主义国家的新变化",
+        "slug": "bx2-c8-s2",
+        "href": "pages/his/bx2-c8-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第20课",
+        "title": "社会主义国家的发展与变化",
+        "slug": "bx2-c8-s3",
+        "href": "pages/his/bx2-c8-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第21课",
+        "title": "世界殖民体系的瓦解与新兴国家的发展",
+        "slug": "bx2-c8-s4",
+        "href": "pages/his/bx2-c8-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第九单元 当代世界发展的特点与主要趋势",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第22课",
+        "title": "世界多极化与经济全球化",
+        "slug": "bx2-c9-s1",
+        "href": "pages/his/bx2-c9-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第23课",
+        "title": "和平发展合作共赢的时代潮流",
+        "slug": "bx2-c9-s2",
+        "href": "pages/his/bx2-c9-s2.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx1",
+    "title": "选择性必修1 国家制度与社会治理",
+    "chapters": [
+     {
+      "title": "第一单元 政治制度",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第1课",
+        "title": "中国古代政治制度的形成与发展",
+        "slug": "xx1-c1-s1",
+        "href": "pages/his/xx1-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第2课",
+        "title": "西方国家古代和近代政治制度的演变",
+        "slug": "xx1-c1-s2",
+        "href": "pages/his/xx1-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第3课",
+        "title": "中国近代至当代政治制度的演变",
+        "slug": "xx1-c1-s3",
+        "href": "pages/his/xx1-c1-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第4课",
+        "title": "中国历代变法和改革",
+        "slug": "xx1-c1-s4",
+        "href": "pages/his/xx1-c1-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第二单元 官员的选拔与管理",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第5课",
+        "title": "中国古代官员的选拔与管理",
+        "slug": "xx1-c2-s1",
+        "href": "pages/his/xx1-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第6课",
+        "title": "西方的文官制度",
+        "slug": "xx1-c2-s2",
+        "href": "pages/his/xx1-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第7课",
+        "title": "近代以来中国的官员选拔与管理",
+        "slug": "xx1-c2-s3",
+        "href": "pages/his/xx1-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三单元 法律与教化",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第8课",
+        "title": "中国古代的法治与教化",
+        "slug": "xx1-c3-s1",
+        "href": "pages/his/xx1-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第9课",
+        "title": "近代西方的法律与教化",
+        "slug": "xx1-c3-s2",
+        "href": "pages/his/xx1-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第10课",
+        "title": "当代中国的法治与精神文明建设",
+        "slug": "xx1-c3-s3",
+        "href": "pages/his/xx1-c3-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第四单元 民族关系与国家关系",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第11课",
+        "title": "中国古代的民族关系与对外交往",
+        "slug": "xx1-c4-s1",
+        "href": "pages/his/xx1-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第12课",
+        "title": "近代西方民族国家与国际法的发展",
+        "slug": "xx1-c4-s2",
+        "href": "pages/his/xx1-c4-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第13课",
+        "title": "当代中国的民族政策",
+        "slug": "xx1-c4-s3",
+        "href": "pages/his/xx1-c4-s3.html"
+       },
+       {
+        "kind": "section",
+        "label": "第14课",
+        "title": "当代中国的外交",
+        "slug": "xx1-c4-s4",
+        "href": "pages/his/xx1-c4-s4.html"
+       }
+      ]
+     },
+     {
+      "title": "第五单元 货币与赋税制度",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第15课",
+        "title": "货币的使用与世界货币体系的形成",
+        "slug": "xx1-c5-s1",
+        "href": "pages/his/xx1-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第16课",
+        "title": "中国赋税制度的演变",
+        "slug": "xx1-c5-s2",
+        "href": "pages/his/xx1-c5-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第六单元 基层治理与社会保障",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第17课",
+        "title": "中国古代的户籍制度与社会治理",
+        "slug": "xx1-c6-s1",
+        "href": "pages/his/xx1-c6-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第18课",
+        "title": "世界主要国家的基层治理与社会保障",
+        "slug": "xx1-c6-s2",
+        "href": "pages/his/xx1-c6-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "活动课",
+      "items": [
+       {
+        "kind": "section",
+        "label": "",
+        "title": "中国历史上的大一统国家治理",
+        "slug": "xx1-c7-s1",
+        "href": "pages/his/xx1-c7-s1.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx2",
+    "title": "选择性必修2 经济与社会生活",
+    "chapters": [
+     {
+      "title": "第一单元 食物生产与社会生活",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第1课",
+        "title": "从食物采集到食物生产",
+        "slug": "xx2-c1-s1",
+        "href": "pages/his/xx2-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第2课",
+        "title": "新航路开辟后的食物物种交流",
+        "slug": "xx2-c1-s2",
+        "href": "pages/his/xx2-c1-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第3课",
+        "title": "现代食物的生产、储备与食品安全",
+        "slug": "xx2-c1-s3",
+        "href": "pages/his/xx2-c1-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第二单元 生产工具与劳作方式",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第4课",
+        "title": "古代的生产工具与劳作",
+        "slug": "xx2-c2-s1",
+        "href": "pages/his/xx2-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第5课",
+        "title": "工业革命与工厂制度",
+        "slug": "xx2-c2-s2",
+        "href": "pages/his/xx2-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第6课",
+        "title": "现代科技进步与人类社会发展",
+        "slug": "xx2-c2-s3",
+        "href": "pages/his/xx2-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三单元 商业贸易与日常生活",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第7课",
+        "title": "古代的商业贸易",
+        "slug": "xx2-c3-s1",
+        "href": "pages/his/xx2-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第8课",
+        "title": "世界市场与商业贸易",
+        "slug": "xx2-c3-s2",
+        "href": "pages/his/xx2-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第9课",
+        "title": "20世纪以来人类的经济与生活",
+        "slug": "xx2-c3-s3",
+        "href": "pages/his/xx2-c3-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第四单元 村落、城镇与居住环境",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第10课",
+        "title": "古代的村落、集镇和城市",
+        "slug": "xx2-c4-s1",
+        "href": "pages/his/xx2-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第11课",
+        "title": "近代以来的城市化进程",
+        "slug": "xx2-c4-s2",
+        "href": "pages/his/xx2-c4-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第五单元 交通与社会变迁",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第12课",
+        "title": "水陆交通的变迁",
+        "slug": "xx2-c5-s1",
+        "href": "pages/his/xx2-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第13课",
+        "title": "现代交通运输的新变化",
+        "slug": "xx2-c5-s2",
+        "href": "pages/his/xx2-c5-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第六单元 医疗与公共卫生",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第14课",
+        "title": "历史上的疫病与医学成就",
+        "slug": "xx2-c6-s1",
+        "href": "pages/his/xx2-c6-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第15课",
+        "title": "现代医疗卫生体系与社会生活",
+        "slug": "xx2-c6-s2",
+        "href": "pages/his/xx2-c6-s2.html"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "xx3",
+    "title": "选择性必修3 文化交流与传播",
+    "chapters": [
+     {
+      "title": "第一单元 源远流长的中华文化",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第1课",
+        "title": "中华优秀传统文化的内涵与特点",
+        "slug": "xx3-c1-s1",
+        "href": "pages/his/xx3-c1-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第2课",
+        "title": "中华文化的世界意义",
+        "slug": "xx3-c1-s2",
+        "href": "pages/his/xx3-c1-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第二单元 丰富多样的世界文化",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第3课",
+        "title": "古代西亚、非洲文化",
+        "slug": "xx3-c2-s1",
+        "href": "pages/his/xx3-c2-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第4课",
+        "title": "欧洲文化的形成",
+        "slug": "xx3-c2-s2",
+        "href": "pages/his/xx3-c2-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第5课",
+        "title": "南亚、东亚与美洲的文化",
+        "slug": "xx3-c2-s3",
+        "href": "pages/his/xx3-c2-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第三单元 人口迁徙、文化交融与认同",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第6课",
+        "title": "古代人类的迁徙和区域文化的形成",
+        "slug": "xx3-c3-s1",
+        "href": "pages/his/xx3-c3-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第7课",
+        "title": "近代殖民活动和人口的跨地域转移",
+        "slug": "xx3-c3-s2",
+        "href": "pages/his/xx3-c3-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第8课",
+        "title": "现代社会的移民和多元文化",
+        "slug": "xx3-c3-s3",
+        "href": "pages/his/xx3-c3-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第四单元 商路、贸易与文化交流",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第9课",
+        "title": "古代的商路、贸易与文化交流",
+        "slug": "xx3-c4-s1",
+        "href": "pages/his/xx3-c4-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第10课",
+        "title": "近代以来的世界贸易与文化交流的扩展",
+        "slug": "xx3-c4-s2",
+        "href": "pages/his/xx3-c4-s2.html"
+       }
+      ]
+     },
+     {
+      "title": "第五单元 战争与文化交锋",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第11课",
+        "title": "古代战争与地域文化的演变",
+        "slug": "xx3-c5-s1",
+        "href": "pages/his/xx3-c5-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第12课",
+        "title": "近代战争与西方文化的扩张",
+        "slug": "xx3-c5-s2",
+        "href": "pages/his/xx3-c5-s2.html"
+       },
+       {
+        "kind": "section",
+        "label": "第13课",
+        "title": "现代战争与不同文化的碰撞和交流",
+        "slug": "xx3-c5-s3",
+        "href": "pages/his/xx3-c5-s3.html"
+       }
+      ]
+     },
+     {
+      "title": "第六单元 文化的传承与保护",
+      "items": [
+       {
+        "kind": "section",
+        "label": "第14课",
+        "title": "文化传承的多种载体及其发展",
+        "slug": "xx3-c6-s1",
+        "href": "pages/his/xx3-c6-s1.html"
+       },
+       {
+        "kind": "section",
+        "label": "第15课",
+        "title": "文化遗产：全人类共同的财富",
+        "slug": "xx3-c6-s2",
+        "href": "pages/his/xx3-c6-s2.html"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "extras": [],
+  "stat": {
+   "books": 5,
+   "chapters": 38,
+   "sections": 101,
+   "research": 0,
+   "extras": 0,
+   "total": 101,
+   "quiz": 0,
+   "quizTotal": 0
+  }
  }
 ];

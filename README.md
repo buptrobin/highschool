@@ -1,6 +1,6 @@
 # 俯瞰太阳系
 
-数学 / 地理 / 生物 / 政治 四门功课的分册分章分节复习导航。
+数学 / 物理 / 化学 / 生物 / 历史 / 地理 / 政治 七门功课的分册分章分节复习导航。
 纯静态页面，双击 `index.html` 就能用，不需要服务器、不需要联网。
 桌面和手机浏览器都适配（手机端搜索框 16px 字号，避免 iOS 聚焦自动放大）。
 
@@ -8,7 +8,7 @@
 
 ```
 index.html            首页（选科目）
-subject.html          科目目录页（?s=math|geo|bio|pol，加 &quiz=1 切到精练）
+subject.html          科目目录页（?s=math|phy|chem|bio|his|geo|pol，加 &quiz=1 切到精练）
 assets/
   app.css             全站样式
   data.js             目录数据（脚本自动生成，别手改）
@@ -16,11 +16,11 @@ assets/
   site.js             首页 / 科目页逻辑
   page.js             内容页逻辑（把 Markdown 渲染成正文）
 pages/
-  math/  geo/  bio/  pol/      每一节一个静态 html
+  math/  phy/  chem/  bio/  his/  geo/  pol/      每一节一个静态 html
 quiz/
-  geo/                         真题精练页（单文件，自带判分与错题本）
+  geo/  bio/  math/  pol/                      真题精练页（单文件，自带判分与错题本）
 content/
-  math.txt  geo.txt  bio.txt  pol.txt        大纲（改这里）
+  math.txt  phy.txt  chem.txt  bio.txt  his.txt  geo.txt  pol.txt   大纲（改这里）
   *.extra.txt                                特别知识点清单
 tools/
   build.py            读大纲 → 生成 data.js + 缺失的页面
