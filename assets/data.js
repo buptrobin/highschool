@@ -193,7 +193,7 @@ window.SUBJECTS = [
         "href": "pages/math/bx1-c4-s2.html",
         "quiz": {
          "href": "quiz/math/bx1-c4-s2.html",
-         "n": 12,
+         "n": 13,
          "title": "4.2 指数函数"
         }
        },
@@ -1094,7 +1094,7 @@ window.SUBJECTS = [
    "extras": 8,
    "total": 81,
    "quiz": 81,
-   "quizTotal": 994
+   "quizTotal": 995
   }
  },
  {

@@ -685,7 +685,7 @@ window.QUIZ_MAP = {
 "title": "4.1 指数"
 },
 "math/bx1-c4-s2": {
-"n": 12,
+"n": 13,
 "title": "4.2 指数函数"
 },
 "math/bx1-c4-s3": {
