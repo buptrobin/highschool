@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分类加法计数原理与分步乘法计数原理</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "xx3-c1-s1", "n": 12, "title": "6.1 分类加法计数原理与分步乘法计数原理"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 选择性必修第三册 · 第六章 计数原理 · 第一节</span>
+        <h1>分类加法计数原理与分步乘法计数原理<span class="thin">北京真题 0 道 · 外地真题 0 道 · 全原创 12 题 · 5 关 12 题</span></h1>
+        <p class="lede">两个原理，一句话分清：<b>分类</b>用加法（几类办法互不干扰，做完就算完成）、<b>分步</b>用乘法（每一步都做完才算完成）。所有排列组合题都在反复用这两条，所以这一节的选择题以“判断用加还是乘”为主。北京 2022—2026 的卷子里没有这一节的选择题（计数原理在北京卷落在填空或解答里），外地近三年也没有单独考两个原理的选择题，因此本页 <b>12 道题全部原创</b>，页脚已如实注明。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>0</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='12' y='12' width='276' height='256' rx='18' fill='#eef2ff'/><g stroke='#4f46e5' stroke-width='2'><line x1='52' y1='96' x2='130' y2='96'/></g><g stroke='#0f766e' stroke-width='2'><line x1='52' y1='150' x2='130' y2='150'/></g><g stroke='#b45309' stroke-width='2'><line x1='52' y1='204' x2='130' y2='204'/></g><g font-size='10' fill='#1e1b4b'><text x='140' y='100'>方案 A（4 种）</text><text x='140' y='154'>方案 B（6 种）</text><text x='140' y='208'>方案 C（2 种）</text></g><g font-size='11' fill='#4f46e5' text-anchor='middle' font-weight='700'><text x='150' y='56'>分类：4+6+2 = 12</text><text x='150' y='254' font-size='10' font-weight='400'>分步就是每一步都要走完 → 相乘</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：分类用加、分步用乘</h2></div>
+  <p class="sec-sub">左图是“分类”的示意：三条并联的路，任选一条就到达，所以相加。右图是“分步”的示意：必须依次经过两段路，所以相乘。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 0 题（选择）</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 0 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">全原创 12 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京 2022—2026 的<b>选择题里没有</b>“两个计数原理”的题（我核过 5 套北京卷的全部 50 道选择题与 25 道填空题，没有一道是分类加法/分步乘法）；外地 2022—2025 也没有单独考两个原理的选择题——它们都把计数原理揉进了排列组合题。所以本页 12 道题<b>全部原创</b>，一条真题都不冒充。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">原创：9 道选择题（两种交通工具的走法、两步走法、选人与选男女各一人、三位数与四位偶数、三棱柱侧面涂色、至少一名女生、信件投邮筒、投递与岗位分配），3 道综合题（0—5 组成无重复数字的数、5 名志愿者分配岗位、3 封信投入 4 个邮筒）。全部数字均已验算：12、12、35 与 300、18、36、74、64、108、36、100 与 108 与 180、150、64 与 36 与 0。</p>
+</div><div class="panel"><p class="panel-title">① 分类加法 vs 分步乘法（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>分类加法 与 分步乘法（示意图，非原卷图）</text><g stroke='#4f46e5' stroke-width='2' fill='none'><path d='M40 90 L150 90 M40 150 L150 150 M40 210 L150 210'/><path d='M150 90 L250 150 M150 150 L250 150 M150 210 L250 150'/></g><g font-size='10' fill='#1e1b4b'><text x='34' y='82'>4 班火车</text><text x='34' y='142'>6 班汽车</text><text x='34' y='202'>2 班飞机</text><text x='258' y='154'>B 地</text></g><g font-size='11' fill='#4f46e5' font-weight='700'><text x='40' y='252'>并联：任选一类即可 → 4+6+2 = 12</text></g><g stroke='#0f766e' stroke-width='2' fill='none'><path d='M420 150 L500 150 M560 150 L640 150'/></g><g font-size='10' fill='#1e1b4b'><text x='410' y='142'>A 地</text><text x='504' y='142'>中转</text><text x='646' y='142'>B 地</text><text x='486' y='180'>3 条路</text><text x='576' y='180'>4 条路</text></g><g font-size='11' fill='#0f766e' font-weight='700'><text x='420' y='252'>串联：每步都要走 → 3×4 = 12</text></g></svg></div></div><div class="panel"><p class="panel-title">② 计数题的四个标准动作（示意图，非原卷图）</p><div class="svg-box" id="map-fig-steps"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>计数题的四个标准动作（示意图，非原卷图）</text><g font-size='11' fill='#111827'><text x='18' y='60' font-weight='700'>① 问一句“做完这件事了吗”</text><text x='250' y='60'>做完就停 → 分类（加法）；还要继续 → 分步（乘法）</text><text x='18' y='96' font-weight='700'>② 找“特殊位置/特殊元素”</text><text x='250' y='96'>如首位不能为 0、某人不能站排头：先安排它，再安排其余</text><text x='18' y='132' font-weight='700'>③ 看“至少/至多”</text><text x='250' y='132'>优先用“总数 − 反面”，比正面分类快得多</text><text x='18' y='168' font-weight='700'>④ 检查“分类是否有重复”</text><text x='250' y='168'>分类必须“不重不漏”，两类有交集就要减掉交集</text></g><g font-size='10.5' fill='#b45309'><text x='18' y='212' font-weight='700'>三个高频结论：</text><text x='18' y='236'>把 n 个不同的东西分给 m 个不同的对象（每个对象可多可少）→ mⁿ 种</text><text x='18' y='258'>从 0—5 中选数字组成无重复数字的三位数 → 5×5×4 = 100 个</text><text x='18' y='280'>每个岗位至少 1 人的分配问题，常用“总数 − 有岗位没人”</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">两个原理的题，错都错在“该加的时候乘了”。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把分类当分步。</b>“乘火车或汽车或飞机”是分类（相加）；“先到丙再到乙”是分步（相乘）。判断标准：一步做完算不算完成。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把分步当分类。</b>3+4 = 7 是最常见的错答；只要题目出现“先……再……”，就必须相乘。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>数字组成题忘了“首位不能为 0”。</b>先定首位（1—5 共 5 种或 3 种），再排其余位；直接 4×3×2 会算多。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>环状涂色把最后一个也少算一种。</b>最后一个只受“相邻的那个”限制，通常仍是 3 种，不是 2 种。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>“至少”类问题正面分类漏项。</b>优先用“总数 − 一个都没有”，或用容斥（加回被减两次的）。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>分不清谁是主体。</b>“把信投进邮筒”以信为主体（4³）；“把 3 个球放进 4 个盒子”以球为主体；以盒子为主体则会算成 A(4,3)。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关先把“分类用加、分步用乘”的判断标准写下来：一步做完算完成 → 加。</li><li>第 2 关的数字与涂色题，动笔前先在草稿上写“先定首位/先定第一个面”，再逐个填数。</li><li>第 3 关的“至少”“恰有”题，固定用“总数 − 反面”，比正面分类省时间。</li><li>综合题三道都请写出“主体是谁”，这一步决定了用 mⁿ 还是用组合数。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题：0 道 · 外地真题：0 道。</b>我核对了北京 2022—2026 五套卷的 50 道选择题与 25 道填空题，<b>没有</b>单独考“分类加法/分步乘法”的题；外地 2022—2025 也没有——计数原理都揉进了排列组合题（那些题收在 6.2 页）。</li><li><b>原创题（12 道）：</b>9 道选择题＋3 道综合题，标 <b>orig</b>；全部数字均已逐一验算（12、12、35/300、18、36、74、64、108、36、100/108/180、243/150/180、64/36/0）。</li><li>本页<b>没有真题</b>；内容按人教A版选择性必修第三册 6.1 节教材定义与例题自行编写，不冒充原卷题目。两张方法图为原创手绘 SVG，标题注明“示意图，非原卷图”。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修第三册", chapter:"第六章 计数原理", section:"6.1 分类加法计数原理与分步乘法计数原理"};
+  var TOPIC = {1:"分类加法计数原理", 2:"分步乘法计数原理", 3:"两个原理的区别", 4:"数字组成问题", 5:"涂色问题", 6:"分组与分配", 7:"至少、至多类问题"};
+  var LEVELS = [
+    {id:1, name:"两个原理的直接应用", sub:"“几类办法”用加法，“几个步骤”用乘法", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"数字组成与涂色", sub:"先看有没有“0/首位不为 0”的限制，再按顺序填格子", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"至少、至多与分组", sub:"“至少”常用“总数减去反面”；分组注意是否与顺序有关", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"多原理混合计数", sub:"先分类、再分步；分类时不能重也不能漏", badge:"难点", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"数字组成、志愿者分配、信件投递各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"从甲地到乙地，一天中火车有 4 班、汽车有 6 班、飞机有 2 班。某人某天从甲地去乙地，不同走法的种数为（ ）",
+      opts:["12", "24", "48", "10"],
+      ans:0,
+      why:"乘火车、乘汽车、乘飞机是<b>三类互不干扰的办法</b>：只要坐其中一类就能到达乙地，属于分类问题，用加法原理：4+6+2 = 12 种，选 A。<b>不是乘法</b>——乘法用于“先到中转站、再换乘”这种必须分步的情况。",
+      tip:"判断口诀：一件事只要“选一类就能完成”就相加；必须“一步步走完才能完成”就相乘。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"从甲地到乙地必须先经过丙地：甲地到丙地有 3 条路，丙地到乙地有 4 条路。则从甲地经丙地到乙地的不同走法有（ ）",
+      opts:["7 种", "12 种", "34 种", "3 种"],
+      ans:1,
+      why:"从甲到乙必须<b>先完成第一步</b>（甲到丙，3 种）<b>再完成第二步</b>（丙到乙，4 种），两步都做完才算到达，属于分步问题，用乘法原理：3×4 = 12 种，选 B。选项 A 的 7 是“3+4”的错误相加——这是分类与分步最典型的混淆。",
+      tip:"“先……再……”就是分步，乘起来；“或者……或者……”就是分类，加起来。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某班有男生 20 人、女生 15 人。现要从中选 1 人参加座谈会，共有 m 种选法；若要选男生、女生各 1 人，共有 n 种选法，则（ ）",
+      opts:["m = 35，n = 300", "m = 300，n = 35", "m = 35，n = 35", "m = 35，n = 150"],
+      ans:0,
+      why:"选 1 人：可以选男生（20 种）<b>或</b>选女生（15 种），两类互斥且都能独立完成“选 1 人”，用加法：m = 20+15 = 35。选男女各 1 人：先选 1 名男生（20 种）<b>再</b>选 1 名女生（15 种），两步都完成才算“各 1 人”，用乘法：n = 20×15 = 300。选 A。<b>同一组数字，问法一变，原理就换。</b>",
+      tip:"同一个班、同样的人数，问题是“选一人”还是“各选一人”，决定了用加还是用乘。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"用 0, 1, 2, 3 四个数字可以组成没有重复数字的三位数的个数为（ ）",
+      opts:["12", "18", "24", "9"],
+      ans:1,
+      why:"三位数的<b>首位不能是 0</b>，这是特殊位置，先安排它：首位可取 1、2、3，共 3 种；再安排十位：从剩下的 3 个数字里取（含 0），3 种；最后个位：剩下的 2 个数字，2 种。分步相乘：3×3×2 = 18，选 B。选项 C 的 24 是“没考虑 0 不能打头”（4×3×2），选项 A 的 12 是“首位只有 2 种”算错了。",
+      tip:"含 0 的数字组成题，永远先定首位：首位有 3 种（1、2、3），后面的位置才轮到 0。"
+    },
+    {
+      id:5, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"用 4 种不同的颜色给正三棱柱的三个侧面涂色，要求相邻的两个侧面颜色不同，则不同的涂色方法有（ ）",
+      opts:["24 种", "36 种", "12 种", "48 种"],
+      ans:1,
+      why:"三个侧面首尾相接，构成一个“环”：先涂第一个侧面（4 种），第二个侧面不能与第一个相同（3 种），第三个侧面不能与第二个相同、<b>但可以与第一个相同</b>（3 种）。分步相乘：4×3×3 = 36，选 B。<b>环状涂色的要点：最后一个只受“前一个”限制</b>，不要误以为它也不能与第一个同色（那会算成 4×3×2 = 24）。",
+      tip:"环形（首尾相接）涂色：第一个 4 种，中间每个 3 种，最后一个也是 3 种（除非题目额外要求首尾不同）。"
+    },
+    {
+      id:6, lv:3, src:"原创·选择题", kind:"orig", star:2,
+      stem:"从 5 名男生、4 名女生中选 3 人参加活动，要求至少有 1 名女生，则不同的选法有（ ）",
+      opts:["64 种", "74 种", "84 种", "10 种"],
+      ans:1,
+      why:"“至少 1 名女生”用<b>补集</b>最快：总的选法 C(9,3) = 84，全是男生的选法 C(5,3) = 10，所以 84−10 = 74，选 B。也可以用分类加法正面算：1 女 2 男 C(4,1)C(5,2) = 4×10 = 40，2 女 1 男 C(4,2)C(5,1) = 6×5 = 30，3 女 C(4,3) = 4，合计 40+30+4 = 74 ✓ 两种做法一致。",
+      tip:"“至少有一个”优先用“总数 − 一个都没有”，比正面的多类相加更不容易漏。"
+    },
+    {
+      id:7, lv:3, src:"原创·选择题", kind:"orig", star:2,
+      stem:"把 3 封不同的信投入 4 个不同的邮筒，共有（ ）种投法",
+      opts:["12", "24", "64", "81"],
+      ans:2,
+      why:"选“谁当主体”是本题的关键：<b>信是主体</b>。第 1 封信有 4 个邮筒可选，第 2 封有 4 个，第 3 封有 4 个，三封信各投一次，分步相乘：4×4×4 = 4³ = 64，选 C。<b>不是 A(4,3) = 24</b>：邮筒可以投多封信，也可以有空筒，不存在“一个邮筒只放一封”的限制。",
+      tip:"“把 n 个不同东西放进 m 个不同盒子，盒子可空、可多装” → 答案是 mⁿ，主体是“东西”。"
+    },
+    {
+      id:8, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"用 0, 1, 2, 3, 4, 5 六个数字可以组成没有重复数字的四位偶数的个数为（ ）",
+      opts:["108", "156", "120", "180"],
+      ans:0,
+      why:"按<b>个位</b>分类（个位决定了“偶数”）：① 个位为 0：前三位从 1—5 中选 3 个排列 = 5×4×3 = 60；② 个位为 2：首位从 1、3、4、5 中取（4 种），中间两位从剩下 3 个数（含 0）中取 2 个排列 = 3×2 = 6，共 4×6 = 24；③ 个位为 4：同理 24。合计 60+24+24 = 108，选 A。<b>分类的关键是“按是否含 0”拆开</b>，因为 0 不能打头，处理方式不同。",
+      tip:"四位偶数＝个位 0/2/4，按个位分类；个位为 0 的那一类没有“首位不能为 0”的麻烦，要单独算。"
+    },
+    {
+      id:9, lv:4, src:"原创·选择题", kind:"orig", star:3,
+      stem:"将 4 名志愿者分配到 3 个不同的岗位，每个岗位至少 1 人，则不同的分配方案有（ ）",
+      opts:["24 种", "36 种", "48 种", "81 种"],
+      ans:1,
+      why:"先算不加限制的分配数：每名志愿者有 3 个岗位可选，共 3⁴ = 81 种。再减去“有岗位没人”的情况：恰好 1 个岗位没人 = C(3,1)×2⁴ = 3×16 = 48；恰好 2 个岗位没人（即 4 人全在同一个岗位）= C(3,2)×1⁴ = 3 种。注意 81−48 时把“3 个岗位只用了 1 个”的情况减了 2 次又加回，正确做法是容斥：81−48+3 = 36，选 B。<b>也可以正面算</b>：人数分配只能是 2+1+1，选哪个岗位 2 人（3 种），选哪 2 人（C(4,2) = 6），剩下 2 人分到 2 个岗位（2 种），共 3×6×2 = 36 ✓",
+      tip:"“每个对象至少 1 个”的分配：先算 mⁿ，再用容斥减去“有空位”的情况；或正面按“2+1+1”分组。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:2, title:"用 0—5 组成无重复数字的数",
+      material:"用 0, 1, 2, 3, 4, 5 这六个数字组成没有重复数字的数。",
+      asks:[{q:"可以组成多少个三位数？", pt:3}, {q:"可以组成多少个四位偶数？", pt:5}, {q:"可以组成多少个比 3000 大的四位数？", pt:4}],
+      points:[
+        ["首位不能是 0：可从 1—5 中取，5 种", "十位：从剩下 5 个数字（含 0）中取，5 种", "个位：剩下 4 个数字，4 种", "5×5×4 = 100", "答：100 个三位数"],
+        ["按个位分类：个位为 0 → 前三位从 1—5 排 3 个：5×4×3 = 60", "个位为 2 或 4：首位从 1、3、4、5（除去已用的个位）中取 4 种，中间两位从剩下 3 个数（含 0）排列：3×2 = 6，共 4×6 = 24；两种个位共 48", "合计 60+48 = 108", "答：108 个四位偶数"],
+        ["比 3000 大，首位只能是 3、4、5：3 种", "后三位从剩下 5 个数字（含 0）中任取 3 个排列：5×4×3 = 60", "3×60 = 180", "答：180 个"]
+      ],
+      tip:"含 0 的组数题只有一条铁律：<b>先安排首位</b>。首位定了，0 就不再特殊，后面直接排列即可；反过来先排后面，最后要按“首位是不是 0”分类，容易漏。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"5 名志愿者分配到 3 个岗位",
+      material:"5 名志愿者（彼此不同）分配到甲、乙、丙 3 个不同的岗位。",
+      asks:[{q:"若每个志愿者可自由选择岗位（允许某些岗位没人），共有多少种分配方案？", pt:3}, {q:"若每个岗位至少 1 人，共有多少种分配方案？", pt:5}, {q:"若只要求甲、乙两个岗位各有至少 1 人，丙岗位可以没人，共有多少种分配方案？", pt:4}],
+      points:[
+        ["以志愿者为主体：每人 3 种选择，5 人独立选择", "3⁵ = 243", "答：243 种"],
+        ["人数分配只能是 3+1+1 或 2+2+1", "3+1+1：选“3 人的岗位”3 种，选 3 人 C(5,3) = 10，剩下 2 人分到 2 个岗位 2 种 → 3×10×2 = 60", "2+2+1：选“1 人的岗位”3 种，选那 1 人 5 种，剩下 4 人分成两个 2 人组放到两个岗位 C(4,2) = 6 → 3×5×6 = 90", "合计 60+90 = 150", "答：150 种"],
+        ["“甲、乙各有至少 1 人”用补集：总数 243 减去“甲空”或“乙空”", "甲空 = 2⁵ = 32，乙空 = 32，甲、乙都空（全在丙）= 1", "由容斥：243−32−32+1 = 180", "答：180 种"]
+      ],
+      tip:"分配问题的两条主线：<b>“以人为主体”用 mⁿ，“以岗位为主体”要分组再排列</b>。有“至少”就加容斥：加回被减两次的情况。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"3 封信投入 4 个邮筒",
+      material:"把 3 封不同的信投入 4 个不同的邮筒（每个邮筒可投多封，也可空着）。",
+      asks:[{q:"共有多少种投法？", pt:3}, {q:"恰有 2 个邮筒有信，共有多少种投法？", pt:5}, {q:"能否让 4 个邮筒都至少有一封信？说明理由。", pt:4}],
+      points:[
+        ["以信为主体：第 1 封 4 种投法，第 2 封 4 种，第 3 封 4 种", "4³ = 64", "答：64 种"],
+        ["先从 4 个邮筒中选出有信的 2 个：C(4,2) = 6", "3 封信投入这 2 个邮筒，且两个邮筒都要有信：全部投法 2³ = 8，减去“全投进其中一个”的 2 种，得 8−2 = 6", "6×6 = 36", "答：36 种"],
+        ["不能。4 个邮筒每个至少 1 封，至少需要 4 封信", "现在只有 3 封信，由抽屉原理必有邮筒空着", "答：不可能，理由是最少需要 4 封信"]
+      ],
+      tip:"“恰有 k 个盒子有东西”的固定套路：<b>先选盒子 C(m,k)，再算“每个选中盒子都非空”的投法（用 2³−2 这类减法）</b>，两步相乘。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-xx3-c1-s1-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigTWO(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>分类加法 与 分步乘法（示意图，非原卷图）</text><g stroke='#4f46e5' stroke-width='2' fill='none'><path d='M40 90 L150 90 M40 150 L150 150 M40 210 L150 210'/><path d='M150 90 L250 150 M150 150 L250 150 M150 210 L250 150'/></g><g font-size='10' fill='#1e1b4b'><text x='34' y='82'>4 班火车</text><text x='34' y='142'>6 班汽车</text><text x='34' y='202'>2 班飞机</text><text x='258' y='154'>B 地</text></g><g font-size='11' fill='#4f46e5' font-weight='700'><text x='40' y='252'>并联：任选一类即可 → 4+6+2 = 12</text></g><g stroke='#0f766e' stroke-width='2' fill='none'><path d='M420 150 L500 150 M560 150 L640 150'/></g><g font-size='10' fill='#1e1b4b'><text x='410' y='142'>A 地</text><text x='504' y='142'>中转</text><text x='646' y='142'>B 地</text><text x='486' y='180'>3 条路</text><text x='576' y='180'>4 条路</text></g><g font-size='11' fill='#0f766e' font-weight='700'><text x='420' y='252'>串联：每步都要走 → 3×4 = 12</text></g></svg></div>"; }
+  function buildFigSTEPS(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>计数题的四个标准动作（示意图，非原卷图）</text><g font-size='11' fill='#111827'><text x='18' y='60' font-weight='700'>① 问一句“做完这件事了吗”</text><text x='250' y='60'>做完就停 → 分类（加法）；还要继续 → 分步（乘法）</text><text x='18' y='96' font-weight='700'>② 找“特殊位置/特殊元素”</text><text x='250' y='96'>如首位不能为 0、某人不能站排头：先安排它，再安排其余</text><text x='18' y='132' font-weight='700'>③ 看“至少/至多”</text><text x='250' y='132'>优先用“总数 − 反面”，比正面分类快得多</text><text x='18' y='168' font-weight='700'>④ 检查“分类是否有重复”</text><text x='250' y='168'>分类必须“不重不漏”，两类有交集就要减掉交集</text></g><g font-size='10.5' fill='#b45309'><text x='18' y='212' font-weight='700'>三个高频结论：</text><text x='18' y='236'>把 n 个不同的东西分给 m 个不同的对象（每个对象可多可少）→ mⁿ 种</text><text x='18' y='258'>从 0—5 中选数字组成无重复数字的三位数 → 5×5×4 = 100 个</text><text x='18' y='280'>每个岗位至少 1 人的分配问题，常用“总数 − 有岗位没人”</text></g></svg></div>"; }
+  var FIG = {
+    "two": buildFigTWO,
+    "steps": buildFigSTEPS
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

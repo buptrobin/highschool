@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>随机抽样</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "bx2-c4-s1", "n": 12, "title": "9.1 随机抽样"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 必修第二册 · 第九章 统计 · 第一节</span>
+        <h1>随机抽样<span class="thin">北京真题 0 道 · 外地真题 1 道 · 原创题 8 道 · 5 关 12 题</span></h1>
+        <p class="lede">抽样这一节考三件事：<b>简单随机抽样</b>（抽签、随机数，每个个体等可能）、<b>分层抽样</b>（按比例分配）、<b>系统抽样</b>（等距）。北京 2022—2026 的统计选择题极少，这一节<b>一道也没有</b>；本页只收到 1 道新课标真题（2024 第3题，分层抽样＋组合数），其余 8 道按教材概念原创。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>1</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='12' y='12' width='276' height='256' rx='18' fill='#eef2ff'/><g fill='#c7d2fe'><circle cx='70' cy='86' r='7'/><circle cx='100' cy='86' r='7'/><circle cx='130' cy='86' r='7'/><circle cx='70' cy='116' r='7'/><circle cx='100' cy='116' r='7'/><circle cx='130' cy='116' r='7'/><circle cx='70' cy='146' r='7'/><circle cx='100' cy='146' r='7'/></g><g fill='#b45309'><circle cx='130' cy='146' r='7'/></g><g fill='#0f766e'><circle cx='196' cy='86' r='7'/><circle cx='226' cy='86' r='7'/><circle cx='196' cy='116' r='7'/><circle cx='226' cy='116' r='7'/></g><g stroke='#94a3b8' stroke-width='1.2' stroke-dasharray='4 3'><line x1='46' y1='192' x2='252' y2='192'/></g><g font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'><text x='86' y='226'>总体</text><text x='210' y='226'>样本</text><text x='150' y='52'>每层按比例抽</text><text x='150' y='256' font-size='10' font-weight='400'>每个个体被抽到的机会相同</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：三种抽样，三种“等可能”的说法</h2></div>
+  <p class="sec-sub">左图是三种抽样方法的对比，右图是“抽样比”这一步该怎么用。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 0 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 1 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">原创题 8 道</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京 2022—2026 的统计选择题里<b>没有</b>“随机抽样”这一节的题（北京的统计题集中在 9.2 用样本估计总体，且多以解答题形式出现）。外地卷里 <b>2023 新课标Ⅱ 第3题</b>是标准的“分层抽样＋组合数”题，已收入第 4 关；其余 8 道按教材原话原创。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">外地收入：<b>2023 新课标Ⅱ 第3题</b>（初中部 400 人、高中部 200 人，分层抽 60 人，问不同抽样结果数）。原创：8 道选择题覆盖总体与样本的概念、简单随机抽样的判定、系统抽样号码、分层抽样人数计算、等可能概率、系统抽样间隔、抽样方法的选择。3 道综合题：分层抽样方案设计、系统抽样的号码表、抽签法的步骤与概率。<b>没有收入的：</b>北京合格考题（按规矩不取）。</p>
+</div><div class="panel"><p class="panel-title">① 三种抽样方法对比（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三种抽样方法（示意图，非原卷图）</text><g font-size='11'><rect x='18' y='40' width='234' height='118' rx='10' fill='#eef2ff' stroke='#4f46e5'/><text x='32' y='64' font-weight='700' fill='#4f46e5'>简单随机抽样</text><text x='32' y='88'>抽签法、随机数法</text><text x='32' y='110'>逐个不放回地抽，</text><text x='32' y='132'>每个个体概率都是 n/N</text><rect x='262' y='40' width='234' height='118' rx='10' fill='#ecfdf5' stroke='#0f766e'/><text x='276' y='64' font-weight='700' fill='#0f766e'>分层随机抽样</text><text x='276' y='88'>按“层”分别抽</text><text x='276' y='110'>各层抽样比相同：</text><text x='276' y='132'>n₁/N₁ = n₂/N₂ = n/N</text><rect x='506' y='40' width='234' height='118' rx='10' fill='#fffbeb' stroke='#b45309'/><text x='520' y='64' font-weight='700' fill='#b45309'>系统抽样</text><text x='520' y='88'>等距抽样</text><text x='520' y='110'>编号后每隔 k 个取一个，</text><text x='520' y='132'>k = N/n（N 能被 n 整除时）</text></g><g font-size='11' fill='#111827'><text x='18' y='188' font-weight='700'>三种方法的共同点：</text><text x='150' y='188'>都是“等可能”抽样——每个个体被抽到的机会相同，这是估计总体时样本有代表性的前提。</text><text x='18' y='216' font-weight='700'>怎么选：</text><text x='150' y='216'>个体差异小、数量少 → 简单随机；个体差异明显、分成几类 → 分层；个体排好序、数量大 → 系统。</text><text x='18' y='252' fill='#b45309' font-weight='700'>分层抽样一定要先算“抽样比”，再用“抽样比×各层人数”，不要凭感觉分配。</text><text x='18' y='278' fill='#b45309' font-weight='700'>系统抽样的间隔 k 必须整除：k = N/n，且抽到的号码构成等差数列。</text></g></svg></div></div><div class="panel"><p class="panel-title">② 抽样比：一句话解决所有人数计算（示意图，非原卷图）</p><div class="svg-box" id="map-fig-ratio"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>抽样比：所有人数计算的源头（示意图，非原卷图）</text><g font-size='12' fill='#fff' text-anchor='middle' font-weight='700'><rect x='60' y='48' width='200' height='46' rx='10' fill='#4f46e5'/><text x='160' y='76'>总体 N</text><rect x='300' y='48' width='160' height='46' rx='10' fill='#0f766e'/><text x='380' y='76'>样本 n</text><rect x='500' y='48' width='200' height='46' rx='10' fill='#b45309'/><text x='600' y='76'>抽样比 n/N</text></g><g stroke='#94a3b8' stroke-width='1.6' fill='none'><path d='M260 71 L296 71'/><path d='M460 71 L496 71'/></g><g font-size='11' fill='#111827'><text x='60' y='134' font-weight='700'>例（与第 4 关真题同一组数）：</text><text x='60' y='158'>总体 600 人（初中 400、高中 200），抽 60 人 ⇒ 抽样比 = 60/600 = 1/10</text><text x='60' y='182'>初中抽 400×1/10 = 40 人，高中抽 200×1/10 = 20 人</text><text x='60' y='206'>不同的抽样结果数 = C(400,40)·C(200,20)（两步各选各的，相乘）</text><text x='60' y='244' font-weight='700' fill='#b45309'>要素：先算比 → 各层乘比 → 若问“结果数”再乘组合数。</text><text x='60' y='272' fill='#334155'>系统抽样同理：k = N/n，1 号入样则号码为 1, 1+k, 1+2k, …</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">抽样题的错，多在“总体是什么”和“比算错了”。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把“人”当总体。</b>总体、个体、样本都是<b>数据</b>：总体是“12000 名学生的身高”，不是“12000 名学生”。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>样本容量带单位。</b>样本容量是 200，不是“200 人”也不是“200 名学生的身高”——容量是一个数。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>分层抽样凭感觉分配。</b>必须先算抽样比 n/N，再逐层相乘；算完用“各层相加 = n”验算。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>系统抽样的间隔算成 n/N。</b>间隔 k = N/n（总体除以样本），不是反过来；且抽到的号码是等差数列。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>以为“先抽的人机会大”。</b>简单随机抽样与系统抽样的每个个体概率都等于 n/N，与抽的先后无关。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>忽略“等可能”这个前提。</b>只抽前 10 号、只抽男生、只抽一个时间段，都不是随机抽样，样本没有代表性。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关先把总体、个体、样本、样本容量的定义各写一遍，注意“数据”两个字。</li><li>第 2 关练“算概率”：任何抽样方法，每个个体被抽到的概率都回到 n/N。</li><li>第 3 关的三道题分别对应分层、系统、方法选择，做错的题请把“抽样比”重新算一遍。</li><li>第 4 关的新课标真题是本页唯一的真题，请把“先算各层人数、再乘组合数”写完整。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>外地真题（1 道）：</b>2023 新课标Ⅱ 第3题（分层抽样＋组合数）。</li><li><b>北京真题：0 道。</b>北京 2022—2026 没有“随机抽样”这一节的选择题；北京的统计题集中在 9.2，且多为解答题。</li><li><b>原创题（11 道）：</b>8 道选择题（总体与样本、简单随机抽样判定、系统抽样号码、等可能概率、分层抽样人数、系统抽样间隔、分层抽样适用场景）＋3 道综合题（分层方案、系统抽样、抽签法与代表性），标 <b>orig</b>；人数与概率均已验算（15、2、1/20、1/10、1/8）。</li><li>真题的题干、选项来自原卷 docx，公式按原卷图形内嵌；该题的原卷详解只有公式片段，本页已按原卷答案重写讲解。两张方法图为原创手绘 SVG，标题注明“示意图，非原卷图”。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修第二册", chapter:"第九章 统计", section:"9.1 随机抽样"};
+  var TOPIC = {1:"简单随机抽样", 2:"抽签法与随机数法", 3:"分层随机抽样", 4:"系统抽样（等距抽样）", 5:"总体、个体、样本、样本容量", 6:"抽样比与比例分配", 7:"样本的代表性"};
+  var LEVELS = [
+    {id:1, name:"总体与样本的概念", sub:"总体是“数据的全体”，不是“人”", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"简单随机抽样", sub:"抽签、随机数：每个个体被抽到的概率相同", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"分层抽样与系统抽样", sub:"分层按比例、系统按等距，两者都要先算“抽样比”", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"抽样结果的计数", sub:"分两层各抽若干人，不同的抽样结果是组合数之积", badge:"难点", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"分层抽样方案设计、系统抽样号码表、抽签法的步骤与概率各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"为了解某市 12000 名高一学生的身高情况，从中抽取 200 名学生的身高进行统计。下列说法正确的是（ ）",
+      opts:["12000 名高一学生是总体", "200 名学生是样本", "每名学生的身高是个体", "样本容量是 12000"],
+      ans:2,
+      why:"统计里的总体、个体、样本都是指<b>数据</b>，不是“人”。A 错：总体是这 12000 名学生的<b>身高</b>；B 错：样本是抽出的 200 名学生的<b>身高</b>；C 对：个体是每一名学生的身高；D 错：样本容量是 200，12000 是总体容量。选 C。",
+      tip:"看到“总体”“样本”，先在心里补上“的身高/的成绩”这类词，选项的对错立刻分明。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"下列抽样方法中，属于简单随机抽样的是（ ）",
+      opts:["从 100 名学生中抽取学号为 1—10 的学生", "用抽签法从 50 件产品中抽取 5 件", "在某班男生中抽取 10 人调查身高", "每隔 10 分钟从生产线上抽取一件产品"],
+      ans:1,
+      why:"A 错：只抽前 10 号，每个个体被抽到的机会不均等，不是等可能抽样。B 对：抽签法把每个个体都做成签，逐个不放回地抽，属于简单随机抽样。C 错：只在男生中抽，结论不能代表全体，且不是所有个体都入签。D 错：按时间等距抽取，属于<b>系统抽样</b>。选 B。",
+      tip:"简单随机抽样的两个关键词：<b>逐个</b>（一次一个）、<b>等可能</b>（每个个体机会相同）。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某班有 50 名学生，学号为 1—50。用系统抽样（等距抽样）从中抽取 5 人，若第一组抽到的是 3 号，则抽到的 5 个学号是（ ）",
+      opts:["3, 8, 13, 18, 23", "3, 13, 23, 33, 43", "3, 12, 21, 30, 39", "3, 10, 17, 24, 31"],
+      ans:1,
+      why:"系统抽样先算间隔 k = N/n = 50/5 = 10。把 50 人按学号分成 5 段，每段 10 人，在每段中按相同的位置抽一个：第 1 段取第 3 个（学号 3），则后面依次加 10，得到 3、13、23、33、43，选 B。<b>系统抽样的号码构成等差数列，公差就是 k。</b>",
+      tip:"系统抽样三步：算间隔 k=N/n → 第一段随机取一个 → 依次加 k。号码一定是等差数列。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"从 100 个个体中用简单随机抽样抽取 10 个，则每个个体被抽到的概率为（ ）",
+      opts:["1/100", "1/10", "1/9", "10/1000"],
+      ans:1,
+      why:"简单随机抽样是<b>等可能</b>抽样：每个个体被抽到的概率都等于样本容量除以总体容量，即 10/100 = 1/10，选 B。这个结论与“抽第几个”无关——第 1 个被抽到的概率是 1/10，第 10 个被抽到的概率也是 1/10，这正是“等可能”的含义。",
+      tip:"等可能抽样的概率 = n/N，与顺序无关；不要因为“先抽的人机会大”而上当。"
+    },
+    {
+      id:5, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某校高一年级有 400 人、高二年级 300 人、高三年级 300 人。用分层抽样从中抽取 50 人，则高二年级应抽取（ ）",
+      opts:["15 人", "20 人", "12 人", "10 人"],
+      ans:0,
+      why:"总体 400+300+300 = 1000 人，抽样比 = 50/1000 = 1/20。高二年级 300 人，应抽 300×(1/20) = 15 人，选 A。<b>分层抽样的核心就是“各层都乘同一个抽样比”</b>，所以三个年级抽到的人数之比一定等于 4:3:3。",
+      tip:"分层抽样先算抽样比 n/N，再逐层相乘；抽到的人数之比＝各层人数之比。"
+    },
+    {
+      id:6, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"从 200 件产品中用系统抽样抽取 20 件进行检验，则抽样的间隔为（ ）",
+      opts:["10", "20", "5", "40"],
+      ans:0,
+      why:"系统抽样的间隔 k = N/n = 200/20 = 10，即把 200 件按顺序分成 20 组、每组 10 件，在每组中抽取同一位置的 1 件，选 A。若第一组抽到第 4 件，则抽到的编号为 4、14、24、…、194。",
+      tip:"间隔 k = 总体容量 ÷ 样本容量，先除后取整；不能整除时要先剔除多余个体。"
+    },
+    {
+      id:7, lv:3, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某单位有职工 160 人，其中业务人员 120 人、管理人员 16 人、后勤人员 24 人。用分层抽样从中抽取 20 人，则管理人员应抽取（ ）",
+      opts:["2 人", "3 人", "4 人", "1 人"],
+      ans:0,
+      why:"抽样比 = 20/160 = 1/8。管理人员 16 人，应抽 16×(1/8) = 2 人，选 A。顺便核对：业务人员 120×(1/8) = 15 人，后勤 24×(1/8) = 3 人，15+2+3 = 20，与样本容量一致。<b>做完分层抽样题，用“各层相加等于样本容量”验算一遍</b>，能发现绝大多数计算错误。",
+      tip:"分层抽样的答案要能加回样本容量：各层人数相加 = n，这是最快的验算。"
+    },
+    {
+      id:8, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"下列调查中，最适合用分层抽样的是（ ）",
+      opts:["从 10 台机器中抽取 2 台检查是否有故障", "了解某校高一、高二、高三三个年级学生的近视率差异", "从一批 1000 件产品中抽取 50 件检验质量", "调查某路口一天内通过的汽车数量"],
+      ans:1,
+      why:"分层抽样适用于<b>总体由差异明显的几部分组成</b>、且需要分别了解各部分情况的情形。A、C 的个体差异小、数量不大，用简单随机抽样即可；D 是调查一天的总量，既不需要抽样也不适合抽样。B 中三个年级的近视率可能差异明显，按年级分层抽样最合适，选 B。",
+      tip:"选抽样方法的判断顺序：差异明显且要分层比较 → 分层；个体多且有序 → 系统；其它 → 简单随机。"
+    },
+    {
+      id:9, lv:4, src:"2023·新课标Ⅱ 第3题", kind:"real", star:3,
+      stem:"某学校为了解学生参加体育运动的情况，用比例分配的分层随机抽样方法作抽样调查，拟从初中部和高中部两层共抽取60名学生，已知该校初中部和高中部分别有400名和200名学生，则不同的抽样结果共有（    ）．",
+      opts:["<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:23.0px;vertical-align:middle\" alt=\"\">种", "<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:23.0px;vertical-align:middle\" alt=\"\">种", "<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:23.0px;vertical-align:middle\" alt=\"\">种", "<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:23.0px;vertical-align:middle\" alt=\"\">种"],
+      ans:3,
+      why:"分层抽样按比例分配：初中部 400 人、高中部 200 人，共 600 人，抽样比 = 60/600 = 1/10。所以初中抽 400×(1/10) = 40 人，高中抽 200×(1/10) = 20 人。不同的抽样结果，就是先从 400 名初中生中选 40 人、再从 200 名高中生中选 20 人的组合数之积，即 C(400,40)·C(200,20)，对应选项 D。<b>两步独立选取，结果数相乘；每一步都是“从某层里选若干个”，用组合数。</b>",
+      tip:"“分层抽样＋结果数”题的固定两步：先算各层抽几人，再把各层的组合数乘起来。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"分层抽样方案：三个年级怎么分",
+      material:"某校高一年级 500 人、高二年级 400 人、高三年级 300 人。为了解学生的睡眠时间，用分层随机抽样从中抽取 60 人。",
+      asks:[{q:"求抽样比，并分别算出三个年级应抽取的人数。", pt:4}, {q:"求每个学生被抽到的概率；若高一年级某学生被抽到，他的概率是多少？", pt:3}, {q:"若从抽出的 60 人中再随机抽取 5 人进行访谈，求高一年级被访谈人数的可能取值，并说明理由。", pt:5}],
+      points:[
+        ["总体容量 N = 500+400+300 = 1200，抽样比 = 60/1200 = 1/20", "高一抽 500×(1/20) = 25 人；高二抽 400×(1/20) = 20 人；高三抽 300×(1/20) = 15 人", "验算：25+20+15 = 60 ✓", "答：抽样比 1/20，三个年级分别抽 25、20、15 人"],
+        ["分层抽样仍是等可能抽样，每个个体被抽到的概率 = 样本容量/总体容量 = 60/1200 = 1/20", "高一某学生被抽到的概率同样是 1/20（与所在层无关）", "答：都是 1/20"],
+        ["抽出的 60 人中高一有 25 人，从这 60 人里随机抽 5 人", "被访谈的高一学生数 X 是从 25 个高一学生中抽到的个数，最小 0（一个都没抽到）、最大 5（5 个全是高一）", "所以 X 的可能取值为 0,1,2,3,4,5", "答：可能取 0 到 5 的整数"]
+      ],
+      tip:"分层抽样的计算只有一句口诀：<b>先算抽样比，再逐层相乘，最后相加验算</b>。第（3）问提醒你：“分层抽样”只保证各层人数按比例，不代表后续抽样还分层。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"系统抽样：间隔与号码表",
+      material:"某年级有 600 名学生，学号为 1—600。用系统抽样抽取 30 人参加问卷调查。",
+      asks:[{q:"求抽样的间隔，并说明抽样步骤。", pt:4}, {q:"若在第一组中随机抽到的是 5 号，写出抽到的 5 个号码。", pt:4}, {q:"求每个学生被抽到的概率，并说明为什么系统抽样也是等可能抽样。", pt:4}],
+      points:[
+        ["间隔 k = N/n = 600/30 = 20", "步骤：① 把 600 名学生按学号 1—600 编号；② 分成 30 组，每组 20 人；③ 在第 1 组（1—20 号）中用简单随机抽样抽 1 人；④ 其余各组抽与第 1 组编号“位置相同”的人", "答：间隔 20"],
+        ["第 1 组抽到 5 号，则后面每组都抽该组的第 5 个", "号码为 5、25、45、65、85（前 5 个），一般式为 5+20(j−1)，j = 1,2,…,30", "答：5, 25, 45, 65, 85, …（共 30 个，末项 585）"],
+        ["第 1 组中每个号码被选中的概率是 1/20，而每个学生恰好属于某一组、且在该组中的位置固定", "所以每个学生被抽到的概率都是 1/20 = 30/600", "答：概率为 1/20；因为第 1 组的 20 种选法等可能，每种选法唯一确定整份样本"]
+      ],
+      tip:"系统抽样最容易错在“间隔算错”和“末项越界”：k 要整除 N，最后一个号码 = 首项+(n−1)k，必须 ≤ N。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"抽签法与样本代表性",
+      material:"某厂生产了 1000 件产品，编号为 1—1000。质检部门要抽取 50 件检验某项指标。",
+      asks:[{q:"写出用抽签法抽取 50 件的步骤。", pt:4}, {q:"求每件产品被抽到的概率。", pt:4}, {q:"若质检员图省事，只抽取生产线上最前面生产的 50 件，这样得到的样本有什么问题？", pt:4}],
+      points:[
+        ["① 编号：把 1000 件产品编号为 1—1000", "② 做签：把号码写在 1000 个相同的小纸片上，揉成团、混合均匀", "③ 抽签：每次随机抽出一个，不放回，共抽 50 次", "④ 取样：按抽到的号码取出对应产品，得到容量为 50 的样本"],
+        ["抽签法是简单随机抽样，等可能：每件产品被抽到的概率 = 样本容量/总体容量 = 50/1000 = 1/20", "答：概率为 1/20"],
+        ["只取最前面生产的 50 件，样本只来自一个时间段，不能代表全部 1000 件", "若机器在该时间段运行状态特殊（刚开机、刀具刚换），指标可能系统性地偏好或偏差，估计结果会有系统性误差", "这种做法不是等可能抽样，样本缺乏代表性", "答：样本不具代表性，估计值可能有系统性偏差"]
+      ],
+      tip:"回答“抽样有什么问题”，标准答法是两句：<b>① 不是等可能抽样（破坏了随机性）；② 样本不能代表总体（有系统性偏差）</b>。只写“不随机”拿不到满分。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-bx2-c4-s1-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigMETHODS(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三种抽样方法（示意图，非原卷图）</text><g font-size='11'><rect x='18' y='40' width='234' height='118' rx='10' fill='#eef2ff' stroke='#4f46e5'/><text x='32' y='64' font-weight='700' fill='#4f46e5'>简单随机抽样</text><text x='32' y='88'>抽签法、随机数法</text><text x='32' y='110'>逐个不放回地抽，</text><text x='32' y='132'>每个个体概率都是 n/N</text><rect x='262' y='40' width='234' height='118' rx='10' fill='#ecfdf5' stroke='#0f766e'/><text x='276' y='64' font-weight='700' fill='#0f766e'>分层随机抽样</text><text x='276' y='88'>按“层”分别抽</text><text x='276' y='110'>各层抽样比相同：</text><text x='276' y='132'>n₁/N₁ = n₂/N₂ = n/N</text><rect x='506' y='40' width='234' height='118' rx='10' fill='#fffbeb' stroke='#b45309'/><text x='520' y='64' font-weight='700' fill='#b45309'>系统抽样</text><text x='520' y='88'>等距抽样</text><text x='520' y='110'>编号后每隔 k 个取一个，</text><text x='520' y='132'>k = N/n（N 能被 n 整除时）</text></g><g font-size='11' fill='#111827'><text x='18' y='188' font-weight='700'>三种方法的共同点：</text><text x='150' y='188'>都是“等可能”抽样——每个个体被抽到的机会相同，这是估计总体时样本有代表性的前提。</text><text x='18' y='216' font-weight='700'>怎么选：</text><text x='150' y='216'>个体差异小、数量少 → 简单随机；个体差异明显、分成几类 → 分层；个体排好序、数量大 → 系统。</text><text x='18' y='252' fill='#b45309' font-weight='700'>分层抽样一定要先算“抽样比”，再用“抽样比×各层人数”，不要凭感觉分配。</text><text x='18' y='278' fill='#b45309' font-weight='700'>系统抽样的间隔 k 必须整除：k = N/n，且抽到的号码构成等差数列。</text></g></svg></div>"; }
+  function buildFigRATIO(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>抽样比：所有人数计算的源头（示意图，非原卷图）</text><g font-size='12' fill='#fff' text-anchor='middle' font-weight='700'><rect x='60' y='48' width='200' height='46' rx='10' fill='#4f46e5'/><text x='160' y='76'>总体 N</text><rect x='300' y='48' width='160' height='46' rx='10' fill='#0f766e'/><text x='380' y='76'>样本 n</text><rect x='500' y='48' width='200' height='46' rx='10' fill='#b45309'/><text x='600' y='76'>抽样比 n/N</text></g><g stroke='#94a3b8' stroke-width='1.6' fill='none'><path d='M260 71 L296 71'/><path d='M460 71 L496 71'/></g><g font-size='11' fill='#111827'><text x='60' y='134' font-weight='700'>例（与第 4 关真题同一组数）：</text><text x='60' y='158'>总体 600 人（初中 400、高中 200），抽 60 人 ⇒ 抽样比 = 60/600 = 1/10</text><text x='60' y='182'>初中抽 400×1/10 = 40 人，高中抽 200×1/10 = 20 人</text><text x='60' y='206'>不同的抽样结果数 = C(400,40)·C(200,20)（两步各选各的，相乘）</text><text x='60' y='244' font-weight='700' fill='#b45309'>要素：先算比 → 各层乘比 → 若问“结果数”再乘组合数。</text><text x='60' y='272' fill='#334155'>系统抽样同理：k = N/n，1 号入样则号码为 1, 1+k, 1+2k, …</text></g></svg></div>"; }
+  var FIG = {
+    "methods": buildFigMETHODS,
+    "ratio": buildFigRATIO
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

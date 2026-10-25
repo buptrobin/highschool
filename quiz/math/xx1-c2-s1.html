@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>直线的倾斜角与斜率</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "xx1-c2-s1", "n": 12, "title": "2.1 直线的倾斜角与斜率"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 选择性必修第一册 · 第二章 直线和圆的方程 · 第一节</span>
+        <h1>直线的倾斜角与斜率<span class="thin">北京真题 0 道 · 外地真题 1 道 · 原创 11 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一节只有两个量：<b>倾斜角</b>说方向，<b>斜率</b>说陡不陡，中间靠 k = tanα 连起来。看着简单，丢分全在三处：α = 90° 时斜率<b>不存在</b>、范围题跨过 90° 要<b>分两段</b>、算两点式时上下两个差的减法顺序必须一致。北京卷近五年没有单独考它的选择题，本页 1 道外地真题 + 8 道原创选择题，把这三处坑摆开练。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>1</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='14' y='14' width='272' height='272' rx='18' fill='#eef2ff'/><g stroke='#94a3b8' stroke-width='1.4'><line x1='40' y1='220' x2='268' y2='220'/><line x1='150' y1='230' x2='150' y2='48'/></g><path d='M150 220 L240 90' stroke='#4f46e5' stroke-width='3' fill='none'/><path d='M186 220 A36 36 0 0 0 172 190' stroke='#b45309' stroke-width='2.4' fill='none'/><g font-size='11' fill='#1e1b4b'><text x='190' y='212' font-weight='700'>α</text><text x='240' y='248' font-weight='700'>k=tanα</text><text x='44' y='244' font-size='10'>α∈[0°,180°)</text><text x='156' y='60' font-size='10'>90° 处断开</text><text x='150' y='286' text-anchor='middle' font-size='10' fill='#334155'>倾斜角说方向 · 斜率说陡缓</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：倾斜角是方向，斜率是 tanα，两点一除就出来</h2></div>
+  <p class="sec-sub">左图是 α 与 k 的对应：α 从 0° 走到 90°，k 从 0 升到 +∞；90° 处斜率<b>不存在</b>；α 从 90° 走到 180°，k 从 −∞ 回到 0。右图是两点式斜率的几何来源：竖直差比水平差，就是“每走 1 格横的，升多少”。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 0 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 1 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 1 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>倾斜角与斜率在北京卷 2022—2026 里<b>没有一道独立的选择题</b>——它只作为工具出现在解析几何大题里（2022 第19题、2024 第19题都在设直线斜率）。外地卷近三年也只有 <b>1 道</b>选择题正面考它，本页收了这一道，其余 8 道选择题和 3 道综合题为原创。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>0 道独立命题</b>。2022、2024 两年的椭圆大题都靠“设直线斜率 k”起步，但那是 3.1 的内容，不放进本节。<br>外地卷：<b>2023 全国乙（文）第 7 题</b>（圆环内取点，直线 OA 的倾斜角不超过 π/4 的概率）收入第 4 关；同一道题在理科卷是第 5 题，为避免同一真题重复出现只收了一道。<b>2022 新高考Ⅱ 第 3 题</b>（举架与步的比值就是斜率，答案是 0.9）本来是本节最贴切的题，但原卷的图1、图2 没有进题库，缺图根本看不懂题意，故未收——这一条如实写在页脚。<br>另外两道路过的：2025 天津第 9 题、2024 天津第 8 题虽然给的是“直线 PF 的斜率”，主体是双曲线，已放进 3.2 页。</p>
+</div><div class="panel"><p class="panel-title">① 倾斜角 α 与斜率 k 的对应（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>倾斜角 α 与斜率 k = tanα（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.2'><line x1='70' y1='230' x2='470' y2='230'/><line x1='250' y1='252' x2='250' y2='60'/></g><g stroke='#4f46e5' stroke-width='2.6' fill='none'><line x1='250' y1='230' x2='400' y2='80'/><line x1='250' y1='230' x2='150' y2='110'/><line x1='250' y1='230' x2='250' y2='72' stroke='#b45309'/></g><path d='M310 230 A60 60 0 0 0 292 187' stroke='#4f46e5' stroke-width='2' fill='none'/><path d='M190 230 A60 60 0 0 1 208 186' stroke='#4f46e5' stroke-width='2' fill='none'/><g font-size='11' fill='#1f2937'><text x='316' y='216' font-weight='700' fill='#4f46e5'>α=45°，k=1</text><text x='120' y='176' font-weight='700' fill='#4f46e5'>α=120°，k=−√3</text><text x='258' y='90' font-weight='700' fill='#b45309'>α=90°，k 不存在</text><text x='470' y='234' font-size='10' fill='#475569'>x</text><text x='256' y='64' font-size='10' fill='#475569'>y</text></g><g font-size='11' fill='#334155'><text x='510' y='90' font-weight='700'>α：0° → 90°</text><text x='510' y='112'>k 从 0 增到 +∞</text><text x='510' y='146' font-weight='700'>α = 90°</text><text x='510' y='168'>斜率不存在（竖直）</text><text x='510' y='202' font-weight='700'>α：90° → 180°</text><text x='510' y='224'>k 从 −∞ 回到 0</text><text x='510' y='258' fill='#b45309' font-weight='700'>断点只有一个：90°</text></g></svg></div></div><div class="panel"><p class="panel-title">② 两点式斜率的几何意义（示意图，非原卷图）</p><div class="svg-box" id="map-fig-slope"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>两点式斜率：k = 竖直差 ÷ 水平差（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.2'><line x1='60' y1='250' x2='500' y2='250'/><line x1='100' y1='268' x2='100' y2='56'/></g><line x1='160' y1='204' x2='420' y2='84' stroke='#4f46e5' stroke-width='2.8'/><g fill='#4f46e5'><circle cx='160' cy='204' r='5'/><circle cx='420' cy='84' r='5'/></g><g stroke='#b45309' stroke-width='1.6' stroke-dasharray='5 4'><line x1='160' y1='204' x2='420' y2='204'/><line x1='420' y1='204' x2='420' y2='84'/></g><g font-size='11' fill='#1f2937'><text x='124' y='222' font-weight='700'>A(x₁, y₁)</text><text x='428' y='78' font-weight='700'>B(x₂, y₂)</text><text x='264' y='222' font-weight='700' fill='#b45309'>Δx = x₂−x₁</text><text x='428' y='150' font-weight='700' fill='#b45309'>Δy = y₂−y₁</text></g><g font-size='11' fill='#334155'><text x='512' y='110' font-weight='700'>k = Δy / Δx</text><text x='512' y='136'>= (y₂−y₁)/(x₂−x₁)</text><text x='512' y='170'>方向向量 (1, k) 或 (Δx, Δy)</text><text x='512' y='204' fill='#b45309' font-weight='700'>x₁ = x₂ 时 Δx=0</text><text x='512' y='226'>分母为 0 → 斜率不存在</text><text x='512' y='258' fill='#0f766e' font-weight='700'>先定分母，再谈斜率</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把倾斜角写成 [0°，180°]。</b>右端是<b>开</b>的：180° 的直线就是 0° 那条，所以范围是 [0°，180°)。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>忘了 90° 没有斜率。</b>倾斜角为 90° 时 tan 无定义，写范围题时 90° 这个点必须被排除，答案往往就是两段。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>两点式减法顺序不一致。</b>(y₂−y₁)/(x₂−x₁) 与 (y₁−y₂)/(x₂−x₁) 差一个负号，倾斜角会从 30° 变成 150°。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>用 tanα 的单调性直接套整个区间。</b>tan 在 [30°，120°] 上不单调（90° 断开），必须分段讨论。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>只看 sinα 就写一个斜率。</b>sinα = 3/5 对应锐角、钝角两个 α，斜率是 ±3/4。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>线段题漏掉两侧分支。</b>定点横坐标夹在线段两端之间时，竖直线一定在张角内，答案会断成两段，别只写中间那段。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关两道题限时 60 秒：只做一件事——把一般式化成 y=kx+b，让 k 的符号决定锐角还是钝角。</li><li>第 2 关三题做完，回头默一遍：方向向量 (a,b) 给的是 k=b/a，不是 a/b。</li><li>第 3 关的“倾斜角跨 90°”是本节的招牌坑，做错的把 tan 图像在草稿上画一遍。</li><li>综合题三题分别练：共线求参、斜率符号定锐钝、转动直线的断点。写完对照要点数漏了几条。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>外地真题（1 道）：</b>2023 全国乙（文）第 7 题（倾斜角不超过 π/4 的几何概型）。<b>北京真题 0 道</b>：北京 2022—2026 没有独立命制的倾斜角/斜率选择题，本节在北京卷里只作解析几何大题的工具。</li><li><b>原创题（11 道）：</b>8 道选择题 + 3 道综合题，均标 <b>orig</b>，数字与答案已逐一验算。</li><li><b>没收的题：</b>2022 新高考Ⅱ 第 3 题（举架、步与斜率的比值）本是本节最佳真题，但原卷图1、图2 未进题库，缺图无法呈现题意，宁缺勿滥。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；示意图两张为原创 SVG，已在标题标注“示意图，非原卷图”。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修第一册", chapter:"第二章 直线和圆的方程", section:"2.1 直线的倾斜角与斜率"};
+  var TOPIC = {1:"倾斜角的定义与范围", 2:"两点式斜率公式", 3:"k=tanα 的正负与象限", 4:"方向向量与斜率", 5:"三点共线的判定", 6:"倾斜角跨 90° 的斜率范围", 7:"斜率与线段的交点范围"};
+  var LEVELS = [
+    {id:1, name:"倾斜角与斜率的基本换算", sub:"先化成 y=kx+b 拿到 k，再用 tanα=k 反查角", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"两点式与方向向量", sub:"k=(y₂−y₁)/(x₂−x₁)；方向向量 (a,b) 给出 k=b/a", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"k 的正负与大小比较", sub:"锐角 k>0、钝角 k<0，越接近 180° 越接近 0", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"本节易错", sub:"范围跨 90° 必须分段、共线要排除垂直、线段题看两段", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"三点共线求参、斜率范围、钝角条件各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创", kind:"orig", star:1,
+      stem:"直线 √3x + y − 1 = 0 的倾斜角是（　）",
+      opts:["30°", "60°", "120°", "150°"],
+      ans:2,
+      why:"先把方程化成斜截式：y = −√3x + 1，所以斜率 k = −√3。由 tanα = −√3 且倾斜角 α∈[0°，180°)，得 α = 120°。<b>k 是负数就一定选钝角</b>，30°、60° 可以当场排除。故选 C。",
+      tip:"第一步永远是把一般式化成 y=kx+b；k 的符号直接决定锐角还是钝角。"
+    },
+    {
+      id:2, lv:1, src:"原创", kind:"orig", star:1,
+      stem:"过点 A(1, 2)，B(4, 2+√3) 的直线的倾斜角为（　）",
+      opts:["30°", "45°", "60°", "120°"],
+      ans:0,
+      why:"k = (2+√3−2)/(4−1) = √3/3，所以 tanα = √3/3，倾斜角 α = 30°。<b>两点式的分子分母减法顺序必须一致</b>：都用“后减前”或都用“前减后”，混着用符号就反了。故选 A。",
+      tip:"k=(y₂−y₁)/(x₂−x₁)，上下两个差的方向要统一。"
+    },
+    {
+      id:3, lv:2, src:"原创", kind:"orig", star:2,
+      stem:"已知 A(1, −1)，B(3, 3)，C(4, m) 三点共线，则 m =（　）",
+      opts:["4", "5", "6", "7"],
+      ans:1,
+      why:"k_AB = (3−(−1))/(3−1) = 2。三点共线等价于 A 到 C 的斜率也等于 2：(m+1)/(4−1) = 2，即 m+1 = 6，m = 5。检查一下：C(4,5) 在直线 y = 2x − 3 上，而 A、B 也在这条线上。<b>共线的本质是斜率相等，不是距离相加</b>。故选 B。",
+      tip:"共线题的固定套路：从一个公共点出发写两条斜率，令它们相等。"
+    },
+    {
+      id:4, lv:2, src:"原创", kind:"orig", star:2,
+      stem:"已知直线 l 的一个方向向量为 (√3, −1)，则 l 的倾斜角为（　）",
+      opts:["30°", "60°", "120°", "150°"],
+      ans:3,
+      why:"直线的方向向量 (a, b) 与斜率的关系是 k = b/a（a ≠ 0），这里 k = −1/√3 = −√3/3。由 tanα = −√3/3 且 α∈[0°，180°)，得 α = 150°。<b>方向向量反向取不改变倾斜角</b>：(−√3, 1) 算出来还是 −√3/3。故选 D。",
+      tip:"方向向量 (a,b) → k=b/a；记得方向向量可以整体反号，斜率不变。"
+    },
+    {
+      id:5, lv:2, src:"原创", kind:"orig", star:2,
+      stem:"已知直线 l 的倾斜角为 α，且 sinα = 3/5，则 l 的斜率 k =（　）",
+      opts:["3/4", "−3/4", "±3/4", "4/3"],
+      ans:2,
+      why:"α∈[0°，180°) 且 sinα = 3/5 时，α 可以是锐角也可以是钝角，所以 cosα = ±4/5。于是 k = tanα = sinα/cosα = ±3/4。<b>只给 sinα 一定有两个斜率</b>；题目若补一句“α 为锐角”，才只剩 3/4。故选 C。",
+      tip:"k=sinα/cosα；sin 定不下来符号，是因为锐角、钝角的正弦值相同。"
+    },
+    {
+      id:6, lv:3, src:"原创", kind:"orig", star:2,
+      stem:"若直线 l₁，l₂，l₃ 的倾斜角分别为 45°，135°，150°，则它们的斜率 k₁，k₂，k₃ 的大小关系是（　）",
+      opts:["k₁>k₂>k₃", "k₁>k₃>k₂", "k₃>k₂>k₁", "k₂>k₃>k₁"],
+      ans:1,
+      why:"k₁ = tan45° = 1，k₂ = tan135° = −1，k₃ = tan150° = −√3/3 ≈ −0.58。两个钝角的斜率都是负数，<b>钝角越接180° 越接近 0</b>，所以 −0.58 > −1，即 k₃ > k₂。答案 k₁ > k₃ > k₂。故选 B。",
+      tip:"比斜率别比绝对值：120° 的 −√3≈−1.73 比 150° 的 −0.58 更小。"
+    },
+    {
+      id:7, lv:3, src:"原创", kind:"orig", star:3,
+      stem:"若直线 l 的倾斜角 α 满足 30° ≤ α ≤ 120°，则 l 的斜率 k 的取值范围是（　）",
+      opts:["[√3/3, √3]", "(−∞, −√3] ∪ [√3/3, +∞)", "[−√3, √3/3]", "(−∞, 0] ∪ [√3/3, +∞)"],
+      ans:1,
+      why:"范围跨过了 90°，必须<b>分两段</b>：α∈[30°，90°) 时 tanα 从 √3/3 增到 +∞，这一段是 [√3/3，+∞)；α = 90° 时倾斜角存在但<b>斜率不存在</b>，要单独排除；α∈(90°，120°] 时 tanα 从 −∞ 增到 −√3，这一段是 (−∞，−√3]。合起来 k ∈ (−∞，−√3] ∪ [√3/3，+∞)。故选 B。",
+      tip:"看到“范围跨 90°”就直接写两段，别指望一个区间能表示。"
+    },
+    {
+      id:8, lv:4, src:"原创", kind:"orig", star:3,
+      stem:"已知点 A(2, 3)，B(−1, 0)，过点 P(1, 1) 的直线 l 与线段 AB 有公共点，则 l 的斜率 k 的取值范围是（　）",
+      opts:["[1/2, 2]", "[−1, 2]", "[1/2, +∞)", "(−∞, 1/2] ∪ [2, +∞)"],
+      ans:3,
+      why:"先算两条边界：k_PA = (3−1)/(2−1) = 2，k_PB = (0−1)/(−1−1) = 1/2。关键在于 P 的横坐标 1 落在 A、B 的横坐标之间，<b>线段上存在横坐标为 1 的点 (1, 2)，此时 l 是竖直线、斜率不存在</b>。所以 k 的取值在 2 处断开：一侧是 [2，+∞)，另一侧从 1/2 一直滑到 −∞，即 (−∞，1/2]。故选 D。",
+      tip:"过定点的线段题先看定点横坐标是否夹在线段横坐标之间——夹住就会漏掉两条“外侧”分支。"
+    },
+    {
+      id:9, lv:4, src:"2023·全国乙(文) 第7题", kind:"real", star:3,
+      stem:"设O为平面坐标系的坐标原点，在区域<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:29.1px;vertical-align:middle\" alt=\"\">内随机取一点A，则直线OA的倾斜角不大于<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAACqCAAAAADXH33YAAAE7UlEQVR42u2ZXYhVVRTH/2vtve+dGZ1m0hELZEpCiiLKoOhbifIhNILMCC1KERG0AusxtPAlahJi8qHsO8UwfEgzlYKyl8BB6FOJCEHUcqhxPpx755y91+rhzjjO/Zh77pmIyrNfLpxz92+vvdfa/7XO3qSYYmNkhIyQETJCRsgIGeG/RLDVH/uaHciUP6hWPyhN0YZgCuuPG6nGtv6htb6sj1Y0r93NtYdco9HEv9sqFmxbB2MYQUAWANQDpIYBuPiSurOI3b7VOaGoYkUDABRxth5BeWg7qUfnPXL4KNwjBkqnD5Ky3jZPGCYsrAiAskUI/hiasHbXMdWN4DZVVT0Cixze1+qtYhZmjSuu3QqcKx4l1YEmCPcCJG1NI2JAagwmtcHL/las1BBHegAObcOqXg/CWiwu98FYK5uU0EGseisiy3CkIAKAVgCINdm+cOg6uw2OAOhoFwpfQRWGKOnOYi0FdSh5Snnk+ZInk+/N0cHaAfQJAG4Hpdjd5HcBWOZkLKxqQ2p4WQcYDoc1Vi1cCjJYrHEiX4y31pkA/gCNLSk1qDCCt/tZS2+DplG5wDujsVfT0xCEf+lnBTGg+Dyixgke+3psUPVAwOYia6MEcUObTEToaFMCZkxwXUIbaFufwIYnbom5TLcpmS+00EWkQFwu2lr0uXwCGyLzUq8VAPYCgIoiolc7XkRc1wbB8d0CABi50Hzmkfzxj6OhBFEtOg8MMM09E0RjfRAGsNO6T2nfO7j6TJCJf68kBN1jDADGtRpUY10wmuhmvHEN7BwNWo8Q6x0wAMjcIEFV9FBpvzMAiw8lCeEBMgAIRzSoquitzABAzmJ2f0hCWIi8tXm+f8CLqvrwNWCttTaHuT95r3UJoj92AAB2l9RZ4r417aVVb3myimBXyf7CP2wyCDc/i/Op4fd1JsD6jdeFSu9Xqx+EG6knqlcgHhjN2xc8mBijkxOyejIjZISM8O8jSHK5Uv07VW5cTqOfuz8xIUkfI0tebjZUkbuHGxl473h9Om4DXVZIOiPnm6uuQ9TI5DnLFxkhI2SEi/tssPyYS0ktN1CZ1y32G7VBeONp65cvCKahM5Dxbx6vGwCgq8aBVH0bBM91Obh4WupZmMIr7BWxpPSm+lNLHHQK8RDbvV+QTCGihL/fbKKpxKTYR08QU3pCsNtP5LxLTxDZsWIwurJFUxPYrYSd/2VzaoIvbpB8vPSKgXqFXa0W6UfI8/JoaCYAh601orq2DYrB1zmSLY7SKkxwSw+Z6VumS1pCsN/2NMU3PeM4pUaJ/Hpfn7ZsFk6rk+L29+Yv/+xOpCUEu/2pfPHhuwucUqs9HViR1xs3hKaUaq/KO4FoVydRSkJwT7/rRh6bHVPKfKF2cIelx99LdiPE1YTt5KI+HyUEVCN41/ONy7/mA6XMm+K+W5UrLlsvJmXmDdJz75/Uvjoky6hVVlLcnt78yN67iue/uUZPVUMcl51z1bgJ0jfhaNGEZ7MAOHxQQ0bKc7fwnJPWL5zlx1chfBoBLPOvEgY6uyo8VGHD9ZOqe2fFKWvltIqqk5wDtiWIyRntXJbl+hUAWnIAaWsCpQ2+rA2WlLbbF7z3IUH9wDXMNEZNylpOx340q2n/B3W1c4CrOVYCgv4GIMa59AT3wjDAcnuteyf9J9ahdMU7pe+LLCYzwkVG+AvLWVSGoYrLkwAAAABJRU5ErkJggg==\" style=\"height:37.6px;vertical-align:middle\" alt=\"\">的概率为（    ）",
+      opts:["<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAACqCAAAAADUqHPwAAAEyklEQVR42u2aXYgWVRjH/885Z2bd1d0UDaM1l1IRC+si+6Aoq5sSvanEQKXMsAu7yb4Tse6iLkIsUFJI0/wgKhBRvFgQDA0JKgmx0jVT+6DSSN3dd+ac8+9i3nXf3Z153/PaTcLM1bzzzm/Oc855vuZ5RogrPxRKuIRL+H8Em3p/kvWfLnWcQRpd8chM4/So8jPiuqLlHinJzfMAHKdj0ZEPW8v0wGzAaH2iSdhbcu99AqUhONH0yHvmA9BA07DnkUlomQElDeGR2+jRPXvZn0fXemmsJQUPtXwbutHIeftsPSK4+yFXop4GAPSF/2IYunQGJVzCJVzCJVzC9Q/ffBKXWuOys9GJN6aZtMI5kl0iIkr2DfwOTCugsPYXfwoAiDkrk1sXNZG4JgsvHbiE8VlKwr8wYVbXekpo1nuR7UN+X9BtTafMpXqWcAmX8FUE+4DbWQC7ECHE54Ybpz961dj6aGSXr7JmZLixXBc0zVdqX2oHZBVMbQ9ZopuZ5/SdPvxGY7GXPep0XsTwQbs25K6acONdY1arMlaVcAmXcHi51vqqs9DFVbV8T+KlpgBIFFUDc2EKsO5r4wxslDzyWHYh7B3DW/7w4I2DPm/mEUcfWq61fCnDWp5fnp3Mp3VhcMLXYTTG7NrzJdm9dxpgsIDOh8ApX0OspOMgyUpC9u0Yb0ZhEVPfGHZcDSW64yArqSWtdXwYJsLivKrtCPifiVoJ9jMdWD53dDRE4WxjsROu0AaCMzUr5MdBtJ57+XH1StROIOirUat+AHBBuk0AHJJ7SE42UtcwrvHDEx0fDq9Qgze3CQDTEQIrAFD7Tg+8P5OH+gXebswxwBFwqgDKuYdO6SzHsLKqV2m+MNo3NAzv/rhWFKBw0+90JBO/uyNSWn/nbYiGvQgFwGDGaVpvUz6BSMunzgbotvPnIAJAY9oZenIxWgSf0AZZVdq/TUUCQKF9qf92Cdog29gfaM+OO7PuiQIWGACLP8vRzCJnkHIzjGRbIXHXM8yXuaDx089N1UaEUdjOJGmqa5RyQ5UWLdtZ2IDJ79308+Sd2mS02vpbEY38rs/WBdUlgwim9BSsWP6c3wcwd3mcKa/B5NOB+0ymfA8x7qiwpyubucbUs7mS57neDxDJ3eddwp4paBEAEaafTFyQ612POG55hxU6/nxD5kcibMmb9kjD2AjR6KQlmfL7p5QoACbemyP4cNi6TlGit3iXNfv4cbV5dW/O0CNc71txBMGv1XFcLz8cZwSIWjczqe96qX76PPUKc0y1N6haK0tutwpA38VGPszrY4eN01w0wQ1E5Ni/e50X5Ab44T6sRRPAedZE/5lbqfMd93CYroni5XBYFACMrZFRu3uediYITjzgZfffqkbK1gmUgDkrO+txbxx2XtKDMJM+AFHU0G9X+BxiiN41WCdN/TeR0XJX0lBJnOtuhyhMZmoHwgCXQmnsCFBPxy/GxmLaVpOVlEwqjj1AhPUhhsFerkGkBCsPVS8sRatG5/Egk3Tux00xdIwxC19m+uyT8xADnccCnQHJfbcBowSYdD0AYOaG8wxM4uhScs0Dl7fjljdZ5HzzE1cb9X5lHAVQbvpEq0SaKRTXflZR/IlF0Zs7/VBtL0vUJXy1wf8CDx7qtrnE3FYAAAAASUVORK5CYII=\" style=\"height:37.6px;vertical-align:middle\" alt=\"\">", "<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAACqCAAAAADUqHPwAAAEw0lEQVR42u2aXYgWVRjHf885M/Nuu22+m6xItWCwRZlLFhEl3YgQRVAEfUhhUGFEQkRGoRfmKqiVEQglYhD24UVXGpRXBQaJCH1ZmJHlSq5LmOGau+07M+c8Xby6H+87835sFxXMuXo/zm/OM+c58/z/Z2ZEmX0zFHABF/B/CA4a/+1BZHawd2HDQ0uDSpIGHEm19wrNHVtzWupUf9oo8IzGeX3ywo4jRp/9dNiGSWe7E+ZNdOTjdRNEsXG+XdhMrN41Zgxx23nW9NyTPW/1zvf49heJBsPxg3uPf361b7qCcmdbj19phJDn82c78+Aax86mC3q8zGJ5SgQY7/7BhWGkKAYFXMAFXMAFXMBN1L9tB+hTtVVLEhITSBuwqonYcixMBTMkXZBtT7Jhka93d+5NgYQP3cLK+kta9p5psGPP8Hd0VQnzR8rS0ubFGYNnG9dK3DHD7467Ttum6y2WZwEXcAH/j2DfGuGzYNdiEMbVF31n330pSJvf3UhfeczZml1sqttbPdPtmtbsYoX+7tbY7n6ktug7e+jllsIevHUy7CnF8K1mbarjNLlpvl8GwJpCqwq4gAu4rRvFF1pSLRmhtOt6vYDMbmSHBTacLHkYXbuwpkpqwxar/vjIgv5q1/L+yXJfbQ3DVuGrjwYBuK8/6Xuh5Zumqup09KG5lCI6du1zqupqO+TDvqJruiGC586paiWuv/GaDye6DmyJW7apusRndcmD/YSuJ8Jy01nNJhvAqa4nJOCGM1rJDY68FG3CYrjxt5rstABXdBORiB04o17bhFPdioWA/Q1izoETfZtICKIVZxLfJuzj03fZACPztEkjK+jPCEHY1miycmA3dJ0RROae9a5dONF7sRCyM/5r8nipb+nxizOfHApTEFsJQ1z1qrMtPoqo6DtEYLldvzxwd09vuVyeW95zQJ1vHrZ3p+8xBsyc19dNd3WPq2sOOx2pVqxLbwboFTCIjXgq4/qoh9+3UvWT3PnwCt31wAABELGynq6H+y7W8hXVX05VacsqTZrBbgADwsAxdZVYXUV/vxYBOnit9ilO/ciLMBDwhV7IbaK/LjYGbLBkqCbdNXKTyo5frIIyrhdKfRBfdb9acHLghPWNtErl8LgoIHZSJSL34vWJAW+/cdJY6Dqrc63TrLd0JCg4tzo2jWGvAoF7dEkybU3urCZvjrQisaLzuqZLSf8MscyHBQWozJiaiWydrIFDP3hNaoBuMzWKSRa86sNWnEFXCfBm/1AwLUZbzuxcf85/As4cPDojp9Xtx/mm8DIBMNHM/AMiS602gbeoAj5gescIMLoxco1hPT9fBMfK8ak8S3ISFb08qV3N9WXoTSKgY0ponP6MIeLpWv2og316YlFgMMHgZNV26VERIz0/1NYxMmr+WiyGgeGLlcPpEsSY5XVlLFMxVhEQsV3HvKpqJd1XtmIZca3A6WECEdP3vfpEtaK6nChi81jSikqmyQdYY5i/e0K96sE1NjRsyVBqsj3UexCU4I6teuqRyyjBYJbokeNIRp4AOqFvHgLLRjRLrXIcoDdsGHsjqX5ZHQyWMrfmefZREb4dFRANb4PslxzyvWei0eSnUNp+t+LiVWBn82JGsTUq4H8Z/hvrW+r2uF6TaAAAAABJRU5ErkJggg==\" style=\"height:37.6px;vertical-align:middle\" alt=\"\">", "<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAACqCAAAAADXH33YAAADZ0lEQVR42u2ZTWhUVxTH/+d+zEvSmFQKRReCIsaCuLBQ6CqbIkLBqkFwJ4iguLGrolgUXLjwa9MGbKFWFBSsRDFkpSgi6EZUVFCIaSop3TQUoeIMeffce7rIaDrivDdzxyKk965m3rz5vXPvPfd/Ph4JOhwKiZAIiTA/Cab4ZxGAqPAWKlQY1tSRDcIWD7Rf3itUbGeTwSIyug3AFWEpGM1sCFzB+I5bbCiYqFkEVblx4iLDsPYSRVD3h38GdOC43RRMbXiATybzIJEeFej26m2/PTmnFLXiUk3X2MkvIEDjWsxeeA+j/GAHXq01EPTfHZ8snRQmERIhERIhERKhPQK9Xxvqjw+RGSmzqqdhPY6NbduGEExXZTsREeih7bYhtJ0N4uzDyj0RgLFrUi/e3WZmLrRz6u40Fs4mMTSNnsHes5X2cvuqX9Dw/QX1xlUH6VwkQiIkQiL8ixBalEyRd6y0cxEnHx8e1b70DzqsOd3f0OB5XcNXW37qUcnfWvvTolpLM7Kuv9k65K3aoHWKWYmQCImA1Plv6H4DZDvI7Yu79i3YwObXw9p3Hbdtd5vrI8gfSwDgZbud/7mS7enG3zORPoqdhbdj49kMiYvomYuIiPdjPRog9FWb3VK6DkuhignFs+D86J+GYzv/IuLkDrSiYhtUsbMcJAk2+lwIT28YU2FliU8WzGJGTuIDDF+AjdyL4CYGNCCnSgjNZxHMlnH18QjXYk+3V6MT2cxnQ6VvMZoRvDzezHrF985Ga5Q547r5h2Ucq3KsDx2pVDetdjpS5QLVzlv/1QhJpA3ief2j4H8kT5FK6+3QtYre28cm9q2cmbjZlX96IDORah/8sy+eB7NfKDbiiL0+lX10eZ2oSEJQIzuz2pYvayo26jEdExn42ndFxk3hyjf3bH5pgCiSEMy3x0K+cYmjyMgreuYnw6vO6VfO6FAvvZwBAK1KCBKmtz6nbF/3XE2EhbMRuq81G4K+f9W67OpFmtuZSXgIqkMa0H7HWq8LdZLlurZFK/BdQ5n3VpXz3jXPKCyycq+2H74Zo/IqAFA/AOuycrUP3DhqfGJWq18wM3Moj5uk39ze+gWjI3M5gbz6kHLaeZBXK2tBYjsgvHQOwF8SS1D4fI8KQGb/u769aam66LC+SD6ZCP87wj/RDjuaV1WplwAAAABJRU5ErkJggg==\" style=\"height:37.6px;vertical-align:middle\" alt=\"\">", "<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAACqCAAAAADXH33YAAAEVElEQVR42u2aXWhcRRTH/2fuzN1NYhvSENtqQ5u+aEU0BEUoxSqIVB9EkFLBgoEKQlFBBREElebBSBAVP0rBIoHGh77UUtSnKhX6pPEDaakftGLNgzWGWFO7O3dmjg/bppu9Hzt7QxFl5nGX+7sz53vOucRY5hIIhEAIhP8nQRb/7QCiZRCcVe33QAUxykicNDxwHRfvgnOWscw/jhGwmzUXrbxT6Bh/PnV0JlJJdylJOhGf/OjFGmItrCtFELVnJy8IAV3OHtic39X37sAaB1fSoljO6O2Hz3w+5PzMLVcXfOZ6QVB4po0uMl/DWtvIbOhzVNaqKQYgnF2uZwkKESYQAiEQAiEQAuE/SGAuV9M6w1GjjFLQkNQpgVnEGP9JGYL4mXqAgpIqm0D09Qfdhw2ABAftTfWXuzqrq43c9+HMd+hpPCbmDO6uvDKct43syryuq0uq+r9td1Smtg82GQiBEAiB0Exwvo+0JLHlR9rLGYfp1DbtQ4vcyGRvROm7v+bNIM93TizpBlyRw7XwO5BBL2fL4cIjnqcYHkN0VSQJIPF8hGTIm4EQCIGAf7vzzwkxAGJVHMPzYhQ3xX4GOr4lwQmcHo8TBqR5fiNgow67zYa/f7h/MZEMvf4r29xucyYh4bcBKKmUUkoBWDWd37TOItT4HShBULFoXNsk+r/kxJ9geC8UkYgARI0ZjMDKE+x8CZb3QygAeHp8A9DIcBFWTzvjSdDnbxNV4IYvvmX+5ZsnVzWMLsZLde1HqPOUiHH/FDMbzcyzNzc0HmE2WyGtBGdnbpdqlNlZy2yt4d+GIQAQdvsRLJ8DRri2KHnHc7cQAQLrswlpz5qK1ROQi7ZKSd9ejgBgpZ9NWu7FmiWKM+7TWAICm/z2QBjddsQ0V4ZRsvVxo/IDgUwR3ki5b8M68iqUNNgknHZ1gDHo6925Mef9UtPJxhYcAEG6w2lUk6Mdq0go7LHafxrV+pI6hB16IEcZHgQzB5C481YXleyiMPXPEWOhS5TMF5be/EtEeKGr47neZcdKZkdQxXbWrpO5XtNK5JGvKlY+6vInbO22ML+JFA6x6SzaNxvDIUisn889QzuCcR/LLmw8bfO3UEwwyYlYYe3ZgozVTpLygMa6Y+uMKDOlZWbNY1B9P+Rmq3ancHXegy482AZQQEj4VVRwT61ADcUEwxPowb0XreVyBKMnUMVW0xy2rXX+BMeWFO5aKDKEwm8P2NGOuL7lk2qztmtn2d2Y8S1EFtY6fgi4Y+GKNxiT8O/Aaxm2hUwh6h3AyLnaxfqlZZi5vlP0eEoy4X3XILpvyW+fHX9rBWjLQoYo01EuUZOjkOaxAS0vHdqJP94DEOvjm7OqwnQZth/pKlZGkRI757WHLlzlwC5hGC3N/gSI3Ipe3d6zDB9U3RUVq9SqVAanM+0TLRHlaL4Xr80OEy29BBp8ThrKTiyrHV2dvr1M3SryLxIqzA4CIRA81z9Tv0JfIFtO3gAAAABJRU5ErkJggg==\" style=\"height:37.6px;vertical-align:middle\" alt=\"\">"],
+      ans:2,
+      why:"区域 {(x, y) | 1 ≤ x²+y² ≤ 4} 是内半径 1、外半径 2 的圆环。倾斜角是<b>直线</b>的倾斜角：A 在第一象限与第三象限给出同一条直线，倾斜角相同。倾斜角不大于 π/4（即斜率在 [0, 1]）的部分，正好是第一、三象限各一块圆心角 π/4 的扇形，合计 π/2，占整个圆环 2π 的 1/4。半径不影响占比，所以答案是 1/4。故选 C。",
+      tip:"倾斜角是“直线”的角，不是“射线”的角：第三象限的点同理会算进来。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"三点共线、垂直与线段张角",
+      material:"已知点 A(−1, 2)，B(3, −2)，C(5, m)。",
+      asks:[{q:"求直线 AB 的斜率与倾斜角。", pt:3}, {q:"若 A、B、C 三点共线，求 m 的值；若 AC ⊥ AB，再求 m 的值。", pt:4}, {q:"已知 D(−3, 0)，直线 l 过 D 且与线段 AB 有公共点，求 l 的斜率 k 的取值范围。", pt:5}],
+      points:[
+        ["k_AB = (−2−2)/(3−(−1)) = −4/4 = −1", "由 tanα = −1 且 α∈[0°，180°)，得倾斜角 α = 135°"],
+        ["三点共线：k_BC = k_AB，即 (m+2)/(5−3) = −1，得 (m+2)/2 = −1，m = −4", "AC ⊥ AB：k_AC·k_AB = −1，所以 k_AC = 1，即 (m−2)/(5−(−1)) = 1，(m−2)/6 = 1，m = 8", "答案：共线时 m=−4；垂直时 m=8"],
+        ["两条边界斜率：k_DA = (2−0)/(−1−(−3)) = 1，k_DB = (−2−0)/(3−(−3)) = −1/3", "D 的横坐标 −3 不在 A、B 的横坐标 −1 到 3 之间，所以转动过程中<b>不会出现竖直线</b>，k 从 1 连续减到 −1/3", "所以 k ∈ [−1/3, 1]", "验算：取 AB 中点 (1, 0)，k_D中点 = (0−0)/(1+3) = 0，确实落在区间内"]
+      ],
+      tip:"线段张角题三步：算两端斜率、看定点横坐标是否夹住线段（夹住就断开成两段）、写出区间。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"共线求参，再用斜率符号定倾斜角",
+      material:"已知点 A(1, 1)，B(4, 4)，C(a, 9)。",
+      asks:[{q:"求直线 AB 的斜率与倾斜角。", pt:3}, {q:"若 A、B、C 三点共线，求 a 的值。", pt:4}, {q:"若直线 AC 的倾斜角为钝角，求 a 的取值范围；若直线 AC 的倾斜角为锐角，再求 a 的取值范围。", pt:5}],
+      points:[
+        ["k_AB = (4−1)/(4−1) = 1", "tanα = 1 且 α∈[0°，180°)，所以 α = 45°"],
+        ["k_BC = (9−4)/(a−4) = 5/(a−4)", "共线要求 5/(a−4) = 1，得 a−4 = 5，a = 9", "验算：C(9, 9) 与 A、B 都在直线 y = x 上"],
+        ["k_AC = (9−1)/(a−1) = 8/(a−1)", "倾斜角为钝角 ⇔ k_AC < 0 ⇔ a−1 < 0 ⇔ a < 1", "倾斜角为锐角 ⇔ k_AC > 0 ⇔ a > 1", "注意 a = 1 时 AC 是竖直线，倾斜角 90°，既不是钝角也不是锐角，必须挖掉", "答案：钝角时 a<1；锐角时 a>1"]
+      ],
+      tip:"<b>倾斜角与斜率的符号一一对应</b>：锐角 ⇔ k>0，钝角 ⇔ k<0，90° ⇔ k 不存在。分式不等式先看分母符号。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"转动直线：什么时候斜率取不到",
+      material:"已知点 P(1, 2)，A(−1, 3)，B(3, −1)，直线 l 绕点 P 转动。",
+      asks:[{q:"求直线 PA、PB 的斜率。", pt:3}, {q:"当 l 与线段 AB 有公共点时，求 l 的斜率 k 的取值范围。", pt:5}, {q:"在第（2）问的条件下，求 l 的倾斜角为钝角时 k 的取值范围。", pt:4}],
+      points:[
+        ["k_PA = (3−2)/(−1−1) = −1/2", "k_PB = (−1−2)/(3−1) = −3/2"],
+        ["线段 AB 上横坐标为 1 的点是 (1, 1)（由 A(−1,3)、B(3,−1) 得直线 y = 2−x）", "P(1, 2) 与 (1, 1) 连线是竖直线，斜率不存在，而这条竖直线确实与线段 AB 相交", "所以 k 分成两支：小于 1 的一侧从 k_PA = −1/2 转向 +∞（对应 t→竖直线之前），得到 [−1/2, +∞)；另一侧从 −∞ 回到 k_PB = −3/2，得到 (−∞, −3/2]", "答案：k ∈ (−∞, −3/2] ∪ [−1/2, +∞)"],
+        ["钝角 ⇔ k < 0，把上一问的两支各取负的部分", "第一支 [−1/2, +∞) 中的负数部分是 [−1/2, 0)", "第二支 (−∞, −3/2] 全为负，照抄", "答案：k ∈ (−∞, −3/2] ∪ [−1/2, 0)"]
+      ],
+      tip:"转动直线求斜率范围，先画图！<b>竖直线是唯一的断点</b>，它在不在张角范围内，决定答案是一段还是两段。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-xx1-c2-s1-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigTILT(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>倾斜角 α 与斜率 k = tanα（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.2'><line x1='70' y1='230' x2='470' y2='230'/><line x1='250' y1='252' x2='250' y2='60'/></g><g stroke='#4f46e5' stroke-width='2.6' fill='none'><line x1='250' y1='230' x2='400' y2='80'/><line x1='250' y1='230' x2='150' y2='110'/><line x1='250' y1='230' x2='250' y2='72' stroke='#b45309'/></g><path d='M310 230 A60 60 0 0 0 292 187' stroke='#4f46e5' stroke-width='2' fill='none'/><path d='M190 230 A60 60 0 0 1 208 186' stroke='#4f46e5' stroke-width='2' fill='none'/><g font-size='11' fill='#1f2937'><text x='316' y='216' font-weight='700' fill='#4f46e5'>α=45°，k=1</text><text x='120' y='176' font-weight='700' fill='#4f46e5'>α=120°，k=−√3</text><text x='258' y='90' font-weight='700' fill='#b45309'>α=90°，k 不存在</text><text x='470' y='234' font-size='10' fill='#475569'>x</text><text x='256' y='64' font-size='10' fill='#475569'>y</text></g><g font-size='11' fill='#334155'><text x='510' y='90' font-weight='700'>α：0° → 90°</text><text x='510' y='112'>k 从 0 增到 +∞</text><text x='510' y='146' font-weight='700'>α = 90°</text><text x='510' y='168'>斜率不存在（竖直）</text><text x='510' y='202' font-weight='700'>α：90° → 180°</text><text x='510' y='224'>k 从 −∞ 回到 0</text><text x='510' y='258' fill='#b45309' font-weight='700'>断点只有一个：90°</text></g></svg></div>"; }
+  function buildFigSLOPE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>两点式斜率：k = 竖直差 ÷ 水平差（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.2'><line x1='60' y1='250' x2='500' y2='250'/><line x1='100' y1='268' x2='100' y2='56'/></g><line x1='160' y1='204' x2='420' y2='84' stroke='#4f46e5' stroke-width='2.8'/><g fill='#4f46e5'><circle cx='160' cy='204' r='5'/><circle cx='420' cy='84' r='5'/></g><g stroke='#b45309' stroke-width='1.6' stroke-dasharray='5 4'><line x1='160' y1='204' x2='420' y2='204'/><line x1='420' y1='204' x2='420' y2='84'/></g><g font-size='11' fill='#1f2937'><text x='124' y='222' font-weight='700'>A(x₁, y₁)</text><text x='428' y='78' font-weight='700'>B(x₂, y₂)</text><text x='264' y='222' font-weight='700' fill='#b45309'>Δx = x₂−x₁</text><text x='428' y='150' font-weight='700' fill='#b45309'>Δy = y₂−y₁</text></g><g font-size='11' fill='#334155'><text x='512' y='110' font-weight='700'>k = Δy / Δx</text><text x='512' y='136'>= (y₂−y₁)/(x₂−x₁)</text><text x='512' y='170'>方向向量 (1, k) 或 (Δx, Δy)</text><text x='512' y='204' fill='#b45309' font-weight='700'>x₁ = x₂ 时 Δx=0</text><text x='512' y='226'>分母为 0 → 斜率不存在</text><text x='512' y='258' fill='#0f766e' font-weight='700'>先定分母，再谈斜率</text></g></svg></div>"; }
+  var FIG = {
+    "tilt": buildFigTILT,
+    "slope": buildFigSLOPE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

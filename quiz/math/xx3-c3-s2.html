@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一元线性回归模型及其应用</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "xx3-c3-s2", "n": 12, "title": "8.2 一元线性回归模型及其应用"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 选择性必修第三册 · 第八章 成对数据的统计分析 · 第二节</span>
+        <h1>一元线性回归模型及其应用<span class="thin">北京真题 0 道 · 外地真题 0 道 · 全原创 12 题 · 5 关 12 题</span></h1>
+        <p class="lede">这一节是“用一条直线去拟合散点”，要会三件事：<b>求方程</b>（b̂ 用偏差乘积除偏差平方和，â 用“直线过样本中心点”）、<b>看拟合</b>（残差越小越好，R² 越大越好）、<b>说清楚</b>（b̂ 是“平均变化率”，预测是“估计值”，超出样本范围的外推不可靠）。北京 2022—2026 与外地 2022—2025 的<b>选择题里都没有</b>这一节的题（回归都放在解答题里考），因此本页 <b>12 道题全部原创</b>，页脚已如实注明。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>0</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='12' y='12' width='276' height='256' rx='18' fill='#eef2ff'/><g stroke='#c7d2fe' stroke-width='1'><line x1='46' y1='206' x2='262' y2='206'/><line x1='46' y1='206' x2='46' y2='54'/></g><g fill='#4f46e5'><circle cx='70' cy='182' r='3.6'/><circle cx='106' cy='160' r='3.6'/><circle cx='142' cy='142' r='3.6'/><circle cx='178' cy='116' r='3.6'/><circle cx='214' cy='92' r='3.6'/><circle cx='246' cy='76' r='3.6'/></g><g stroke='#b45309' stroke-width='1.8'><line x1='56' y1='196' x2='252' y2='70'/></g><g font-size='10.5' fill='#1e1b4b'><text x='150' y='232' text-anchor='middle' font-weight='700'>经验回归直线 ŷ = b̂x + â</text><text x='150' y='254' text-anchor='middle' font-size='10'>一定经过样本中心点 (x̄, ȳ)</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：一条直线、两个系数、三个判断</h2></div>
+  <p class="sec-sub">左图是求 b̂ 与 â 的流程，右图是判断拟合效果的三条标准。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 0 题</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 0 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">全原创 12 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>回归这一节在高考里几乎只以<b>解答题</b>出现（如 2022 全国乙（理）第19题求样本相关系数、2025 上海第17题用回归方程预测），北京 2022—2026 五套卷的选择题与填空题里<b>没有</b>回归题，外地 2022—2025 的选择题里也没有。所以本页 12 道题<b>全部原创</b>，不拿解答题硬改成选择题冒充。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">原创：9 道选择题（代入预测、用样本中心点求 â、b̂ 的实际含义、残差计算、残差平方和比较、R² 的含义、外推风险、b̂ 的公式、b̂ 与 r 的符号关系），3 道综合题（用 5 组数据求方程并预测、算残差与 R²、两个模型比较与外推讨论）。所有数字已验证：10.5、ŷ=2x−1、残差 2、0.3、R²≈0.99、b̂=1.5 与 â=0.3、ŷ(6)=9.3、σ 类比较均一致。</p>
+</div><div class="panel"><p class="panel-title">① 求经验回归方程的两步（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>求经验回归方程：两步走（示意图，非原卷图）</text><g font-size='11' fill='#111827'><text x='18' y='60' font-weight='700'>① 求斜率：</text><text x='120' y='60'>b̂ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²</text><text x='18' y='88' font-weight='700'>② 求截距：</text><text x='120' y='88'>â = ȳ − b̂·x̄（因为直线一定过样本中心点 (x̄, ȳ)）</text></g><g stroke='#4f46e5' stroke-width='1.4' fill='none'><rect x='18' y='106' width='724' height='86' rx='10'/></g><g font-size='11' fill='#4f46e5'><text x='34' y='130' font-weight='700'>用综合题第 1 题的数据走一遍：</text><text x='34' y='154'>x̄ = 3，ȳ = 4.8，Σ(xᵢ−x̄)(yᵢ−ȳ) = 15，Σ(xᵢ−x̄)² = 10</text><text x='34' y='178'>b̂ = 15/10 = 1.5；â = 4.8 − 1.5×3 = 0.3 ⇒ ŷ = 1.5x + 0.3</text></g><g font-size='10.5' fill='#b45309'><text x='18' y='222' font-weight='700'>口诀：先斜率（偏差乘积÷偏差平方和），再截距（用中心点倒推）；</text><text x='18' y='246'>求出后一定代 x̄ 验证 ŷ 是否等于 ȳ —— 这是最快的自检。</text><text x='18' y='274'>不要把 x̄ 与 ȳ 的位置弄反：â = ȳ − b̂x̄，不是 x̄ − b̂ȳ。</text></g></svg></div></div><div class="panel"><p class="panel-title">② 拟合好不好的三条标准（示意图，非原卷图）</p><div class="svg-box" id="map-fig-judge"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>拟合好不好的三条标准（示意图，非原卷图）</text><g font-size='11' fill='#fff' text-anchor='middle' font-weight='700'><rect x='18' y='44' width='230' height='44' rx='9' fill='#0f766e'/><text x='133' y='72'>残差平方和越小越好</text><rect x='262' y='44' width='230' height='44' rx='9' fill='#0369a1'/><text x='377' y='72'>R² 越大越好</text><rect x='506' y='44' width='236' height='44' rx='9' fill='#b45309'/><text x='624' y='72'>|r| 越大线性越强</text></g><g font-size='11' fill='#111827'><text x='18' y='122' font-weight='700'>残差：</text><text x='80' y='122'>eᵢ = 观测值 yᵢ − 预测值 ŷᵢ（可以为负，平方后相加）</text><text x='18' y='150' font-weight='700'>决定系数：</text><text x='100' y='150'>R² = 1 − 残差平方和/总平方和，取值 0 ≤ R² ≤ 1</text><text x='18' y='178' font-weight='700'>解释：</text><text x='80' y='178'>R² = 0.99 表示“y 的变异中约 99% 可由 x 的线性关系解释”</text><text x='18' y='210' font-weight='700'>三者的关系：</text><text x='110' y='210'>一元线性回归里 R² = r²，所以 R² = 0.81 ⇔ |r| = 0.9</text><text x='18' y='242' font-weight='700'>外推提醒：</text><text x='110' y='242'>样本的 x 只覆盖 1—5，硬代 x = 100 得到的是“外推预测”，不可靠</text><text x='18' y='274' fill='#b45309' font-weight='700'>预测值永远是“估计值”，答题要写“估计约为”，不要写“就是”。</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">回归题的错，集中在“符号、分母、措辞”三处。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>â 算成 x̄ − b̂ȳ。</b>正确的是 â = ȳ − b̂x̄（直线过样本中心点），写反会得到完全不同的截距。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>b̂ 的分母用了 y 的偏差平方和。</b>b̂ = Σ(xᵢ−x̄)(yᵢ−ȳ)/Σ(xᵢ−x̄)²，分母永远是 x 的。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>残差顺序减反。</b>残差 = 观测 − 预测；减反了符号全变，“点在直线上方”会判成下方。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把 R² 说成“准确率”或“决定”。</b>R² 是“解释了的变异比例”，不是正确率，也不能证明因果。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>用远超样本范围的 x 外推。</b>样本只到 5，代 x = 100 得到的数不可靠；R² 再高也不能救外推。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>b̂ 的解释漏掉“平均”。</b>“x 每增 1，y 平均增 0.8”，不能写成“y 一定增 0.8”。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关先把“直线过样本中心点”用熟：它既是求 â 的入口，也是最快的自检。</li><li>第 2 关的残差与 b̂ 含义是简答题的高频点，注意措辞里必须有“平均”“预测”。</li><li>第 3 关记住两条换算：R² = r²、残差平方和/总平方和 = 1 − R²。</li><li>综合题三道的数字是连着的（同一组数据），建议一口气做完，体会“方程 → 残差 → R² → 模型比较”的完整链条。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题：0 道 · 外地真题：0 道。</b>回归在高考里几乎只以解答题出现（2022 全国乙（理）第19题求样本相关系数、2025 上海第17题用回归方程预测 2028 年成绩），北京 2022—2026 五套卷的选择题与填空题里没有这一节的题；本页不把解答题硬改成选择题冒充真题。</li><li><b>原创题（12 道）：</b>9 道选择题＋3 道综合题，标 <b>orig</b>；数字均由同一组数据 (1,2)(2,3)(3,5)(4,6)(5,8) 推出并交叉验算：x̄=3、ȳ=4.8、b̂=1.5、â=0.3、残差 0.2/−0.3/0.2/−0.3/0.2、残差平方和 0.3、总平方和 22.8、R²≈0.99。</li><li>本页<b>没有真题</b>；内容按人教A版选择性必修第三册 8.2 节的方法（最小二乘、残差、R²、外推）自行编写，不冒充原卷题目。两张方法图为原创手绘 SVG，标题注明“示意图，非原卷图”。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修第三册", chapter:"第八章 成对数据的统计分析", section:"8.2 一元线性回归模型及其应用"};
+  var TOPIC = {1:"经验回归方程", 2:"最小二乘与 b̂", 3:"样本中心点", 4:"残差与残差平方和", 5:"决定系数 R²", 6:"预测与外推", 7:"回归与相关的联系"};
+  var LEVELS = [
+    {id:1, name:"回归方程与预测", sub:"代 x 求 ŷ；直线必过 (x̄, ȳ)", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"b̂ 的含义与残差", sub:"b̂ 是“x 增加 1 个单位，y 平均增加多少”；残差 = 观测 − 预测", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"拟合效果：残差平方和与 R²", sub:"残差平方和越小越好；R² 越大越好", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"外推与 r 的关系", sub:"超出样本范围的外推不可靠；b̂ 与 r 同号", badge:"难点", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"亲手求一次方程、算一遍残差与 R²、比较两个模型并讨论外推各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"已知经验回归方程为 ŷ = 0.8x + 2.5，当 x = 10 时，y 的预测值为（ ）",
+      opts:["10.5", "8.5", "12.5", "10"],
+      ans:0,
+      why:"把 x = 10 代入方程：ŷ = 0.8×10 + 2.5 = 8 + 2.5 = 10.5，选 A。<b>注意这里的 ŷ 是“预测值”而不是“真实值”</b>：即使 x = 10 的观测值存在，它一般也不恰好等于 10.5，回归方程给的是“平均意义下”的估计。选项 B 是漏加截距，C 是把 2.5 当成了 4.5。",
+      tip:"代入就是算术题，别想复杂；但答案的措辞必须是“预测/估计”，不能是“就是”。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"已知一组数据的样本中心点为 (3, 5)，经验回归方程为 ŷ = b̂x + â，且 b̂ = 2，则 â = （ ）",
+      opts:["1", "−1", "11", "5"],
+      ans:1,
+      why:"经验回归直线一定经过样本中心点 (x̄, ȳ)，所以 ȳ = b̂x̄ + â，即 5 = 2×3 + â，得 â = 5 − 6 = <b>−1</b>，选 B。检验：方程 ŷ = 2x − 1 在 x = 3 时给出 5 ✓ 与 ȳ 一致。<b>选项 A 是把 â 当成 ȳ − b̂ 算的（5−2×2），C 是把 â 当成 ȳ+b̂x̄。</b>",
+      tip:"“直线过样本中心点”是求 â 的唯一入口：â = ȳ − b̂x̄，写完立刻代 x̄ 验算。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某经验回归方程为 ŷ = 0.8x + 2.5，其中 x 表示广告投入（万元），y 表示销售额（万元）。则 b̂ = 0.8 的实际含义是（ ）",
+      opts:["广告投入每增加 1 万元，销售额一定增加 0.8 万元", "广告投入每增加 1 万元，销售额平均增加 0.8 万元", "广告投入为 0.8 万元时，销售额为 2.5 万元", "销售额每增加 1 万元，广告投入平均增加 0.8 万元"],
+      ans:1,
+      why:"b̂ 是<b>平均变化率</b>：x 每增加 1 个单位，y <b>平均</b>增加 b̂ 个单位，选 B。A 用了“一定”，把统计规律说成了确定关系——这正是回归题最常见的错误；C 把 b̂ 与 â 的位置搞混；D 把 x 与 y 的角色互换了（斜率是“x 变引起 y 变”，不是反过来）。",
+      tip:"b̂ 的规范表述：x 每增加 1 个单位，y 平均增加（b̂>0）或平均减少（b̂<0）|b̂| 个单位。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"已知经验回归方程为 ŷ = 2x − 1。若某个样本点为 (4, 9)，则该点的残差为（ ）",
+      opts:["2", "−2", "9", "7"],
+      ans:0,
+      why:"先把 x = 4 代入方程求预测值：ŷ = 2×4 − 1 = 7。残差 = 观测值 − 预测值 = 9 − 7 = <b>2</b>，选 A。<b>残差为正说明实际值高于预测值</b>（点落在直线上方）；选项 D 的 7 是预测值，不是残差；B 的 −2 是把顺序减反了。",
+      tip:"残差 = 观测 − 预测（一定这个顺序）；预测值本身不是残差。"
+    },
+    {
+      id:5, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"用两个不同的模型拟合同一组数据，模型甲的残差平方和为 0.3，模型乙的残差平方和为 1.8，则（ ）",
+      opts:["模型甲拟合得更好", "模型乙拟合得更好", "两个模型拟合一样好", "仅凭残差平方和无法比较"],
+      ans:0,
+      why:"残差平方和衡量“观测值与预测值的总偏离”，<b>越小说明预测越贴近实际、拟合越好</b>：0.3 < 1.8，模型甲更好，选 A。因为两个模型拟合的是<b>同一组数据</b>，总平方和相同，所以残差平方和与 R² 的结论一致（甲的 R² 更大）。若两组数据本身量纲或规模不同，就不能直接比残差平方和，那时要用 R²。",
+      tip:"同一组数据比模型 → 比残差平方和（或 R²）；不同数据比拟合 → 只能比 R²。"
+    },
+    {
+      id:6, lv:3, src:"原创·选择题", kind:"orig", star:2,
+      stem:"某经验回归模型的决定系数 R² = 0.64，下列解释正确的是（ ）",
+      opts:["y 的变化中约有 64% 可以由 x 的线性关系解释", "x 与 y 的相关系数为 0.64", "预测值与观测值相等的点占 64%", "模型的残差平方和等于总平方和的 64%"],
+      ans:0,
+      why:"R² 的含义是“<b>解释了的变异占总变异的比例</b>”：R² = 0.64 表示 y 的变化中约 64% 可由 x 的线性关系解释，其余 36% 来自其它因素与随机误差，选 A。B 混淆了两者：一元线性回归中 r² = R²，所以 |r| = 0.8（不是 0.64）；C 没有这种含义；D 说反了——残差平方和占总平方和的 1 − 0.64 = 36%。",
+      tip:"记住两条换算：R² = r²（一元线性），残差平方和/总平方和 = 1 − R²。"
+    },
+    {
+      id:7, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"某商品的广告投入 x（万元）在 1—5 之间取值，由此得到的经验回归方程为 ŷ = 1.5x + 0.3。现用 x = 100 预测销量，下列说法正确的是（ ）",
+      opts:["预测值为 150.3，可以直接使用", "预测值不可靠，因为 x = 100 超出了样本的取值范围（外推）", "预测值一定准确，因为方程是由数据算出来的", "只要 R² 接近 1，x = 100 的预测就一定可靠"],
+      ans:1,
+      why:"回归方程只是在<b>样本 x 的取值范围内</b>对“平均趋势”的刻画。x = 100 远超 1—5，属于<b>外推</b>：既没有数据支持这个区间，也无法保证原有的线性关系在远处继续成立（现实中常出现饱和、突变），所以预测不可靠，选 B。A 只算了数没判断合理性；C、D 都错在“R² 高就能外推”——R² 只说明样本区间内拟合得好。",
+      tip:"凡是“用远超样本范围的 x 去预测”的选项，先标记“外推不可靠”，这是本节的固定考点。"
+    },
+    {
+      id:8, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"已知一组数据的 Σ(xᵢ−x̄)(yᵢ−ȳ) = 10，Σ(xᵢ−x̄)² = 5，则经验回归方程的斜率 b̂ = （ ）",
+      opts:["0.5", "2", "50", "10"],
+      ans:1,
+      why:"斜率公式就是 b̂ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)² = 10/5 = <b>2</b>，选 B。<b>分母是 x 的偏差平方和，不是 y 的</b>——这是最常写错的地方（写成 Σ(yᵢ−ȳ)² 就变成算相关系数或另一个量了）。选项 A 是把它除反了。",
+      tip:"b̂ 的分母永远是 Σ(xᵢ−x̄)²（x 的离差平方和），分子是 x、y 离差的乘积和。"
+    },
+    {
+      id:9, lv:4, src:"原创·选择题", kind:"orig", star:3,
+      stem:"关于样本相关系数 r 与经验回归方程斜率 b̂ 的关系，下列说法正确的是（ ）",
+      opts:["b̂ 与 r 一定同号", "b̂ 与 r 一定异号", "b̂ 与 r 的符号没有必然联系", "b̂ 一定大于 r"],
+      ans:0,
+      why:"两个公式的分子完全相同，都是 Σ(xᵢ−x̄)(yᵢ−ȳ)；b̂ 的分母 Σ(xᵢ−x̄)² > 0，r 的分母 √[Σ(xᵢ−x̄)²·Σ(yᵢ−ȳ)²] > 0，两个分母都是正数，所以 <b>b̂ 与 r 的符号必然相同</b>，选 A。直观上也好理解：正相关（r>0）时直线上升（b̂>0）；负相关（r<0）时直线下降（b̂<0）。",
+      tip:"记住“分子同、分母皆正”这句：b̂ 与 r 同号，且 r>0 ⇔ 直线上升。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"五个数据，求一次经验回归方程",
+      material:"某小组测得 5 组成对数据：(1, 2)、(2, 3)、(3, 5)、(4, 6)、(5, 8)。已知 x̄ = 3，ȳ = 4.8，Σ(xᵢ−x̄)(yᵢ−ȳ) = 15，Σ(xᵢ−x̄)² = 10。",
+      asks:[{q:"求经验回归方程 ŷ = b̂x + â。", pt:5}, {q:"预测 x = 6 时的 y 值，并说明这个值的性质。", pt:3}, {q:"解释 b̂ 的实际含义。", pt:4}],
+      points:[
+        ["b̂ = Σ(xᵢ−x̄)(yᵢ−ȳ)/Σ(xᵢ−x̄)² = 15/10 = 1.5", "â = ȳ − b̂x̄ = 4.8 − 1.5×3 = 4.8 − 4.5 = 0.3", "所以 ŷ = 1.5x + 0.3", "验证：x = 3 时 ŷ = 4.8 = ȳ ✓", "答：ŷ = 1.5x + 0.3"],
+        ["ŷ = 1.5×6 + 0.3 = 9.3", "这是一个预测值（估计值），不是真实观测值；x = 6 略超出样本的 1—5，属于轻度外推，可靠性下降", "答：预测约为 9.3，属估计值"],
+        ["b̂ = 1.5 表示：x 每增加 1 个单位，y 平均增加 1.5 个单位", "它是“平均意义”上的变化率，不是“每增加 1 就一定增加 1.5”", "答：x 增 1 个单位，y 平均增 1.5 个单位"]
+      ],
+      tip:"求方程只需三个数：x̄、ȳ 与那个“乘积和÷平方和”。算完一定代 x̄ 验算 ŷ = ȳ，能立刻发现 â 的反号错误。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"残差与决定系数",
+      material:"沿用上题数据与方程 ŷ = 1.5x + 0.3，已知总平方和 Σ(yᵢ−ȳ)² = 22.8。",
+      asks:[{q:"分别求 x = 1, 2, 3, 4, 5 时的预测值与残差。", pt:5}, {q:"求残差平方和。", pt:3}, {q:"求决定系数 R²（保留两位小数），并解释它的含义。", pt:4}],
+      points:[
+        ["预测值：x=1 → 1.8；x=2 → 3.3；x=3 → 4.8；x=4 → 6.3；x=5 → 7.8", "残差 e = 观测 − 预测：2−1.8 = 0.2；3−3.3 = −0.3；5−4.8 = 0.2；6−6.3 = −0.3；8−7.8 = 0.2", "答：预测值 1.8、3.3、4.8、6.3、7.8；残差 0.2、−0.3、0.2、−0.3、0.2"],
+        ["残差平方和 = 0.2²+0.3²+0.2²+0.3²+0.2² = 0.04+0.09+0.04+0.09+0.04", "= 0.3", "答：0.3"],
+        ["R² = 1 − 残差平方和/总平方和 = 1 − 0.3/22.8 ≈ 1 − 0.0132 ≈ 0.99", "含义：y 的变化中约 99% 可以由 x 的线性关系解释，拟合非常好", "答：R² ≈ 0.99"]
+      ],
+      tip:"残差一定“观测 − 预测”；残差平方和与 R² 只差一步：R² = 1 − 残差平方和/总平方和。算出 R² 接近 1 时，回头看散点确实几乎共线，才算自洽。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"两个模型怎么选，能不能外推",
+      material:"某工厂用同一组数据（产量 x 与能耗 y，x 的取值在 10—50 之间）拟合了两个模型：模型一 R² = 0.98，模型二 R² = 0.75。",
+      asks:[{q:"应选哪个模型？说明理由。", pt:4}, {q:"若用模型一预测 x = 500 时的能耗，得到的数是否可靠？说明理由。", pt:4}, {q:"有人据此说“能耗的 98% 由产量决定”，这句话有什么问题？", pt:4}],
+      points:[
+        ["两模型用的是同一组数据，可以直接比较 R²", "R² 越大，说明线性关系解释的变异比例越高，拟合越好", "0.98 > 0.75，选模型一", "答：选模型一"],
+        ["不可靠。样本的 x 只在 10—50 之间，x = 500 属于严重外推", "在样本范围外，无法保证线性关系继续成立（实际中常出现饱和、拐点）", "外推越远，误差与风险越大", "答：不可靠，属于外推"],
+        ["R² = 0.98 说的是“y 的变异中约 98% 可由 x 的线性关系解释”，这是<b>统计上的解释比例</b>", "它既不等于“因果决定”，也不等于“98% 的样本点落在直线上”", "而且“由产量决定”是因果表述，回归本身不能确立因果", "答：混淆了“解释比例”与“因果决定”"]
+      ],
+      tip:"R² 的三条禁忌：不能说“决定”、不能说“准确率”、不能用来支持远距离外推。答题时把这三句写出来，评卷点就齐了。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-xx3-c3-s2-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigFIT(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>求经验回归方程：两步走（示意图，非原卷图）</text><g font-size='11' fill='#111827'><text x='18' y='60' font-weight='700'>① 求斜率：</text><text x='120' y='60'>b̂ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²</text><text x='18' y='88' font-weight='700'>② 求截距：</text><text x='120' y='88'>â = ȳ − b̂·x̄（因为直线一定过样本中心点 (x̄, ȳ)）</text></g><g stroke='#4f46e5' stroke-width='1.4' fill='none'><rect x='18' y='106' width='724' height='86' rx='10'/></g><g font-size='11' fill='#4f46e5'><text x='34' y='130' font-weight='700'>用综合题第 1 题的数据走一遍：</text><text x='34' y='154'>x̄ = 3，ȳ = 4.8，Σ(xᵢ−x̄)(yᵢ−ȳ) = 15，Σ(xᵢ−x̄)² = 10</text><text x='34' y='178'>b̂ = 15/10 = 1.5；â = 4.8 − 1.5×3 = 0.3 ⇒ ŷ = 1.5x + 0.3</text></g><g font-size='10.5' fill='#b45309'><text x='18' y='222' font-weight='700'>口诀：先斜率（偏差乘积÷偏差平方和），再截距（用中心点倒推）；</text><text x='18' y='246'>求出后一定代 x̄ 验证 ŷ 是否等于 ȳ —— 这是最快的自检。</text><text x='18' y='274'>不要把 x̄ 与 ȳ 的位置弄反：â = ȳ − b̂x̄，不是 x̄ − b̂ȳ。</text></g></svg></div>"; }
+  function buildFigJUDGE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>拟合好不好的三条标准（示意图，非原卷图）</text><g font-size='11' fill='#fff' text-anchor='middle' font-weight='700'><rect x='18' y='44' width='230' height='44' rx='9' fill='#0f766e'/><text x='133' y='72'>残差平方和越小越好</text><rect x='262' y='44' width='230' height='44' rx='9' fill='#0369a1'/><text x='377' y='72'>R² 越大越好</text><rect x='506' y='44' width='236' height='44' rx='9' fill='#b45309'/><text x='624' y='72'>|r| 越大线性越强</text></g><g font-size='11' fill='#111827'><text x='18' y='122' font-weight='700'>残差：</text><text x='80' y='122'>eᵢ = 观测值 yᵢ − 预测值 ŷᵢ（可以为负，平方后相加）</text><text x='18' y='150' font-weight='700'>决定系数：</text><text x='100' y='150'>R² = 1 − 残差平方和/总平方和，取值 0 ≤ R² ≤ 1</text><text x='18' y='178' font-weight='700'>解释：</text><text x='80' y='178'>R² = 0.99 表示“y 的变异中约 99% 可由 x 的线性关系解释”</text><text x='18' y='210' font-weight='700'>三者的关系：</text><text x='110' y='210'>一元线性回归里 R² = r²，所以 R² = 0.81 ⇔ |r| = 0.9</text><text x='18' y='242' font-weight='700'>外推提醒：</text><text x='110' y='242'>样本的 x 只覆盖 1—5，硬代 x = 100 得到的是“外推预测”，不可靠</text><text x='18' y='274' fill='#b45309' font-weight='700'>预测值永远是“估计值”，答题要写“估计约为”，不要写“就是”。</text></g></svg></div>"; }
+  var FIG = {
+    "fit": buildFigFIT,
+    "judge": buildFigJUDGE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

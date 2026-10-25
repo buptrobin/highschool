@@ -19,35 +19,60 @@ window.SUBJECTS = [
         "label": "",
         "title": "1.1 集合的概念",
         "slug": "bx1-c1-s1",
-        "href": "pages/math/bx1-c1-s1.html"
+        "href": "pages/math/bx1-c1-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c1-s1.html",
+         "n": 12,
+         "title": "1.1 集合的概念"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.2 集合间的基本关系",
         "slug": "bx1-c1-s2",
-        "href": "pages/math/bx1-c1-s2.html"
+        "href": "pages/math/bx1-c1-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c1-s2.html",
+         "n": 12,
+         "title": "1.2 集合间的基本关系"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.3 集合的基本运算",
         "slug": "bx1-c1-s3",
-        "href": "pages/math/bx1-c1-s3.html"
+        "href": "pages/math/bx1-c1-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c1-s3.html",
+         "n": 15,
+         "title": "1.3 集合的基本运算"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.4 充分条件与必要条件",
         "slug": "bx1-c1-s4",
-        "href": "pages/math/bx1-c1-s4.html"
+        "href": "pages/math/bx1-c1-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c1-s4.html",
+         "n": 12,
+         "title": "1.4 充分条件与必要条件"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.5 全称量词与存在量词",
         "slug": "bx1-c1-s5",
-        "href": "pages/math/bx1-c1-s5.html"
+        "href": "pages/math/bx1-c1-s5.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c1-s5.html",
+         "n": 12,
+         "title": "1.5 全称量词与存在量词"
+        }
        }
       ]
      },
@@ -59,21 +84,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "2.1 等式性质与不等式性质",
         "slug": "bx1-c2-s1",
-        "href": "pages/math/bx1-c2-s1.html"
+        "href": "pages/math/bx1-c2-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c2-s1.html",
+         "n": 12,
+         "title": "2.1 等式性质与不等式性质"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.2 基本不等式",
         "slug": "bx1-c2-s2",
-        "href": "pages/math/bx1-c2-s2.html"
+        "href": "pages/math/bx1-c2-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c2-s2.html",
+         "n": 12,
+         "title": "2.2 基本不等式"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.3 二次函数与一元二次方程、不等式",
         "slug": "bx1-c2-s3",
-        "href": "pages/math/bx1-c2-s3.html"
+        "href": "pages/math/bx1-c2-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c2-s3.html",
+         "n": 12,
+         "title": "2.3 二次函数与一元二次方程、不等式"
+        }
        }
       ]
      },
@@ -85,28 +125,48 @@ window.SUBJECTS = [
         "label": "",
         "title": "3.1 函数的概念及其表示",
         "slug": "bx1-c3-s1",
-        "href": "pages/math/bx1-c3-s1.html"
+        "href": "pages/math/bx1-c3-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c3-s1.html",
+         "n": 12,
+         "title": "3.1 函数的概念及其表示"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "3.2 函数的基本性质",
         "slug": "bx1-c3-s2",
-        "href": "pages/math/bx1-c3-s2.html"
+        "href": "pages/math/bx1-c3-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c3-s2.html",
+         "n": 13,
+         "title": "3.2 函数的基本性质"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "3.3 幂函数",
         "slug": "bx1-c3-s3",
-        "href": "pages/math/bx1-c3-s3.html"
+        "href": "pages/math/bx1-c3-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c3-s3.html",
+         "n": 12,
+         "title": "3.3 幂函数"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "3.4 函数的应用（一）",
         "slug": "bx1-c3-s4",
-        "href": "pages/math/bx1-c3-s4.html"
+        "href": "pages/math/bx1-c3-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c3-s4.html",
+         "n": 12,
+         "title": "3.4 函数的应用（一）"
+        }
        }
       ]
      },
@@ -118,35 +178,60 @@ window.SUBJECTS = [
         "label": "",
         "title": "4.1 指数",
         "slug": "bx1-c4-s1",
-        "href": "pages/math/bx1-c4-s1.html"
+        "href": "pages/math/bx1-c4-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c4-s1.html",
+         "n": 12,
+         "title": "4.1 指数"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.2 指数函数",
         "slug": "bx1-c4-s2",
-        "href": "pages/math/bx1-c4-s2.html"
+        "href": "pages/math/bx1-c4-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c4-s2.html",
+         "n": 12,
+         "title": "4.2 指数函数"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.3 对数",
         "slug": "bx1-c4-s3",
-        "href": "pages/math/bx1-c4-s3.html"
+        "href": "pages/math/bx1-c4-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c4-s3.html",
+         "n": 12,
+         "title": "4.3 对数"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.4 对数函数",
         "slug": "bx1-c4-s4",
-        "href": "pages/math/bx1-c4-s4.html"
+        "href": "pages/math/bx1-c4-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c4-s4.html",
+         "n": 12,
+         "title": "4.4 对数函数"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.5 函数的应用（二）",
         "slug": "bx1-c4-s5",
-        "href": "pages/math/bx1-c4-s5.html"
+        "href": "pages/math/bx1-c4-s5.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c4-s5.html",
+         "n": 12,
+         "title": "4.5 函数的应用（二）"
+        }
        }
       ]
      },
@@ -158,49 +243,84 @@ window.SUBJECTS = [
         "label": "",
         "title": "5.1 任意角和弧度制",
         "slug": "bx1-c5-s1",
-        "href": "pages/math/bx1-c5-s1.html"
+        "href": "pages/math/bx1-c5-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s1.html",
+         "n": 12,
+         "title": "5.1 任意角和弧度制"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.2 三角函数的概念",
         "slug": "bx1-c5-s2",
-        "href": "pages/math/bx1-c5-s2.html"
+        "href": "pages/math/bx1-c5-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s2.html",
+         "n": 14,
+         "title": "5.2 三角函数的概念"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.3 诱导公式",
         "slug": "bx1-c5-s3",
-        "href": "pages/math/bx1-c5-s3.html"
+        "href": "pages/math/bx1-c5-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s3.html",
+         "n": 12,
+         "title": "5.3 诱导公式"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.4 三角函数的图象与性质",
         "slug": "bx1-c5-s4",
-        "href": "pages/math/bx1-c5-s4.html"
+        "href": "pages/math/bx1-c5-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s4.html",
+         "n": 13,
+         "title": "5.4 三角函数的图象与性质"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.5 三角恒等变换",
         "slug": "bx1-c5-s5",
-        "href": "pages/math/bx1-c5-s5.html"
+        "href": "pages/math/bx1-c5-s5.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s5.html",
+         "n": 13,
+         "title": "5.5 三角恒等变换"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.6 函数 y=Asin(ωx+φ)",
         "slug": "bx1-c5-s6",
-        "href": "pages/math/bx1-c5-s6.html"
+        "href": "pages/math/bx1-c5-s6.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s6.html",
+         "n": 12,
+         "title": "5.6 函数 y=Asin(ωx+φ)"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.7 三角函数的应用",
         "slug": "bx1-c5-s7",
-        "href": "pages/math/bx1-c5-s7.html"
+        "href": "pages/math/bx1-c5-s7.html",
+        "quiz": {
+         "href": "quiz/math/bx1-c5-s7.html",
+         "n": 12,
+         "title": "5.7 三角函数的应用"
+        }
        }
       ]
      }
@@ -218,28 +338,48 @@ window.SUBJECTS = [
         "label": "",
         "title": "6.1 平面向量的概念",
         "slug": "bx2-c1-s1",
-        "href": "pages/math/bx2-c1-s1.html"
+        "href": "pages/math/bx2-c1-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c1-s1.html",
+         "n": 12,
+         "title": "6.1 平面向量的概念"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "6.2 平面向量的运算",
         "slug": "bx2-c1-s2",
-        "href": "pages/math/bx2-c1-s2.html"
+        "href": "pages/math/bx2-c1-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c1-s2.html",
+         "n": 12,
+         "title": "6.2 平面向量的运算"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "6.3 平面向量基本定理及坐标表示",
         "slug": "bx2-c1-s3",
-        "href": "pages/math/bx2-c1-s3.html"
+        "href": "pages/math/bx2-c1-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c1-s3.html",
+         "n": 12,
+         "title": "6.3 平面向量基本定理及坐标表示"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "6.4 平面向量的应用",
         "slug": "bx2-c1-s4",
-        "href": "pages/math/bx2-c1-s4.html"
+        "href": "pages/math/bx2-c1-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c1-s4.html",
+         "n": 12,
+         "title": "6.4 平面向量的应用"
+        }
        }
       ]
      },
@@ -251,21 +391,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "7.1 复数的概念",
         "slug": "bx2-c2-s1",
-        "href": "pages/math/bx2-c2-s1.html"
+        "href": "pages/math/bx2-c2-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c2-s1.html",
+         "n": 12,
+         "title": "7.1 复数的概念"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.2 复数的四则运算",
         "slug": "bx2-c2-s2",
-        "href": "pages/math/bx2-c2-s2.html"
+        "href": "pages/math/bx2-c2-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c2-s2.html",
+         "n": 12,
+         "title": "7.2 复数的四则运算"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.3 复数的三角表示",
         "slug": "bx2-c2-s3",
-        "href": "pages/math/bx2-c2-s3.html"
+        "href": "pages/math/bx2-c2-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c2-s3.html",
+         "n": 12,
+         "title": "7.3 复数的三角表示"
+        }
        }
       ]
      },
@@ -277,42 +432,72 @@ window.SUBJECTS = [
         "label": "",
         "title": "8.1 基本立体图形",
         "slug": "bx2-c3-s1",
-        "href": "pages/math/bx2-c3-s1.html"
+        "href": "pages/math/bx2-c3-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s1.html",
+         "n": 12,
+         "title": "8.1 基本立体图形"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.2 立体图形的直观图",
         "slug": "bx2-c3-s2",
-        "href": "pages/math/bx2-c3-s2.html"
+        "href": "pages/math/bx2-c3-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s2.html",
+         "n": 12,
+         "title": "8.2 立体图形的直观图"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.3 简单几何体的表面积与体积",
         "slug": "bx2-c3-s3",
-        "href": "pages/math/bx2-c3-s3.html"
+        "href": "pages/math/bx2-c3-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s3.html",
+         "n": 13,
+         "title": "8.3 简单几何体的表面积与体积"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.4 空间点、直线、平面之间的位置关系",
         "slug": "bx2-c3-s4",
-        "href": "pages/math/bx2-c3-s4.html"
+        "href": "pages/math/bx2-c3-s4.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s4.html",
+         "n": 12,
+         "title": "8.4 空间点、直线、平面之间的位置关系"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.5 空间直线、平面的平行",
         "slug": "bx2-c3-s5",
-        "href": "pages/math/bx2-c3-s5.html"
+        "href": "pages/math/bx2-c3-s5.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s5.html",
+         "n": 12,
+         "title": "8.5 空间直线、平面的平行"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.6 空间直线、平面的垂直",
         "slug": "bx2-c3-s6",
-        "href": "pages/math/bx2-c3-s6.html"
+        "href": "pages/math/bx2-c3-s6.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c3-s6.html",
+         "n": 12,
+         "title": "8.6 空间直线、平面的垂直"
+        }
        }
       ]
      },
@@ -324,21 +509,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "9.1 随机抽样",
         "slug": "bx2-c4-s1",
-        "href": "pages/math/bx2-c4-s1.html"
+        "href": "pages/math/bx2-c4-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c4-s1.html",
+         "n": 12,
+         "title": "9.1 随机抽样"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "9.2 用样本估计总体",
         "slug": "bx2-c4-s2",
-        "href": "pages/math/bx2-c4-s2.html"
+        "href": "pages/math/bx2-c4-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c4-s2.html",
+         "n": 12,
+         "title": "9.2 用样本估计总体"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "9.3 统计案例 公司员工的肥胖情况调查分析",
         "slug": "bx2-c4-s3",
-        "href": "pages/math/bx2-c4-s3.html"
+        "href": "pages/math/bx2-c4-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c4-s3.html",
+         "n": 12,
+         "title": "9.3 统计案例 公司员工的肥胖情况调查分析"
+        }
        }
       ]
      },
@@ -350,21 +550,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "10.1 随机事件与概率",
         "slug": "bx2-c5-s1",
-        "href": "pages/math/bx2-c5-s1.html"
+        "href": "pages/math/bx2-c5-s1.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c5-s1.html",
+         "n": 13,
+         "title": "10.1 随机事件与概率"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "10.2 事件的相互独立性",
         "slug": "bx2-c5-s2",
-        "href": "pages/math/bx2-c5-s2.html"
+        "href": "pages/math/bx2-c5-s2.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c5-s2.html",
+         "n": 12,
+         "title": "10.2 事件的相互独立性"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "10.3 频率与概率",
         "slug": "bx2-c5-s3",
-        "href": "pages/math/bx2-c5-s3.html"
+        "href": "pages/math/bx2-c5-s3.html",
+        "quiz": {
+         "href": "quiz/math/bx2-c5-s3.html",
+         "n": 12,
+         "title": "10.3 频率与概率"
+        }
        }
       ]
      }
@@ -382,28 +597,48 @@ window.SUBJECTS = [
         "label": "",
         "title": "1.1 空间向量及其运算",
         "slug": "xx1-c1-s1",
-        "href": "pages/math/xx1-c1-s1.html"
+        "href": "pages/math/xx1-c1-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c1-s1.html",
+         "n": 12,
+         "title": "1.1 空间向量及其运算"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.2 空间向量基本定理",
         "slug": "xx1-c1-s2",
-        "href": "pages/math/xx1-c1-s2.html"
+        "href": "pages/math/xx1-c1-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c1-s2.html",
+         "n": 12,
+         "title": "1.2 空间向量基本定理"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.3 空间向量及其运算的坐标表示",
         "slug": "xx1-c1-s3",
-        "href": "pages/math/xx1-c1-s3.html"
+        "href": "pages/math/xx1-c1-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c1-s3.html",
+         "n": 12,
+         "title": "1.3 空间向量及其运算的坐标表示"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "1.4 空间向量的应用",
         "slug": "xx1-c1-s4",
-        "href": "pages/math/xx1-c1-s4.html"
+        "href": "pages/math/xx1-c1-s4.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c1-s4.html",
+         "n": 12,
+         "title": "1.4 空间向量的应用"
+        }
        }
       ]
      },
@@ -415,35 +650,60 @@ window.SUBJECTS = [
         "label": "",
         "title": "2.1 直线的倾斜角与斜率",
         "slug": "xx1-c2-s1",
-        "href": "pages/math/xx1-c2-s1.html"
+        "href": "pages/math/xx1-c2-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c2-s1.html",
+         "n": 12,
+         "title": "2.1 直线的倾斜角与斜率"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.2 直线的方程",
         "slug": "xx1-c2-s2",
-        "href": "pages/math/xx1-c2-s2.html"
+        "href": "pages/math/xx1-c2-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c2-s2.html",
+         "n": 12,
+         "title": "2.2 直线的方程"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.3 直线的交点坐标与距离公式",
         "slug": "xx1-c2-s3",
-        "href": "pages/math/xx1-c2-s3.html"
+        "href": "pages/math/xx1-c2-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c2-s3.html",
+         "n": 12,
+         "title": "2.3 直线的交点坐标与距离公式"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.4 圆的方程",
         "slug": "xx1-c2-s4",
-        "href": "pages/math/xx1-c2-s4.html"
+        "href": "pages/math/xx1-c2-s4.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c2-s4.html",
+         "n": 12,
+         "title": "2.4 圆的方程"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "2.5 直线与圆、圆与圆的位置关系",
         "slug": "xx1-c2-s5",
-        "href": "pages/math/xx1-c2-s5.html"
+        "href": "pages/math/xx1-c2-s5.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c2-s5.html",
+         "n": 13,
+         "title": "2.5 直线与圆、圆与圆的位置关系"
+        }
        }
       ]
      },
@@ -455,21 +715,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "3.1 椭圆",
         "slug": "xx1-c3-s1",
-        "href": "pages/math/xx1-c3-s1.html"
+        "href": "pages/math/xx1-c3-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c3-s1.html",
+         "n": 12,
+         "title": "3.1 椭圆"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "3.2 双曲线",
         "slug": "xx1-c3-s2",
-        "href": "pages/math/xx1-c3-s2.html"
+        "href": "pages/math/xx1-c3-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c3-s2.html",
+         "n": 13,
+         "title": "3.2 双曲线"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "3.3 抛物线",
         "slug": "xx1-c3-s3",
-        "href": "pages/math/xx1-c3-s3.html"
+        "href": "pages/math/xx1-c3-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx1-c3-s3.html",
+         "n": 12,
+         "title": "3.3 抛物线"
+        }
        }
       ]
      }
@@ -487,28 +762,48 @@ window.SUBJECTS = [
         "label": "",
         "title": "4.1 数列的概念",
         "slug": "xx2-c1-s1",
-        "href": "pages/math/xx2-c1-s1.html"
+        "href": "pages/math/xx2-c1-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c1-s1.html",
+         "n": 12,
+         "title": "4.1 数列的概念"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.2 等差数列",
         "slug": "xx2-c1-s2",
-        "href": "pages/math/xx2-c1-s2.html"
+        "href": "pages/math/xx2-c1-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c1-s2.html",
+         "n": 12,
+         "title": "4.2 等差数列"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.3 等比数列",
         "slug": "xx2-c1-s3",
-        "href": "pages/math/xx2-c1-s3.html"
+        "href": "pages/math/xx2-c1-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c1-s3.html",
+         "n": 12,
+         "title": "4.3 等比数列"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "4.4 数学归纳法",
         "slug": "xx2-c1-s4",
-        "href": "pages/math/xx2-c1-s4.html"
+        "href": "pages/math/xx2-c1-s4.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c1-s4.html",
+         "n": 12,
+         "title": "4.4 数学归纳法"
+        }
        }
       ]
      },
@@ -520,21 +815,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "5.1 导数的概念及其意义",
         "slug": "xx2-c2-s1",
-        "href": "pages/math/xx2-c2-s1.html"
+        "href": "pages/math/xx2-c2-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c2-s1.html",
+         "n": 12,
+         "title": "5.1 导数的概念及其意义"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.2 导数的运算",
         "slug": "xx2-c2-s2",
-        "href": "pages/math/xx2-c2-s2.html"
+        "href": "pages/math/xx2-c2-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c2-s2.html",
+         "n": 12,
+         "title": "5.2 导数的运算"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "5.3 导数在研究函数中的应用",
         "slug": "xx2-c2-s3",
-        "href": "pages/math/xx2-c2-s3.html"
+        "href": "pages/math/xx2-c2-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx2-c2-s3.html",
+         "n": 12,
+         "title": "5.3 导数在研究函数中的应用"
+        }
        }
       ]
      }
@@ -552,21 +862,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "6.1 分类加法计数原理与分步乘法计数原理",
         "slug": "xx3-c1-s1",
-        "href": "pages/math/xx3-c1-s1.html"
+        "href": "pages/math/xx3-c1-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c1-s1.html",
+         "n": 12,
+         "title": "6.1 分类加法计数原理与分步乘法计数原理"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "6.2 排列与组合",
         "slug": "xx3-c1-s2",
-        "href": "pages/math/xx3-c1-s2.html"
+        "href": "pages/math/xx3-c1-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c1-s2.html",
+         "n": 13,
+         "title": "6.2 排列与组合"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "6.3 二项式定理",
         "slug": "xx3-c1-s3",
-        "href": "pages/math/xx3-c1-s3.html"
+        "href": "pages/math/xx3-c1-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c1-s3.html",
+         "n": 12,
+         "title": "6.3 二项式定理"
+        }
        }
       ]
      },
@@ -578,35 +903,60 @@ window.SUBJECTS = [
         "label": "",
         "title": "7.1 条件概率与全概率公式",
         "slug": "xx3-c2-s1",
-        "href": "pages/math/xx3-c2-s1.html"
+        "href": "pages/math/xx3-c2-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c2-s1.html",
+         "n": 12,
+         "title": "7.1 条件概率与全概率公式"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.2 离散型随机变量及其分布列",
         "slug": "xx3-c2-s2",
-        "href": "pages/math/xx3-c2-s2.html"
+        "href": "pages/math/xx3-c2-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c2-s2.html",
+         "n": 12,
+         "title": "7.2 离散型随机变量及其分布列"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.3 离散型随机变量的数字特征",
         "slug": "xx3-c2-s3",
-        "href": "pages/math/xx3-c2-s3.html"
+        "href": "pages/math/xx3-c2-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c2-s3.html",
+         "n": 12,
+         "title": "7.3 离散型随机变量的数字特征"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.4 二项分布与超几何分布",
         "slug": "xx3-c2-s4",
-        "href": "pages/math/xx3-c2-s4.html"
+        "href": "pages/math/xx3-c2-s4.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c2-s4.html",
+         "n": 12,
+         "title": "7.4 二项分布与超几何分布"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "7.5 正态分布",
         "slug": "xx3-c2-s5",
-        "href": "pages/math/xx3-c2-s5.html"
+        "href": "pages/math/xx3-c2-s5.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c2-s5.html",
+         "n": 12,
+         "title": "7.5 正态分布"
+        }
        }
       ]
      },
@@ -618,21 +968,36 @@ window.SUBJECTS = [
         "label": "",
         "title": "8.1 成对数据的统计相关性",
         "slug": "xx3-c3-s1",
-        "href": "pages/math/xx3-c3-s1.html"
+        "href": "pages/math/xx3-c3-s1.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c3-s1.html",
+         "n": 12,
+         "title": "8.1 成对数据的统计相关性"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.2 一元线性回归模型及其应用",
         "slug": "xx3-c3-s2",
-        "href": "pages/math/xx3-c3-s2.html"
+        "href": "pages/math/xx3-c3-s2.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c3-s2.html",
+         "n": 12,
+         "title": "8.2 一元线性回归模型及其应用"
+        }
        },
        {
         "kind": "section",
         "label": "",
         "title": "8.3 列联表与独立性检验",
         "slug": "xx3-c3-s3",
-        "href": "pages/math/xx3-c3-s3.html"
+        "href": "pages/math/xx3-c3-s3.html",
+        "quiz": {
+         "href": "quiz/math/xx3-c3-s3.html",
+         "n": 12,
+         "title": "8.3 列联表与独立性检验"
+        }
        }
       ]
      }
@@ -643,42 +1008,82 @@ window.SUBJECTS = [
    {
     "title": "函数与导数的综合应用",
     "slug": "extra-1",
-    "href": "pages/math/extra-1.html"
+    "href": "pages/math/extra-1.html",
+    "quiz": {
+     "href": "quiz/math/extra-1.html",
+     "n": 14,
+     "title": "函数与导数的综合应用"
+    }
    },
    {
     "title": "恒成立与存在性问题",
     "slug": "extra-2",
-    "href": "pages/math/extra-2.html"
+    "href": "pages/math/extra-2.html",
+    "quiz": {
+     "href": "quiz/math/extra-2.html",
+     "n": 13,
+     "title": "恒成立与存在性问题"
+    }
    },
    {
     "title": "圆锥曲线二级结论",
     "slug": "extra-3",
-    "href": "pages/math/extra-3.html"
+    "href": "pages/math/extra-3.html",
+    "quiz": {
+     "href": "quiz/math/extra-3.html",
+     "n": 14,
+     "title": "圆锥曲线二级结论"
+    }
    },
    {
     "title": "数列求和的常用方法",
     "slug": "extra-4",
-    "href": "pages/math/extra-4.html"
+    "href": "pages/math/extra-4.html",
+    "quiz": {
+     "href": "quiz/math/extra-4.html",
+     "n": 13,
+     "title": "数列求和的常用方法"
+    }
    },
    {
     "title": "立体几何中的向量法",
     "slug": "extra-5",
-    "href": "pages/math/extra-5.html"
+    "href": "pages/math/extra-5.html",
+    "quiz": {
+     "href": "quiz/math/extra-5.html",
+     "n": 12,
+     "title": "立体几何中的向量法"
+    }
    },
    {
     "title": "概率统计常见模型",
     "slug": "extra-6",
-    "href": "pages/math/extra-6.html"
+    "href": "pages/math/extra-6.html",
+    "quiz": {
+     "href": "quiz/math/extra-6.html",
+     "n": 14,
+     "title": "概率统计常见模型"
+    }
    },
    {
     "title": "解三角形的边角互化",
     "slug": "extra-7",
-    "href": "pages/math/extra-7.html"
+    "href": "pages/math/extra-7.html",
+    "quiz": {
+     "href": "quiz/math/extra-7.html",
+     "n": 12,
+     "title": "解三角形的边角互化"
+    }
    },
    {
     "title": "易错点与陷阱清单",
     "slug": "extra-8",
-    "href": "pages/math/extra-8.html"
+    "href": "pages/math/extra-8.html",
+    "quiz": {
+     "href": "quiz/math/extra-8.html",
+     "n": 13,
+     "title": "易错点与陷阱清单"
+    }
    }
   ],
   "stat": {
@@ -688,8 +1093,8 @@ window.SUBJECTS = [
    "research": 0,
    "extras": 8,
    "total": 81,
-   "quiz": 0,
-   "quizTotal": 0
+   "quiz": 81,
+   "quizTotal": 994
   }
  },
  {

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>立体几何中的向量法</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "extra-5", "n": 12, "title": "立体几何中的向量法"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 专题突破 · 立体几何中的向量法</span>
+        <h1>立体几何中的向量法<span class="thin">北京真题 0 道 · 外地真题 0 道 · 原创 12 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一页只练一件事：把「求角、求距离、证垂直」翻译成<b>坐标与法向量</b>。判断链固定成四步——<b>看到两条两两垂直的棱就建系 → 写出点坐标 → 算出要用的两个向量 → 代公式</b>。三种角只剩三个式子：线线角 cos=|a·b|/(|a||b|)、线面角 sin=|a·n|/(|a||n|)、二面角先看法向量夹角、再由图形定锐钝。本页 12 题全部原创：立体几何的真题已由教材节页（8.x、1.4 空间向量）收走，专题页按规矩让位，只提供方法训练。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>0</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='14' y='14' width='272' height='252' rx='18' fill='#eef2ff'/><g stroke='#6366f1' stroke-width='1.6' fill='none'><path d='M80 200 L200 200 L200 110 L80 110 Z'/><path d='M80 200 L120 235 L240 235 L200 200'/><path d='M200 110 L240 145 L240 235'/><path d='M80 110 L120 145 L240 145'/></g><g stroke='#b45309' stroke-width='1.4'><line x1='80' y1='200' x2='52' y2='222'/><line x1='80' y1='200' x2='110' y2='200'/><line x1='80' y1='200' x2='80' y2='160'/></g><g font-size='9' fill='#312e81' font-weight='700'><text x='74' y='215'>A(0,0,0)</text><text x='118' y='214'>B</text><text x='206' y='214'>C</text><text x='206' y='106'>D</text><text x='40' y='228'>x</text><text x='112' y='196'>y</text><text x='84' y='152'>z</text></g><g font-size='10' fill='#3730a3'><text x='40' y='262'>建系 → 坐标 → 向量 → 法向量 → 代公式</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：两两垂直就建系，角与距离都交给法向量</h2></div>
+  <p class="sec-sub">左图：建系三步——选原点（三条两两垂直的棱的交点）、定 x/y/z、按棱长写坐标。右图：三种角用哪个式子、sin 还是 cos、要不要判锐钝。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京选择题 0 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 0 题（已被教材节页收走）</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">本页 12 题全部原创</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>向量法在北京卷主要活在<b>立体几何大题</b>里（第 16—17 题的第二问），近五年选择题没有单独考「用向量求角」；外地卷的选择题里倒是有（2022 浙江第 8 题的三夹角比较、2022 全国乙第 9 题的线面关系），但这些题已收入 <b>xx1-c1-s4（空间向量的应用）</b> 与 <b>bx2-c3-s6（空间直线、平面的垂直）</b>，按「教材节页优先、专题页让位」的规矩本页不重复收。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>选择题 0 道</b>。北京 2022—2026 的立体几何选择题考的是体积、表面积与位置关系判断（已收在 bx2-c3-s1、bx2-c3-s3），向量法出现在解答题第 16 题。外地卷：<b>2022 浙江 第 8 题</b>（正三棱柱中 α、β、γ 三个角的比较）、<b>2022 全国乙 第 9 题</b>（正方体中的线面关系）、<b>2024 新课标Ⅱ 第 7 题</b>（正三棱台侧棱与底面所成角）——这三道<b>已分别收入 xx1-c1-s4 与 bx2-c3-s6</b>，本页不重复收。因此本页 9 道选择题 + 3 道综合题全部为原创，标 <b>orig</b>，几何体与数据自拟并逐一验算（每个答案都用两种方法或回代核过）。</p>
+</div><div class="panel"><p class="panel-title">① 建系三步（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>建系三步：把几何体变成坐标（示意图，非原卷图）</text><g stroke='#6366f1' stroke-width='1.6' fill='none'><path d='M60 230 L150 230 L150 150 L60 150 Z'/><path d='M60 230 L95 258 L185 258 L150 230'/><path d='M150 150 L185 178 L185 258'/><path d='M60 150 L95 178 L185 178'/></g><g stroke='#b45309' stroke-width='1.5'><line x1='60' y1='230' x2='34' y2='250'/><line x1='60' y1='230' x2='92' y2='230'/><line x1='60' y1='230' x2='60' y2='186'/></g><g font-size='9' fill='#312e81' font-weight='700'><text x='52' y='245'>原点</text><text x='28' y='264'>x</text><text x='94' y='226'>y</text><text x='64' y='182'>z</text></g><g font-size='11.5'><text x='260' y='70' font-weight='700' fill='#7c3aed'>① 选原点</text><text x='260' y='94'>三条两两垂直的棱的交点</text><text x='260' y='120' fill='#334155'>常见信号：PA⊥底面、正方形、三条棱两两垂直</text><text x='260' y='160' font-weight='700' fill='#0369a1'>② 定三条轴</text><text x='260' y='184'>沿棱走，右手系（x×y 指向 z 一侧）</text><text x='260' y='224' font-weight='700' fill='#0f766e'>③ 写坐标</text><text x='260' y='248'>每个顶点 = 沿三条轴走过的长度</text><text x='260' y='274'>先写全八个顶点，做题直接查表</text></g></svg></div></div><div class="panel"><p class="panel-title">② 三种角的公式与易错（示意图，非原卷图）</p><div class="svg-box" id="map-fig-angles"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三种角与距离：用哪个式子（示意图，非原卷图）</text><g font-size='11.5'><text x='30' y='68' font-weight='700' fill='#7c3aed'>异面直线角 θ</text><text x='250' y='68'>cos θ = |a·b| / (|a||b|)，θ∈(0°，90°]</text><text x='30' y='108' font-weight='700' fill='#0369a1'>线面角 θ</text><text x='250' y='108'>sin θ = |a·n| / (|a||n|)，θ∈[0°，90°]</text><text x='30' y='148' font-weight='700' fill='#0f766e'>二面角</text><text x='250' y='148'>先算 |cos⟨n₁，n₂⟩|，再由图形判锐钝</text><text x='30' y='188' font-weight='700' fill='#b45309'>点面距 d</text><text x='250' y='188'>d = |AP·n| / |n|（分母是模，不是 1）</text><text x='30' y='228' font-weight='700' fill='#6d43d9'>两个平面所成角</text><text x='250' y='228'>取锐角：arccos|cos⟨n₁，n₂⟩|</text><text x='250' y='272' fill='#334155'>口诀：线线 cos、线面 sin、二面角先算后判</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>线面角用了 cos。</b>直线与平面所成角 θ 满足 sin θ=|a·n|/(|a||n|)，因为法向量与直线的夹角和 θ 互余。算出 |a·n|/(|a||n|)=1/2 时 θ=30°，不是 60°。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>二面角不判锐钝。</b>法向量夹角 120° 时，二面角可能是 120°（两半平面“张开”的一侧）也可能是 60°。必须看图形或题设（如“二面角为锐角”“点 P 在底面上方”）定。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>法向量只验一个点积。</b>取整数解后要分别点积平面内两个不共线的向量，两个都为 0 才算对；只验一个，很容易拿到“像法向量但不是”的向量。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>建系前不证垂直。</b>坐标系要求三条轴两两垂直，题目给的“PA⊥底面”“正方形”“三条棱两两垂直”就是许可证；如果题面只说“正三棱柱”，要用“侧棱⊥底面、底面正三角形的高⊥对边”先把垂直关系写出来。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>点面距分母写成 1。</b>d=|AP·n|/|n|，分母是法向量的模 √(x²+y²+z²)。取 n=(1，1，1) 时距离要除以 √3，不是除以 3。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>异面直线角算成钝角。</b>异面直线所成角规定在 (0°，90°]，算出的 cos 为负时必须取绝对值；若算出 −1/2，答案是 60° 而不是 120°。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先做第 1 关两道题：写全正方体八个顶点的坐标，再独立求一次平面 ABC 的法向量。这两步熟了，后面全是重复动作。</li><li>第 2 关的四道题（异面角、线面角、二面角、点面距）分别对应四个公式，做一道就在草稿上默写一次公式。</li><li>第 3 关第 8 题专治“法向量夹角 vs 平面夹角”，第 9 题练对称性判断锐钝——这两道是易错重灾区。</li><li>三道综合题按“证垂直 → 求法向量 → 求角/体积”的顺序做，每道都要写“因为 ××⊥××，所以可以建系”。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>本页 12 题全部原创，标 <b>orig</b>。</b>几何体都是正方体、四棱锥、三棱锥这类标准体，数据自拟，每个答案都算过两遍（向量法 + 几何法，或回代验算）。</li><li><b>为什么没有真题：</b>按「教材节页优先、专题页让位」的规矩，本考点的外地真题已被教材节页收走——<b>2022 浙江 第 8 题</b>（正三棱柱三夹角比较）、<b>2022 全国乙 第 9 题</b>（正方体线面关系）在 <b>xx1-c1-s4</b>；<b>2022 全国乙 第 7 题</b>、<b>2023 全国乙 第 9 题</b>、<b>2023 全国甲 第 11 题</b>、<b>2024 新课标Ⅱ 第 7 题</b>在 <b>bx2-c3-s6</b>。想做原题请到那两页。</li><li>北京卷 2022—2026 的选择题没有单独考“用空间向量求角/距离”（向量法出现在立体几何解答题里），本页据实标注为 0，没有拿北京选择题凑数。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；两张示意图为原创 SVG，已在标题标注“示意图，非原卷图”。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"专题突破", chapter:"立体几何", section:"立体几何中的向量法"};
+  var TOPIC = {1:"建系：选原点、定三条轴", 2:"点的坐标与向量的坐标", 3:"求平面的法向量", 4:"异面直线所成角", 5:"直线与平面所成角", 6:"二面角", 7:"点到平面的距离"};
+  var LEVELS = [
+    {id:1, name:"建系与坐标", sub:"原点选在三条两两垂直的棱的交点，轴沿着棱走", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"法向量：一算二验", sub:"设 n=(x，y，z)，与平面内两个不共线向量点积为 0，取一组整数解", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"三种角与距离", sub:"线线 |cos|、线面 sin、二面角先法向量后图形、距离用投影", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"本节易错", sub:"sin/cos 用反、二面角不算锐钝、法向量解不唯一就以为答案唯一", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"正方体证垂直、四棱锥求线面角、三棱锥求角与体积三道原创大题", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择", kind:"orig", star:1,
+      stem:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，以 A 为原点，分别以 AB、AD、AA<sub>1</sub> 的方向为 x、y、z 轴的正方向建立空间直角坐标系，则点 C<sub>1</sub> 的坐标是（　　）",
+      opts:["(2，2，2)", "(2，2，0)", "(0，2，2)", "(2，0，2)"],
+      ans:0,
+      why:"沿 x 轴走 AB 的长度 2 到 B，再沿 y 轴走 AD 的长度 2 到 C，最后沿 z 轴走 AA<sub>1</sub> 的长度 2 到 C<sub>1</sub>，所以 C<sub>1</sub>(2，2，2)，选 A。核对：A(0，0，0)、B(2，0，0)、C(2，2，0)、D(0，2，0)、A<sub>1</sub>(0，0，2)、B<sub>1</sub>(2，0，2)、C<sub>1</sub>(2，2，2)、D<sub>1</sub>(0，2，2)——正方体的八个顶点一次写全，后面做题直接查表。",
+      tip:"建系三句话：原点选三条互相垂直的棱的交点，轴沿棱，坐标按棱长数。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择", kind:"orig", star:2,
+      stem:"已知 A(1，0，0)，B(0，1，0)，C(0，0，1)，则平面 ABC 的一个法向量是（　　）",
+      opts:["(1，1，1)", "(1，−1，1)", "(1，1，−1)", "(0，0，1)"],
+      ans:0,
+      why:"平面内的两个向量：AB=(−1，1，0)，AC=(−1，0，1)。设 n=(x，y，z)，由 n⊥AB 得 −x+y=0，由 n⊥AC 得 −x+z=0，所以 y=z=x，取 x=1 得 n=(1，1，1)，选 A。验证：n·AB=−1+1+0=0，n·AC=−1+0+1=0 ✓。注意 B 项 (1，−1，1)·AC=−1+0+1=0 却与 AB 点积 −2≠0，所以不是法向量——<b>两个点积都要验</b>。",
+      tip:"法向量不唯一，取一组整数解就行；写完必须分别点积两个向量验算。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择", kind:"orig", star:2,
+      stem:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，异面直线 A<sub>1</sub>B 与 B<sub>1</sub>C 所成角的大小为（　　）",
+      opts:["30°", "45°", "60°", "90°"],
+      ans:2,
+      why:"取 A(0，0，0)、B(2，0，0)、C(2，2，0)、A<sub>1</sub>(0，0，2)、B<sub>1</sub>(2，0，2)。则 A<sub>1</sub>B=(2，0，−2)，B<sub>1</sub>C=(0，2，−2)。cos⟨A<sub>1</sub>B，B<sub>1</sub>C⟩=(0+0+4)/(2√2×2√2)=4/8=1/2，所以异面直线所成角为 60°，选 C。<b>两种检验</b>：① B<sub>1</sub>C 与 A<sub>1</sub>D 平行（同为面对角线），把 A<sub>1</sub>B、A<sub>1</sub>D 都画出来，△A<sub>1</sub>BD 三边都是面对角线 2√2，是正三角形，∠BA<sub>1</sub>D=60°；② 异面直线所成角规定取[0°，90°]，所以点积为负时要加绝对值。",
+      tip:"异面直线角：算 cos 加绝对值，答案必在 (0°，90°]。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择", kind:"orig", star:2,
+      stem:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，直线 A<sub>1</sub>B 与平面 ABCD 所成角的大小为（　　）",
+      opts:["30°", "45°", "60°", "90°"],
+      ans:1,
+      why:"A(0，0，0)、B(2，0，0)、A<sub>1</sub>(0，0，2)，A<sub>1</sub>B=(2，0，−2)。平面 ABCD 的法向量 n=(0，0，1)。直线与平面所成角 θ 满足 sin θ=|A<sub>1</sub>B·n|/(|A<sub>1</sub>B||n|)=2/(2√2×1)=√2/2，所以 θ=45°，选 B。几何上也好解释：A<sub>1</sub> 在底面的投影是 A，∠A<sub>1</sub>BA 就是所求角，tan∠A<sub>1</sub>BA=AA<sub>1</sub>/AB=2/2=1。<b>易错</b>：线面角用 <b>sin</b>，不是 cos——因为法向量与直线的夹角与线面角互余。",
+      tip:"线面角：sin θ=|a·n|/(|a||n|)；sin 算出 1/2 时角是 30°，别写成 60°。"
+    },
+    {
+      id:5, lv:3, src:"原创·选择", kind:"orig", star:3,
+      stem:"在四棱锥 P-ABCD 中，PA⊥平面 ABCD，底面 ABCD 是边长为 2 的正方形，PA=2，则二面角 P-BC-A 的大小为（　　）",
+      opts:["30°", "45°", "60°", "90°"],
+      ans:1,
+      why:"建系：A(0，0，0)、B(2，0，0)、C(2，2，0)、P(0，0，2)。平面 PBC 内 BC=(0，2，0)，BP=(−2，0，2)，设 n<sub>1</sub>=(x，y，z)：n<sub>1</sub>·BC=2y=0 得 y=0，n<sub>1</sub>·BP=−2x+2z=0 得 x=z，取 n<sub>1</sub>=(1，0，1)。平面 ABCD 的法向量 n<sub>2</sub>=(0，0，1)。|cos⟨n<sub>1</sub>，n<sub>2</sub>⟩|=1/√2，法向量夹角 45°；再由图形判断二面角 P-BC-A 的平面角是锐角（P 在底面上方，∠PBA 即所求），故为 45°，选 B。<b>几何验算</b>：BC⊥AB，BC⊥PA ⇒ BC⊥平面 PAB ⇒ ∠PBA 是二面角的平面角，tan∠PBA=PA/AB=1。",
+      tip:"二面角三步：求两个法向量 → 算 |cos| → 看图形决定取锐角还是补角。"
+    },
+    {
+      id:6, lv:3, src:"原创·选择", kind:"orig", star:3,
+      stem:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，点 A 到平面 A<sub>1</sub>BD 的距离为（　　）",
+      opts:["2√3/3", "√3", "2", "2/3"],
+      ans:0,
+      why:"A(0，0，0)、B(2，0，0)、D(0，2，0)、A<sub>1</sub>(0，0，2)。设平面 A<sub>1</sub>BD 的法向量 n=(x，y，z)：BD=(−2，2，0)，BA<sub>1</sub>=(−2，0，2)，由 −2x+2y=0、−2x+2z=0 得 y=z=x，取 n=(1，1，1)。平面方程即 x+y+z=2（过 B(2，0，0)，法向量 (1，1，1)）。点 A 到平面的距离 d=|0+0+0−2|/√3=2/√3=2√3/3，选 A。<b>易错</b>：距离公式的分母是 |n|，不是 1；且必须把平面方程写成 x+y+z−2=0 的形式再代点。",
+      tip:"点面距 d=|AP·n|/|n|，分子是点代入平面方程的绝对值，分母是法向量的模。"
+    },
+    {
+      id:7, lv:3, src:"原创·选择", kind:"orig", star:3,
+      stem:"在三棱锥 P-ABC 中，PA、PB、PC 两两垂直，且 PA=PB=PC=2，则直线 PA 与平面 ABC 所成角的正弦值为（　　）",
+      opts:["√3/3", "1/3", "√6/3", "2/3"],
+      ans:0,
+      why:"以 P 为原点，PA、PB、PC 为三条轴：A(2，0，0)、B(0，2，0)、C(0，0，2)。平面 ABC 过三点，方程 x+y+z=2，法向量 n=(1，1，1)。PA=(2，0，0)。sin θ=|PA·n|/(|PA||n|)=2/(2×√3)=1/√3=√3/3，选 A。<b>结构提示</b>：三棱锥三条棱两两垂直是“天然建系点”，把公共顶点放在原点，三条棱就是三条轴——这是立体几何建系最快的一类。",
+      tip:"见到“三条棱两两垂直”，公共顶点直接当原点，不用再找垂直的底面。"
+    },
+    {
+      id:8, lv:4, src:"原创·选择", kind:"orig", star:2,
+      stem:"已知两个平面的法向量分别为 n<sub>1</sub>=(1，0，1)，n<sub>2</sub>=(−1，1，0)，则这两个平面所成角的大小为（　　）",
+      opts:["60°", "120°", "45°", "30°"],
+      ans:0,
+      why:"cos⟨n<sub>1</sub>，n<sub>2</sub>⟩=(−1+0+0)/(√2×√2)=−1/2，所以两个<b>法向量</b>的夹角是 120°。而两个<b>平面</b>所成角规定取锐角（或直角），是法向量夹角的补角 180°−120°=60°，选 A。<b>这是本节最高频的错</b>：算出 120° 就选 120°，或者求二面角时不看图形一律取锐角。平面夹角 ∈(0°，90°]；二面角要看半平面位置，可能取钝角。",
+      tip:"平面夹角取锐角；二面角要判锐钝。先算 |cos|，再看图或题设决定补不补角。"
+    },
+    {
+      id:9, lv:4, src:"原创·选择", kind:"orig", star:3,
+      stem:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，平面 A<sub>1</sub>BD 与平面 C<sub>1</sub>BD 所成角的余弦值为（　　）",
+      opts:["1/3", "−1/3", "√3/3", "2/3"],
+      ans:0,
+      why:"平面 A<sub>1</sub>BD：过 B(2，0，0)、D(0，2，0)、A<sub>1</sub>(0，0，2)，法向量 n<sub>1</sub>=(1，1，1)。平面 C<sub>1</sub>BD：过 B(2，0，0)、D(0，2，0)、C<sub>1</sub>(2，2，2)，BC<sub>1</sub>=(0，2，2)，BD=(−2，2，0)，设 n<sub>2</sub>=(x，y，z)：2y+2z=0、−2x+2y=0 得 y=x、z=−x，取 n<sub>2</sub>=(1，1，−1)。cos⟨n<sub>1</sub>，n<sub>2</sub>⟩=(1+1−1)/(√3×√3)=1/3，所以两平面所成角的余弦值为 1/3，选 A。<b>对称性检验</b>：两个平面关于平面 BB<sub>1</sub>D<sub>1</sub>D 对称，夹角自然相等且为锐角，结果必为正，不会出现 −1/3。",
+      tip:"两平面都过同一条直线时，可用对称性快速判断夹角是锐角，避免符号错。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:2, title:"正方体：向量法证线面垂直，再求线面角",
+      material:"在棱长为 2 的正方体 ABCD-A<sub>1</sub>B<sub>1</sub>C<sub>1</sub>D<sub>1</sub> 中，以 A 为原点，AB、AD、AA<sub>1</sub> 的方向分别为 x、y、z 轴正方向建立空间直角坐标系。",
+      asks:[{q:"写出点 A<sub>1</sub>、C、B<sub>1</sub>、D<sub>1</sub> 的坐标。", pt:4}, {q:"用向量法证明：直线 A<sub>1</sub>C⊥平面 AB<sub>1</sub>D<sub>1</sub>。", pt:5}, {q:"求直线 A<sub>1</sub>C 与平面 ABCD 所成角的余弦值。", pt:4}],
+      points:[
+        ["A<sub>1</sub>(0，0，2)、C(2，2，0)、B<sub>1</sub>(2，0，2)、D<sub>1</sub>(0，2，2)", "写法：沿 x 走 AB、沿 y 走 AD、沿 z 走 AA<sub>1</sub>，各顶点都是“棱长的组合”"],
+        ["A<sub>1</sub>C=C−A<sub>1</sub>=(2，2，−2)", "AB<sub>1</sub>=(2，0，2)，AD<sub>1</sub>=(0，2，2)", "A<sub>1</sub>C·AB<sub>1</sub>=2×2+2×0+(−2)×2=0，所以 A<sub>1</sub>C⊥AB<sub>1</sub>", "A<sub>1</sub>C·AD<sub>1</sub>=2×0+2×2+(−2)×2=0，所以 A<sub>1</sub>C⊥AD<sub>1</sub>", "又 AB<sub>1</sub> 与 AD<sub>1</sub> 是平面 AB<sub>1</sub>D<sub>1</sub> 内两条相交直线（交于 A），故 A<sub>1</sub>C⊥平面 AB<sub>1</sub>D<sub>1</sub>", "（也可求平面 AB<sub>1</sub>D<sub>1</sub> 的法向量：(2，0，2)×(0，2，2)=(−4，−4，4)∥(−1，−1，1)，而 A<sub>1</sub>C=(2，2，−2)∥(1，1，−1)，与法向量平行，故 A<sub>1</sub>C⊥平面）"],
+        ["平面 ABCD 的法向量 n=(0，0，1)，A<sub>1</sub>C=(2，2，−2)", "sin θ=|A<sub>1</sub>C·n|/(|A<sub>1</sub>C||n|)=2/(2√3×1)=1/√3=√3/3", "所以 cos θ=√(1−1/3)=√(2/3)=√6/3"]
+      ],
+      tip:"证线面垂直的向量模板：<b>证方向向量与平面内两个不共线向量都垂直 → 说明这两个向量相交 → 得结论</b>。第三步不能省“相交”两个字，否则逻辑不完整。第 3 问注意问的是余弦：先算 sin 再转 cos。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"四棱锥：求法向量与线面角",
+      material:"在四棱锥 P-ABCD 中，PA⊥平面 ABCD，底面 ABCD 是边长为 2 的正方形，PA=2。以 A 为原点，AB、AD、AP 的方向分别为 x、y、z 轴正方向建立空间直角坐标系。",
+      asks:[{q:"写出 P、B、C、D 的坐标。", pt:4}, {q:"求平面 PCD 的一个法向量。", pt:4}, {q:"求直线 PB 与平面 PCD 所成角的大小。", pt:5}],
+      points:[
+        ["A(0，0，0)、B(2，0，0)、C(2，2，0)、D(0，2，0)、P(0，0，2)", "为什么能这么建：PA⊥底面 ⇒ PA⊥AB、PA⊥AD；正方形 ⇒ AB⊥AD，三条线两两垂直"],
+        ["PC=(2，2，−2)，PD=(0，2，−2)", "设 n=(x，y，z)：n·PC=2x+2y−2z=0，n·PD=2y−2z=0", "由第二式得 y=z，代入第一式得 x=0，取 y=z=1 得 n=(0，1，1)", "验算：n·PC=0+2−2=0 ✓，n·PD=0+2−2=0 ✓"],
+        ["PB=B−P=(2，0，−2)", "sin θ=|PB·n|/(|PB||n|)=|0+0−2|/(2√2×√2)=2/4=1/2", "所以直线 PB 与平面 PCD 所成角为 30°"]
+      ],
+      tip:"本题的关键在坐标：<b>PA⊥底面 + 正方形 ⇒ 三条线两两垂直</b>，这是最常见的“能建系”信号。法向量解出后一定要代回验算，比事后检查整道题便宜得多。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"三棱锥：一题两问（角与体积）",
+      material:"在三棱锥 P-ABC 中，PA⊥平面 ABC，AB⊥BC，PA=AB=BC=2。以 A 为原点，AB 的方向为 x 轴正方向，平面 ABC 内与 AB 垂直的方向为 y 轴正方向，AP 的方向为 z 轴正方向建立空间直角坐标系。",
+      asks:[{q:"写出 A、B、C、P 的坐标。", pt:4}, {q:"求平面 PBC 的一个法向量。", pt:4}, {q:"求直线 AC 与平面 PBC 所成角的正弦值，以及三棱锥 P-ABC 的体积。", pt:5}],
+      points:[
+        ["A(0，0，0)、B(2，0，0)、C(2，2，0)、P(0，0，2)", "AB⊥BC ⇒ BC=(0，2，0) 与 AB=(2，0，0) 垂直 ✓", "PA⊥平面 ABC ⇒ P 在 z 轴上，坐标为 (0，0，2)"],
+        ["PB=(2，0，−2)，PC=(2，2，−2)", "设 n=(x，y，z)：2x−2z=0 得 x=z；2x+2y−2z=0 代入 x=z 得 2x+2y−2x=2y=0，即 y=0", "取 x=z=1 得 n=(1，0，1)", "验算：n·PB=2+0−2=0 ✓，n·PC=2+0−2=0 ✓"],
+        ["AC=(2，2，0)，|AC|=2√2，|n|=√2", "sin θ=|AC·n|/(|AC||n|)=|2+0+0|/(2√2×√2)=2/4=1/2", "体积：底面 △ABC 是直角三角形，面积 S=(1/2)×AB×BC=(1/2)×2×2=2", "V=(1/3)×S×PA=(1/3)×2×2=4/3"]
+      ],
+      tip:"几何体的体积用向量法算不划算，<b>角用向量、体积用公式</b>是更聪明的分工。本题两条信息各管一边：AB⊥BC 决定 C 的 y 坐标，PA⊥底面 决定 P 在 z 轴上。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-extra-vector-solid-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigSETUP(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>建系三步：把几何体变成坐标（示意图，非原卷图）</text><g stroke='#6366f1' stroke-width='1.6' fill='none'><path d='M60 230 L150 230 L150 150 L60 150 Z'/><path d='M60 230 L95 258 L185 258 L150 230'/><path d='M150 150 L185 178 L185 258'/><path d='M60 150 L95 178 L185 178'/></g><g stroke='#b45309' stroke-width='1.5'><line x1='60' y1='230' x2='34' y2='250'/><line x1='60' y1='230' x2='92' y2='230'/><line x1='60' y1='230' x2='60' y2='186'/></g><g font-size='9' fill='#312e81' font-weight='700'><text x='52' y='245'>原点</text><text x='28' y='264'>x</text><text x='94' y='226'>y</text><text x='64' y='182'>z</text></g><g font-size='11.5'><text x='260' y='70' font-weight='700' fill='#7c3aed'>① 选原点</text><text x='260' y='94'>三条两两垂直的棱的交点</text><text x='260' y='120' fill='#334155'>常见信号：PA⊥底面、正方形、三条棱两两垂直</text><text x='260' y='160' font-weight='700' fill='#0369a1'>② 定三条轴</text><text x='260' y='184'>沿棱走，右手系（x×y 指向 z 一侧）</text><text x='260' y='224' font-weight='700' fill='#0f766e'>③ 写坐标</text><text x='260' y='248'>每个顶点 = 沿三条轴走过的长度</text><text x='260' y='274'>先写全八个顶点，做题直接查表</text></g></svg></div>"; }
+  function buildFigANGLES(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三种角与距离：用哪个式子（示意图，非原卷图）</text><g font-size='11.5'><text x='30' y='68' font-weight='700' fill='#7c3aed'>异面直线角 θ</text><text x='250' y='68'>cos θ = |a·b| / (|a||b|)，θ∈(0°，90°]</text><text x='30' y='108' font-weight='700' fill='#0369a1'>线面角 θ</text><text x='250' y='108'>sin θ = |a·n| / (|a||n|)，θ∈[0°，90°]</text><text x='30' y='148' font-weight='700' fill='#0f766e'>二面角</text><text x='250' y='148'>先算 |cos⟨n₁，n₂⟩|，再由图形判锐钝</text><text x='30' y='188' font-weight='700' fill='#b45309'>点面距 d</text><text x='250' y='188'>d = |AP·n| / |n|（分母是模，不是 1）</text><text x='30' y='228' font-weight='700' fill='#6d43d9'>两个平面所成角</text><text x='250' y='228'>取锐角：arccos|cos⟨n₁，n₂⟩|</text><text x='250' y='272' fill='#334155'>口诀：线线 cos、线面 sin、二面角先算后判</text></g></svg></div>"; }
+  var FIG = {
+    "setup": buildFigSETUP,
+    "angles": buildFigANGLES
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

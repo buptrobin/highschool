@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>空间点、直线、平面之间的位置关系</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "bx2-c3-s4", "n": 12, "title": "8.4 空间点、直线、平面之间的位置关系"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 必修第二册 · 第八章 立体几何初步 · 第四节</span>
+        <h1>空间点、直线、平面之间的位置关系<span class="thin">北京真题 0 道 · 外地真题 1 道 · 原创选择题 8 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一节是立体几何的“语法”：<b>三个基本事实</b>（确定平面的条件）、<b>异面直线</b>（既不平行也不相交的两条线）、以及直线与平面、平面与平面各只有几种位置关系。北京卷近五年没有这一节的选择题，本页只收到 1 道天津真题（2024 第 6 题），其余 8 道按教材概念原创，专治“看着都对、一选就错”。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>1</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='12' y='12' width='276' height='256' rx='18' fill='#eef2ff'/><g stroke='#4f46e5' stroke-width='2.2' fill='none'><path d='M34 210 L150 246 L266 210 L150 174 Z'/></g><g stroke='#b45309' stroke-width='2.6'><line x1='70' y1='196' x2='196' y2='152'/></g><g stroke='#0f766e' stroke-width='2.6'><line x1='112' y1='120' x2='238' y2='164'/></g><g fill='#1f2937' font-size='11' text-anchor='middle' font-weight='700'><text x='60' y='190'>a</text><text x='246' y='176'>b</text><text x='150' y='272' font-size='10' font-weight='400'>异面直线：不平行、不相交，也不共面</text><text x='150' y='54' font-size='10' font-weight='400'>三个基本事实 → 定平面、定交线</text></g><g stroke='#94a3b8' stroke-width='1.2' stroke-dasharray='4 4'><line x1='70' y1='196' x2='112' y2='120'/><line x1='196' y1='152' x2='238' y2='164'/></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：先问“共不共面”，再问“什么角”</h2></div>
+  <p class="sec-sub">左图是三个基本事实的口诀版，右图是异面直线所成角的“平移法”——把两条线挪到同一个顶点上。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 0 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 1 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">原创选择题 8 道</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷近五年<b>没有</b>“点线面位置关系”的选择题（立体几何选择只有 2022 第9题、2024 第8题，在 8.1）。这一节在外地卷里也多是“判定命题”的形式，最典型的是 <b>2024 天津 第6题</b>，已收入第 3 关；其余 8 道为原创，按教材原话设卡。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">外地收入：<b>2024 天津 第6题</b>（l、m 两条直线与平面 α 的位置关系判断）。原创：8 道选择题覆盖确定平面的条件、正方体中异面棱的条数、正方体与正四面体的异面直线角、异面直线的判定、两个平面分空间、直线与平面位置关系、中点四边形的形状。3 道综合题分别练正方体的三个角、空间四边形中点四边形、三个平面的交线。<b>没有收入的：</b>2022 上海春考、2024 上海（回忆版）里与空间点集有关的抽象题——超出必修二范围，按规矩不用。</p>
+</div><div class="panel"><p class="panel-title">① 三个基本事实（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三个基本事实（示意图，非原卷图）</text><g font-size='11' fill='#111827'><rect x='18' y='42' width='232' height='96' rx='10' fill='#eef2ff' stroke='#4f46e5'/><text x='32' y='66' font-weight='700' fill='#4f46e5'>基本事实 1</text><text x='32' y='90'>过不在一条直线上的三点，</text><text x='32' y='110'>有且只有一个平面。</text><text x='32' y='130' font-size='10' fill='#b45309'>三点共线 → 不能定平面</text><rect x='266' y='42' width='232' height='96' rx='10' fill='#ecfdf5' stroke='#0f766e'/><text x='280' y='66' font-weight='700' fill='#0f766e'>基本事实 2</text><text x='280' y='90'>如果一条直线上的两点在</text><text x='280' y='110'>一个平面内，那么这条直线</text><text x='280' y='130'>在此平面内。</text><rect x='514' y='42' width='232' height='96' rx='10' fill='#fffbeb' stroke='#b45309'/><text x='528' y='66' font-weight='700' fill='#b45309'>基本事实 3</text><text x='528' y='90'>如果两个不重合的平面有</text><text x='528' y='110'>一个公共点，那么它们有且</text><text x='528' y='130'>只有一条过该点的公共直线。</text></g><g font-size='11' fill='#334155'><text x='18' y='172' font-weight='700'>三条推论（都由基本事实 1 推出来）：</text><text x='18' y='196'>① 经过一条直线和这条直线外一点，有且只有一个平面；</text><text x='18' y='220'>② 经过两条相交直线，有且只有一个平面；</text><text x='18' y='244'>③ 经过两条平行直线，有且只有一个平面。</text><text x='18' y='276' fill='#b45309' font-weight='700'>“确定一个平面”＝存在且唯一；两条异面直线、三个共线点都不行。</text></g></svg></div></div><div class="panel"><p class="panel-title">② 异面直线所成角的平移法（示意图，非原卷图）</p><div class="svg-box" id="map-fig-translate"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>异面直线所成角：平移法（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.4' fill='none'><path d='M70 220 L250 260 L400 214 L220 176 Z'/></g><g stroke='#b45309' stroke-width='2.4'><line x1='120' y1='240' x2='300' y2='196'/></g><g stroke='#0f766e' stroke-width='2.4'><line x1='250' y1='260' x2='400' y2='214'/></g><g fill='#1f2937' font-size='11'><text x='108' y='256' fill='#b45309'>a</text><text x='404' y='212' fill='#0f766e'>b（异面）</text></g><g stroke='#be123c' stroke-width='2' stroke-dasharray='6 4'><line x1='480' y1='160' x2='620' y2='128'/></g><g stroke='#be123c' stroke-width='2' stroke-dasharray='6 4'><line x1='480' y1='160' x2='600' y2='196'/></g><g font-size='11' fill='#be123c' font-weight='700'><text x='626' y='124'>a′∥a</text><text x='604' y='212'>b′∥b</text><text x='530' y='176'>θ</text></g><g font-size='10.5' fill='#334155'><text x='430' y='56' font-weight='700'>做法三步：</text><text x='430' y='80'>① 在两条异面直线上各取一点，把其中一条平移，</text><text x='430' y='102'>使它和另一条相交（常用“找平行线”的现成棱）；</text><text x='430' y='124'>② 得到的锐角（或直角）就是所成角；</text><text x='430' y='146'>③ 放进三角形里用余弦定理算。</text><text x='430' y='244' fill='#b45309' font-weight='700'>所成角的范围是 0°＜θ≤90°，算出钝角要取补角。</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">位置关系的题，错在“想当然”。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>三点确定平面忘了“不共线”。</b>三点共线时有无数个平面经过它们，题目里最爱用这个当错误选项。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“不相交”当“平行”。</b>空间里两条直线不相交，还可能异面；判断平行必须再加“共面”。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>忽略“直线在平面内”。</b>讨论直线与平面的位置关系共 3 种：在面内、相交、平行。“到平面距离相等的点”这类条件往往同时允许前两种。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>异面直线所成角算出钝角不取补角。</b>所成角的范围是 0°＜θ≤90°，向量算出负余弦要取绝对值再取角。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>两个平面的位置关系只记得“相交”。</b>两个平面只有平行、相交两种；说“两个平面有一个公共点”就一定相交于一条过该点的直线。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>中点四边形直接当矩形或菱形。</b>它永远是平行四边形；要矩形需对角线垂直，要菱形需对角线相等。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关先把三个基本事实和三条推论背到能默写，这一节的判断题全靠它们。</li><li>第 2 关数异面棱时，先用排除法（去掉相交、平行的），再核对剩下的条数，别凭印象数。</li><li>第 3 关的天津真题是本页唯一的真题，请把每个错误选项“错在哪一步”写出来。</li><li>综合题第 2 题（中点四边形）建议把 AC、BD 两条对角线画成虚线，一眼就能看出 EFGH 的两条邻边从哪来。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>外地真题（1 道）：</b>2024 天津 第6题（直线 l、m 与平面 α 的位置关系判断）。</li><li><b>北京真题：0 道。</b>北京 2022—2026 没有这一节的选择题；2022 第9题、2024 第8题考的是几何体结构，已收进 8.1。</li><li><b>原创题（11 道）：</b>8 道选择题（确定平面、平行平面分空间、异面棱条数、命题判断、距离相等、正方体异面角、正四面体对棱、中点四边形）＋3 道综合题（正方体三个角、中点四边形、三平面交线），标 <b>orig</b>；角度与面积均已验算（60°、90°、60°、90°、1、√3）。</li><li>真题的题干、选项与详解来自原卷 docx，公式按原卷图形内嵌；两张方法图为原创手绘 SVG，标题注明“示意图，非原卷图”。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修第二册", chapter:"第八章 立体几何初步", section:"8.4 空间点、直线、平面之间的位置关系"};
+  var TOPIC = {1:"三个基本事实与推论", 2:"共面与共线", 3:"异面直线的判定", 4:"异面直线所成角", 5:"直线与平面的位置关系", 6:"平面与平面的位置关系", 7:"等角定理"};
+  var LEVELS = [
+    {id:1, name:"确定平面与位置关系", sub:"三个基本事实是尺子：什么样的条件才“确定一个平面”", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"异面直线的判定", sub:"“不相交”不等于“平行”；正方体是数异面棱的最好道具", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"异面直线所成角", sub:"平移法：把两条线挪到相交，再解三角形", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"共面与中点四边形", sub:"中位线一出现，四个中点必然共面", badge:"难点", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"正方体的异面棱与三个角、空间四边形中点、三平面交线各一道", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"下列条件中，能确定一个平面的是（ ）",
+      opts:["空间中的三个点", "一条直线和这条直线外的一个点", "一条直线和这条直线上的一个点", "两条异面直线"],
+      ans:1,
+      why:"A 错：三个点必须<b>不共线</b>，共线时过这三点的平面有无数个。B 对：这是基本事实 1 的推论：一条直线和这条直线外的一个点唯一确定一个平面。C 错：点若在直线上，过这条直线和这个点的平面有无数个，不能“确定”。D 错：两条异面直线不在同一个平面内，谈不上确定一个平面。选 B。",
+      tip:"看到“确定一个平面”，先检查点是否共线、线是否相交或平行——这三个条件缺一不可。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择题", kind:"orig", star:1,
+      stem:"两个平行平面把空间分成的部分数为（ ）",
+      opts:["2", "3", "4", "5"],
+      ans:1,
+      why:"两个平行平面把空间分成三层：一个平面的上方、两个平面之间、另一个平面的下方，共 3 部分，选 B。对照记：一个平面把空间分成 2 部分；两个相交平面把空间分成 4 部分；三个两两平行的平面把空间分成 4 部分。<b>数“块”时最好画一个截面图</b>，靠想象容易漏。",
+      tip:"平面分空间的口诀：一个 2、两个平行 3、两个相交 4；每多一个“切割面”就多一层。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"在正方体 ABCD-A₁B₁C₁D₁ 中，与棱 AB 异面的棱共有（ ）",
+      opts:["2 条", "3 条", "4 条", "5 条"],
+      ans:2,
+      why:"正方体共 12 条棱，去掉 AB 本身还剩 11 条：与 AB <b>相交</b>的 4 条（AD、AA₁、BC、BB₁）；与 AB <b>平行</b>的 3 条（CD、A₁B₁、C₁D₁）；剩下的 4 条既不平行也不相交，就是与 AB 异面的：B₁C₁、CC₁、DD₁、A₁D₁，选 D。",
+      tip:"数异面棱用“排除法”：先去掉与它相交的、再去掉与它平行的，剩下的就是异面的。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"在空间中，下列命题正确的是（ ）",
+      opts:["若两条直线不相交，则它们平行", "若两条直线都平行于第三条直线，则这两条直线平行", "若两条直线与第三条直线所成的角相等，则这两条直线平行", "若两条直线没有公共点，则它们异面"],
+      ans:1,
+      why:"A 错：不相交还可能<b>异面</b>。B 对：这是基本事实 4（平行公理的推广），平行于同一条直线的两条直线平行。C 错：与第三条直线成等角的两条直线可以相交、可以异面，比如正方体里两条面对角线。D 错：没有公共点的两条直线可能平行，也可能异面。选 B。",
+      tip:"“没有公共点”只排除了相交，还剩平行与异面两种，必须再判断是否共面。"
+    },
+    {
+      id:5, lv:2, src:"原创·选择题", kind:"orig", star:2,
+      stem:"若直线 l 上有两个点到平面 α 的距离相等，则 l 与 α 的位置关系是（ ）",
+      opts:["平行", "相交", "平行或在平面内", "无法确定"],
+      ans:2,
+      why:"取这两个点 A、B，它们到 α 的距离相等。若 A、B 在 α 的同侧，则直线 AB 上所有点到 α 的距离都相等，l∥α；若 A、B 恰好在 α 内（距离都是 0），则 l⊂α。两种情况都成立，所以答案是“平行或在平面内”，选 C。<b>“两个点”太少，不足以排除“整条线在面内”这种特殊情况。</b>",
+      tip:"涉及位置关系的判断，一定要把“在平面内”这种特殊情况单独想一遍，出题人就爱在这里挖坑。"
+    },
+    {
+      id:6, lv:3, src:"2024·天津 第6题", kind:"real", star:3,
+      stem:"若<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAABjCAAAAAAnEWRYAAAE0ElEQVR42u2b0ZKjIBBFWyFqDPz/hw5mQEH2IaKgjaIzW5NU4dPEGDhcbncj7BYWPukqIeNm3IybcTNuxs24GTfjZtyMm3Ez7rtddOc7Zq22FhrhbjwGbQGqmwifewyjgZKqC92/urB3v8VWjwaA1gJ5vkDehPlozWjH6ZvKYTBpphkJW++n26QRyZh8tKOZuyB6+WLoHVHbJanbfqNPNLN6o/T6VYP70wzpoj4tDjFLAgBPJlK8Wxakqon7RIoX1s2ba/OYm//2GA1LdwGhlCwf3B9NZ7xndJK6rzHdpf+Ry+C3BlXJJMOGXUyKrDvBcKOZgVJvPOxbQ9k8bL2d07Kx7DZ9Prkj5LogYqEt64d9FJcyw/wAV+YVqbS3K9pKAXwxbX+enbjUU9YRq+hJwbVmHjmXGmoZOM/RhreLc5hTF6+fcamhbLpNL4lmmASjAKA2tMVE28pfSP0vLygN5D7RjtHRx3C5mUfYDlBNWC5RCgCu7DozkpOcniLQDF7eHqPt0QMvFMAkEBW2M0k+0079EnGK1ilCX0l9qRVMBwkjRd3REXBlSbPtoB2g7pB+z1uXAECrYO5kne6ScLUjGPSyaFjCj8nZIP5MnLpmRYDJoIL7JknD5VNTBeuhFesOgCtL1Lp5ECet6xThyl9H7U5WeZBjlK06XPKk5vesa138K+1JEqTQVFw3H4MmN9iEQCD5PLSL1hXNAFUXSRiJuC6V9LBddpJQ8ot5YaZiPRAVSRiJuE7HAeMKJb/qhVmRp4UmUk5TcaeYKlCuIpT8ohecIr1dTeCeFyJ3p5iyFuEifSC5l4+upDEDQCSkegFX1wWtIUgIFIMvuZcuLqUxgNAK+17Acd38hi2NblFLxXZSr6YxWMfyrhdwXJf3K4zLhJN30QuzImFrR4Fb7gQt3BAugBp+wwt4awdeQHGdjuFvnNkCP1/1wqxI1cEJL6C4Tsca41rJMS8jLqUxCKP2OImX8aDFV1ihuIBORHIaC6P22AsYrgtagmXvlbg/9AKhcMoLGC5apuaXoQ71wsml7jzn4pwXMFy3ZOkOx3DZC7HCfeQFDHfEmnJjoHEv1I+zaawSO15g9yRc3I7jnoykAIC295aBrCqLgt4PrEt3Xja5ko+UJQ5aptwYbrhvBACTXslupQUAYyi+hxp71fW9MOi6S1EXHTleavmyDcOVXV4wmHRrJMn2XyohlsRbRWSKGfDgxPPVEjFcaq8+LTtpRp7wgtcLk8iLPIaLBudBerXsW1dqWwABwDTRNLbxwrJKY0+L24jG0lh8N2tbm54A0ZMJHU9jInJf3sJX4z1199JYHVmnAFB/o7/wx4psqY8HpWvU6LkEhosGLTf4luD84yo4lvgKpsbG90OixSBGu8FFgzZWbFzRqFdOuNG9LUmnyGa6RTWN4x6jRQ+qTtR+NUB5o5uOeT9YoLVoFETnFbua3kYO1ODaUiq8vg7unz0TlX9/yFrAx5wJj+ffM/4Ql5vza8s/xLXmp8Hxu5nh4KoG/3T63dVth/WO0jvjMglQi0/B5cp6xy3w//+1yA+1NVAp+AxcPvT2VPn9S1w+HNX+d8JlTwu06gA+AxdKchP/x2RF/j8/GTfjZtyMm3EzbsbNuBk342bcjJtxM+77Xv8ACVZLKq4XnmUAAAAASUVORK5CYII=\" style=\"height:15.8px;vertical-align:baseline\" alt=\"\">为两条不同的直线，<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAABUCAAAAADICxSQAAACbUlEQVR42u2YydKrIBCFD+IUlfd/0GgckHAXQNTIIKb+xa0im5QaPpvTTQ8hEn/2yZDYiZ3YiZ3YiX385Nd+1q0rBABKi/4ym1yoaR3nu1/l1Y7evdSTcr5ld7fww/X6bofPxaLQtLijN6sGDgBZ2UrZPSiA96vbpFLfVX9Dk24SAIB61DceswSoRrJpdSsSsrseBADQ1qAxNgQQrbrg+h1FvC/ZsljMqmdzxziymqLjm002NIocEN3ekVP02elGtWP6JeazAIQE0Oj4qaPPJZuVF+lpaUYAAXSTL0Z8bBMCqE9LCQUksGpF8uh8wt2R+ySAQLeEzHaxGy2y1aoMAJv1YR9i86DR0m5Vtu2LFtE5VkcXqMsqGVbEkatMdKFyLXsH3u20mxm0f6kvtJ1ssYbMxgVFrOzNbOJHOw+7my2F8UXvFTugiJVtgsRVk8ypKftotqkloI61qwyHtoP9vmh21cezV3+ZvnLYXeyQJIE6dq025D8qYmH75TaKhELbwfZK8knr+IntUwTkDptJz2qjiP3F131pk3te/6z/brams/+FTd2F7rCjmtSX2U+nl0yH1hydG9NDOBsW7ccmO97M+2i2OKGVH6tB7h4tq8dsC1uLIr/QfN+yql6TVQs8Zp/ZvTZkPnZwCt2Yoz62YI9x8XVstjAuVe4X9fQ9PWT1J6++XyScss6u+xjebiOPAID8cUrZ/iRu2VMlldteRTkALVf7yMrRtLFb9Zij50szixws3GbW2hBzHj8XP9EshxjMin04FLo3qqabczHjQgUyJfl3KmczP2zkl5k7/X+S2Imd2Imd2In9f7L/ATUA7Nr0IcONAAAAAElFTkSuQmCC\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">为一个平面，则下列结论中正确的是（   ）",
+      opts:["若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">，<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOsAAABUCAAAAABG/Z+pAAAFF0lEQVR42u2a2ZarKhRFF41NJfj/HyoxNiD3QbGLAuboacaFlxqjEg2TvXbDBmLwvxkUkTWyRtbIGlkja2SNrJE1skbWyBpZI2tk/ZsG/0fn/VC9BsAIfwc/Q+7vwRRa9wY67MtpE/Al0XZLc2Vy8VE1AGX1Obs+DToDtvx1oZQGWPYKBRWtuno1i269HkrlM1hvjrn2/ieMUcZYQ2Sf66mrrAlTWqsvl4moh3fy9AU8dWuAZp6OGv6wMH8tarVW+d56tnkdMKtGXe8RVqSPFwC8UHStQZt0Vncjqwy0KyPAZNbpKbue4/oJ6ZvVTzPqiXJGiLwDFUAJUWuojdB4mF3LwYhNt/6C/ZFx+LWZD79OEy7vsuowZFErtM8XAIzBgZEz+bVMyYpVVAbgDyOS8QsmCJXmur4BNV3FxjLnQCMAFNYE8ptags0/wh7da14DX1RqAID/vC911nY0W7IxTEagFWbP4+fqpjF4D+4qKoNUvc4ESwBIO3kp6sP61fa1Mh8M68o4Dla1eEpUZjTUTnjeTYGNARCYmE4k1sMgwzjQzRlHnqoRi4WTi9rMwcDa2zkrrQCk9bWow1v3UcqHQitsEcjO1f5W+RIoGr2Ie73L+5cK3jrVrw/lypMcUG53PWQdgzcH0KgFaqED9gzKAMjkxai2Ttg1W5kAyplxjufcTx8/OizKXxPAWmgA7HW1WW3g2Q8VlHyWP2F2HdeQSYh65XjKOF83r0eGuyS8742STwUOObdXnyKQqMxyoxMsYUauRi2m6sUXZfk51injtAb5TsjyShhXe+uiQj8gIR4JH7BOGSfv1jEmWMK/v98huW9LTl1ryNCus2SQhAPy7y8N4mknsXOso/lIZdZZ0ug/16XqTVjsOo4U9NjjAG02WTJEwv5J3dTWMh533We15lObzVOh/+Lmo19z1GmZTZ0XJmFK/gir7eGRc6xTm2izeQqScGjf4uzwLKHVnGNy1Fl41vhWwubvk/Au6yThHF9IGITdYtfAMH2WdfybSnwj4ZIA0OLytMqcklH+vE6PlY8E30mYr3z+qlGSkA2fPsdqpbrdgAYXEpQAUOKuYzbtisKuNabHj3Hguygs00XD5IZALBxadAVFeuiuW2+1rwvYmHKCsWF7R3GvHa0oZ6Cgh8pPDvYDAZWCTAGgFjeJWB3vQcliJQTlPtb+QKpLCYvMzZFwAPrqPiLjRzK1bZRsuRIfdTl1NoYPonDRtJ6YmREA+uI+TDlKrRUH5wGcsAWr2iYgerRd4A4JN8rXJJQ5ALSJuMWwHXbPA1hdMkA/J1sTD6tlkgd1iQQeHfPKs8oAQL2flxo2I3uGFfUUNTmxQbFojNeui8bwgbRFzXL/vOoMAPqKZRfiDkFvG/ZGBWevobjS7yfweKuPMEoRVhzNXTxRmTykcVY/CQD0bUVY8vO8Rs3JMC+9hM0GBac1gJIB6CtC3vqzv8cDJWyLpibR5hHWI5TTdZW+V57DLgTegynHGw76/XytrzyMD/J2jr6ZJw57j6aUeYR29GX7c3mLrcwHGfcVfwpAZK8B1Z4JSr66CuG060HGAWHjJzQ/cXhRba4iXQFr72HoapbKYlLpVBl/5IrNXa7xkJ59euR4/YGfP5ISvTKX3uUqVLd6G03fO3eCPuUXfm8tb803pLjpLlxnegOAUrY9ZS+61gy3n37/HT3Ee6aRNbJG1sgaWSNrZI2skTWyRtbIGlkja2SNrJE1sv7b4z9Qly40xGzD0AAAAABJRU5ErkJggg==\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMUAAABqCAAAAAApGcoXAAAFEklEQVR42u2cbbuqKhCGH8PUVfD/f+i2lijI/pAQ2KCWL1f7HPpUUQz3zMPMiK2VGfwHHickikSRKBJFokgUiSJRJIpEkSgSRaJIFP9rikuWZdc3R76PQgEse3Pk6yi4Alj93sj3UfQGyN8c+T6KXQV1FMW+gjqKYl9BHUWxr6AOothZUAdRqKhs1BaCOoZC6Jhs4iPfR2F0TDbxke+j2FtQh1DsLqhDKHYX1CEUuwvqCIr9BXUEhdFAXr838n0U+wvqAAoR3cFio719BIXRMYfHR76P4gBB7U9xhKAmfcGNUcagcpaunTJAcR6Zvna9ximXmwnqYdj8+HYuqtdAXtZLKURvdG/64Rcihf0ebzQAoFU8mL7VANC3eVWvFJToTa+dYS9Oomsfbyp1vS2juPySn6icr/vGMyw7+1R3KwXF74ZemvUfANx5vWhfnDJWlMy+GmqrOHuC0e4oj/96S9d8raBYnrPnC/ukuunwEndJLB6sP43/UjTBlzXpPb1SUKFh25qMTJMU0RyV5x4m/1U4VVdTjnbh3eBUGX627t0iQ1nDw6BoFHAqr+aafZaj3AeE1I/skLdmBFFI4A9XZvuSlz8hinMN1KP9uojCaOcR0SiUTaBfCxG+nW1R8gbDj8lEo3Cqbi+2lypqcG8OQL5AZAPEpdmt5D0GpQL7GSD6mKviFEI78kuHonke5A37UEiDS5i72SaC8tyHqgNzVaiPxyKfEVQG3oDJcKIhQA5iMPzq2w8EZd2XP0oUU/75GyJXVaeJg1UArBbSsOrVwqVDeSMMrxaUdR+Ai4QzPc7HyyiUXVinno3Uc8fzxqnMj9sGgnLuA288OYVKW0ghhrky3uJSjy1ASMPkeH5sIain+4T0G9F4wCcoXLqTprjRAZqf/xNBDe5DBqk8/wWZfzGFDV+n2Bkv+ysIkCPOtxCUW2zVobhFUtdSCpvVWrw29CwMUDxDtVHZtGYuz/IWTEZS11IK6/WOWm4YoPj8H920sO67G1SRVmIxxbCNM3K5WRigqKA+uQtm3deakQgmBTWdKIwhlsvaIEBeaiQmiU8/mWc1wBosFhQdC5soNCP2V9b5AfIS1xaCel48VFguKJrCiiScqrcXEcGhJFcbCkq4Dn+UVKYFRVOo8cGBv1wdxnpTQTn3hTbmBEVTDF7HmVguUGI/QdE25gRFUlivh1+ykg32yrSgyqigyskyFda7eUGRFNbrJbXc0QJca7XFfXrnvjPeEhRJoRDv5EehABm2j0ve4L7xPY05QVEUwpCCogK0bYZyhTvHe4KiKMhi7K5gb6Sgsi0E5YRTvykoisJ2d7dZtI0FFetlZgVFUfTUXBYtjwuqvK4U1GCjqCcExX+WUdBS7zHhD5YBuLRy5S+JejoUvqCEbK6LKMhibNHOtPhqgDdev/KRoGKHHL6gOlXellGQoSD7DPE8xhPSeJd/n2WoSC/jlaSLZM0iRdEJgU6oz+0oGhVcT20oKM82b4iTnejFclRQES8a3uhCrsxQInIe9Oxz+d1U9TIKZaLniC/2ba29A8FdvY8EZQNbR95vzuGhyCTFVJ4tI80bkHerf+vYzxTovh+fC8f3BZkohKaPq92Xi279bx3VbIGOQrxQkIkiVjxtDSzl+h7Kuu+FsS4GvJ8oBLJV/zFAyA6n87jvKbrggHXRyNSjak3sRvcmFEh/C5MoEkWiSBSJIlEkikSRKBJFokgUiSJRJIp/4vEXQZX/LQG/GWUAAAAASUVORK5CYII=\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">", "若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMUAAABqCAAAAAApGcoXAAAFEklEQVR42u2cbbuqKhCGH8PUVfD/f+i2lijI/pAQ2KCWL1f7HPpUUQz3zMPMiK2VGfwHHickikSRKBJFokgUiSJRJIpEkSgSRaJIFP9rikuWZdc3R76PQgEse3Pk6yi4Alj93sj3UfQGyN8c+T6KXQV1FMW+gjqKYl9BHUWxr6AOothZUAdRqKhs1BaCOoZC6Jhs4iPfR2F0TDbxke+j2FtQh1DsLqhDKHYX1CEUuwvqCIr9BXUEhdFAXr838n0U+wvqAAoR3cFio719BIXRMYfHR76P4gBB7U9xhKAmfcGNUcagcpaunTJAcR6Zvna9ximXmwnqYdj8+HYuqtdAXtZLKURvdG/64Rcihf0ebzQAoFU8mL7VANC3eVWvFJToTa+dYS9Oomsfbyp1vS2juPySn6icr/vGMyw7+1R3KwXF74ZemvUfANx5vWhfnDJWlMy+GmqrOHuC0e4oj/96S9d8raBYnrPnC/ukuunwEndJLB6sP43/UjTBlzXpPb1SUKFh25qMTJMU0RyV5x4m/1U4VVdTjnbh3eBUGX627t0iQ1nDw6BoFHAqr+aafZaj3AeE1I/skLdmBFFI4A9XZvuSlz8hinMN1KP9uojCaOcR0SiUTaBfCxG+nW1R8gbDj8lEo3Cqbi+2lypqcG8OQL5AZAPEpdmt5D0GpQL7GSD6mKviFEI78kuHonke5A37UEiDS5i72SaC8tyHqgNzVaiPxyKfEVQG3oDJcKIhQA5iMPzq2w8EZd2XP0oUU/75GyJXVaeJg1UArBbSsOrVwqVDeSMMrxaUdR+Ai4QzPc7HyyiUXVinno3Uc8fzxqnMj9sGgnLuA288OYVKW0ghhrky3uJSjy1ASMPkeH5sIain+4T0G9F4wCcoXLqTprjRAZqf/xNBDe5DBqk8/wWZfzGFDV+n2Bkv+ysIkCPOtxCUW2zVobhFUtdSCpvVWrw29CwMUDxDtVHZtGYuz/IWTEZS11IK6/WOWm4YoPj8H920sO67G1SRVmIxxbCNM3K5WRigqKA+uQtm3deakQgmBTWdKIwhlsvaIEBeaiQmiU8/mWc1wBosFhQdC5soNCP2V9b5AfIS1xaCel48VFguKJrCiiScqrcXEcGhJFcbCkq4Dn+UVKYFRVOo8cGBv1wdxnpTQTn3hTbmBEVTDF7HmVguUGI/QdE25gRFUlivh1+ykg32yrSgyqigyskyFda7eUGRFNbrJbXc0QJca7XFfXrnvjPeEhRJoRDv5EehABm2j0ve4L7xPY05QVEUwpCCogK0bYZyhTvHe4KiKMhi7K5gb6Sgsi0E5YRTvykoisJ2d7dZtI0FFetlZgVFUfTUXBYtjwuqvK4U1GCjqCcExX+WUdBS7zHhD5YBuLRy5S+JejoUvqCEbK6LKMhibNHOtPhqgDdev/KRoGKHHL6gOlXellGQoSD7DPE8xhPSeJd/n2WoSC/jlaSLZM0iRdEJgU6oz+0oGhVcT20oKM82b4iTnejFclRQES8a3uhCrsxQInIe9Oxz+d1U9TIKZaLniC/2ba29A8FdvY8EZQNbR95vzuGhyCTFVJ4tI80bkHerf+vYzxTovh+fC8f3BZkohKaPq92Xi279bx3VbIGOQrxQkIkiVjxtDSzl+h7Kuu+FsS4GvJ8oBLJV/zFAyA6n87jvKbrggHXRyNSjak3sRvcmFEh/C5MoEkWiSBSJIlEkikSRKBJFokgUiSJRJIp/4vEXQZX/LQG/GWUAAAAASUVORK5CYII=\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">", "若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPIAAABqCAAAAACjNlNWAAAEfUlEQVR42u2a0bKjKhBFt2LUGPj/D72aAwpyHyJEFNRTMxVSNe1TNAmy2JvuBi0s/rWjBCETMiETMiETMiETMiETMiETMiETMiETMiETMiET8t85eFkUxYNUJmRCJmRCJmRCJmRCJmRCJmRCJmRCJmRCJmRC/vOjSn/FrdXWou3dhcekLVDf+vB3j2k2KCuVD+LVU3tfd6zTswGqpr+CLGZrZjsvL3fW7j9cGgDAqHnQ9GgAYB6rtv80qpjtbHxP2fv+YhpfF7V+DOfI3U/0B61XcZarm6rJfTTTx8V92jiKUwcAnrw/nctlweqGuTNWvNBuK98av+3Mf1achn/c0ayq2PvEfWgHs/qNPlf5NSh3uT4VMvijiQ6z+TRw2NNFnG1f98ipiF1VqyHhPxpl+7DN3lhla/ltOc/zarfr6TKVhdRA2Tzso/h9xPbfC2Veoa8a7Ya4VsB/XNuvyT1C6iWp9JugdIpsjR86ITUaGUwhRxxeLrKgLj193V1IjbIddp29YuxFuAqA2hEXC3Env6fAePlaabD7QjwnhEggC+OHqJtQL2guA/aAUBZdmPJYHtaVOGgnMF8ezIluVce+LsAlmAobWaT3xMtNWZ+D2IlTvWoH5gM010EgP1V5dhRCWdbuW+8mNEPkptmmMgPQKfi+blPZObJ2FJN+F9nvkMalN/vaETkOLw64XLk6NPwFZLG0U/ARXb9tHUJZprZto88zlZ04Qq2XQAfeK48Dv7L1EJf+QtsfmcrWxWWlV+oEWfYSsjPFpNkNu3gQSO+HJ+9U7tsJ9ZAI5FeQXXwfsV9vslD6vPHak/ERTCUC+RVkp+cUYwulz+xrL87Tok1Uj5eQlzhVRNmKUPq8vnbijHbjx7Sv4z1d4pS1ETY2BtKvkkTGFGUAJnHN11GVXRQ0LBIPimkt/SqM50xRQGjrI19HkZ1Xw2Zmtyiu+r2zMqcobMPsga+jyHq707dmM6GD8vraixN26jimlukoiFuEDWjwRb6Od+rQ1zFkp2f4Bzdrgvmd2ddenHrAZV/HkJ2eTYxtM56+7M6ZohAG1LNaoUxGwfjKKBQZUUN8OkWFAfXM1xFkYaO+jkn/Jb5mFX7h6whytJzyG0ND1Nd5lsrev/1vfB1BdsuE4XQccvs6Vese+zqCPMfaceNQpX3dPJAnRdX9ga/5/Rw5Pj3nIzlZAaAbVaapXB1sAAolH6fI0XLKjcMtPgd6gEu0mVZRxYGvJ90M58hRkaNlpXg/JxDKdn22jT6kaoVOMXlq7Hi0i+eid/gQUtfDl/h61VkuI5u816LdSfq1XJpaZUpRO1+/V1f8aWNvNiSyOEs/9tkXP0/g7E2R1FPA5XgmE3s3nKWoPnFd3sItzyTyUYpqEkU9UH38pQk/4MnCb54T41VeiILCxJ/h+f/WU849+9RRJhxSXoiCqWrGFSaNyrjRt7NuXy9jcU/MieJPXgAQakJ5q/KUm+mjHW30ha+/gQx6oZGQCZmQCZmQCZmQCZmQCZmQCZmQCZmQCZmQCZmQcx7/A+3aGhABKrZsAAAAAElFTkSuQmCC\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">", "若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAABUCAAAAACzL9ZcAAACpklEQVR42u2Y25qrIAyFl8VDq/j+D7ptPxU0+6IGQaOVmekdXM1kKH+ykhA6GeHr64bESIzESIzESIzE+ObKT/7WzjRPND+ezmDsBOTlM9ynrZ2AsuhiGA3BEKblt8wRRgIAaxsfokcDABgnfQDJ9u8S/Qpsyi7mflqdWE97DG53OUTkQ+WPIttEWr9WBIxTr+pXh0Z9Wau3j21v/R2P3t/COLfpvSiyrv5V70iUQ5QNPTg6vSLKhu4b9HbR0XosIi8/q5qIqFjEJCIinQOq8cyVfNJx7XpS6R7qvi+awSI3v+nB9i2uygD9og1CAcDdoDS/6nOauALawSEWMHIA9eCKlc0qkmGJTzMWHAWDs7d+A3bmGEY7scf1gLoLweodnMXOHMVYXFOd7lG5q2PGGpy67/2JY8yLaxhJ9evl5wW3VgH9kMGnac9fB+50j6rDRamOGIvHKhvIP4z99YP7KNURgz221hsWrnJr4wX3UapDxlKMoyr2dZAZX6lVwTgGh0++Uk53Y4NJaD9N1NtZ5d6MfxiDVRCcV2xx83zxeEYhtIylvEOEVAdxzDw9hcNgVI8YqWQGhx9owodNqBAllcxgjwNN+DCET5/PUskMKyWLwUGOrkglMrjXgmw4cGjVP2SIjeukKhAplcjgXntKHwjDuCKVxJDvOEuS1VVgJEOUyjX5U5Qqi2SIEjO4EivwNB0Sw55ItXHYr6q2bC7fV3I1zqLDvlTGzJfjEKVicIEjsh79ufWJIYYhtoFXgfoVjJpzxkHlisqubzfdU/W8nHOeEhdy5K4w0v1U9tdn1NlDZmvkJL+Ov6eJccwnlXt8Y5whdgz3sPqcI+/Dp4gd46zJd/qpBXo/RUjfnSNWOxjcirzDFxnp/z6JkRiJkRiJkRiJ8XfrP8PZfQ4oDBzdAAAAAElFTkSuQmCC\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">与<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABUCAAAAAANeY4BAAAB9ElEQVR42u2Y3XKkIBBGP4J/Mfj+DzpogYK9FysMZmwDU3uxqWJuphQ49mkaoRSEf/f7QIVVWIVVWIX9Ilhz1/hF2AjSJreUcx6Q/ZwNU0SOyB9XfdKwbgAAv/Q2DzYZd7oWsWF7EtbBZEYmBRADkzqEZXzSxymdA3v8DcNu5x5qOW2xvmQ2H504wdRCQDOSao8O9EZpyCdLjtv8fEhRaeyUpEwthM6+X7QueZpaCOM3liiATRQnFsoQxvlbxCWRhdLQwGT9k4UdsSEb5ihaWpewJs8nm4Xtccy4IVmK9AZMuTCXyqAzLxFLXQCLaVYLpa+NO0sWFgtjJQwX81ICi4UxbOg18iw52BGAxHpK2L0lBzsCEAvJFrmWDCwE4OkseW/JwEIADt2MbEsGtoeX1VnyB0sGFjeBRiPf8hqmAkwaFFhew6LlgBJLBnb8dxollpewYIMWRZaXsGDT6zLLS9hh8zLoJ8tL2H6dsWDZl+xOoTBaZvGLEtjO2KSWqld5MHedsXQuJ7vmRTYx6U8trevz9oAwSDPLQgPjJk1eZMmGydgrI4e8CeDKfIpHKLXQoPNOQZxlKH/behp15pHq5lwSdMc5t86YwoAI+A+W9QILx4KXMn8csOaTZUHkf1gaVkLT65seon6lqrAKq7AKq7D/DvYHX/binqw/CYsAAAAASUVORK5CYII=\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">相交"],
+      ans:2,
+      why:"对于B，若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKcAAABjCAAAAADbBE+SAAAEwUlEQVR42u2b0ZarKBBFj0LUGPj/D22TBhWZh4iCFop976zOrMGnmGixqw5VhdhdWPwnjhKZM3NmzsyZOTNn5sycmTNzZs7MmTkBgB/8JqwdrUXTuS8ew2iB6taF1z2GyaDkOnXMt117982042QAXneRewrieVNO1kx2mn+p3PhCmVmDcIR+/po13TGfnOxkFrtsXH8YeofRPpPj2X6TVzRLvCblja0H99EMJ2F8WXrkJQAAXqJLnZ9lwaqauTNWvHlunqzmsQzx7cEZcSI445ytJ+5D8zTeNWNyPN8O3ZV/KlVwvyFDZI4pQ7uz/1vLMc5ovnPuOSK+R5TNw9Z7JcvGitt8nrK34uyybsUs64d9FD/O9+UCqc07FXlvN5iVBr7EaH9YaKQa5wLSbdIildOaxW2pRtQqmGgOM/y6SOCb7b6vlWpE2Tx3pi/oPoeIA9A7zGLGbNVP6/Zbdj2C3WfM6dDXGKc0i3vtgGrmcbWvA6S222LHUgA9/9EMXtGdDo3wE9kLCAWmQ1tzkBfMeWzWnWM6//m7Iq/FXoxBGUiN5+SGltqyZj9IO6B+EmMnTk8GoNVYLG+rVzLn6IYexrXBr7kl1DIX/NifH4v/ECrotP58SOeUs7lC9Gi77SCQ2jK9HQJdyvR0/kvtr3BONSlPqoe21ZMOcvIQhP8ooEcvAEEZvMLpVBhGdsNuqgdBXny6Mj27ZkD1jJSBC5yuSPTYrwhZGOQr2b7giB5MR8rABU4XuYECCoN8SfbF/5dFE+l+VzjnhClIoCIM8hXZnf+93eh0JnvklzlhrCWAWB8E2as0yVXJAEzhiux0PF1WGkZM9WLwg+wVgfSqBISqn8tOczopQ2uTW2Tybi/lpaqEbXaeyk5zusJdUUAmlOyK7Iv/oYmUVCwPshI3Agio8WPZaRMJspOcLnLhfW5uBXP2kuyL/9UTF2UnOV3kagpoE4ul5adXJYR5mFaBy3hW0uufMJwgQ39clcI8TJOd4nRZyahKvAnnT2RnHJdlpzjJBrM8hzxJ2VOWnou83XXZKU63rniewl+TPdZgU2SnOCfKnIPncdnrR1JVqroD2cU9mZOectNR4FgBoO29hZqoyqLg93P/Q9mlVo/UdQjZYBz8jZ4iHSCU12VbZQEYw70ni9gDpS/7MNbP1HiSbtPdUa57G1LbdYkvlFvIKHHaYL0K3GqmUnWns48uP2tmSDV6TWbdhTLqTHbPtFDEc3KMk8y+kzJpxfdY6X3rAmA2z/472dc1lHjZ+I40j1Wl+KbQvsG8gOju/LiJfRepVuoWPoCexfOoKtWRdQXA/T3vwnfSbTJPJ01nGqN78xQnmZXS0Htpy81VsDX/FYhhE9d/5RHmjpPMyljHcFW/3oh+47u9N+f/Ttmumh24H2GS72XSD6kHlDe+G1z2gwWvu0bjUM33w01vD14c4cJCJ3p8nXyf9LZPfcZ7wwKf/35zSlzp/zKnNIlLvl/mtOZPE+Av5fvJUQ3+29aPjWc7bPdnPpJTKKDuPp5Tauu9a8C/+PcMfxhNg0rjwznl0NvzjvnbnHJIadm/zileFrx6Ah/OiZLdur9sssj/35E5M2fmzJyZM3NmzsyZOTNn5sycmfN/zPkPHR5LKo/VJ+UAAAAASUVORK5CYII=\" style=\"height:15.8px;vertical-align:baseline\" alt=\"\">平行或异面或相交，故B错误.对于C，<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，过<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAABUCAAAAACzL9ZcAAACpklEQVR42u2Y25qrIAyFl8VDq/j+D7ptPxU0+6IGQaOVmekdXM1kKH+ykhA6GeHr64bESIzESIzESIzE+ObKT/7WzjRPND+ezmDsBOTlM9ynrZ2AsuhiGA3BEKblt8wRRgIAaxsfokcDABgnfQDJ9u8S/Qpsyi7mflqdWE97DG53OUTkQ+WPIttEWr9WBIxTr+pXh0Z9Wau3j21v/R2P3t/COLfpvSiyrv5V70iUQ5QNPTg6vSLKhu4b9HbR0XosIi8/q5qIqFjEJCIinQOq8cyVfNJx7XpS6R7qvi+awSI3v+nB9i2uygD9og1CAcDdoDS/6nOauALawSEWMHIA9eCKlc0qkmGJTzMWHAWDs7d+A3bmGEY7scf1gLoLweodnMXOHMVYXFOd7lG5q2PGGpy67/2JY8yLaxhJ9evl5wW3VgH9kMGnac9fB+50j6rDRamOGIvHKhvIP4z99YP7KNURgz221hsWrnJr4wX3UapDxlKMoyr2dZAZX6lVwTgGh0++Uk53Y4NJaD9N1NtZ5d6MfxiDVRCcV2xx83zxeEYhtIylvEOEVAdxzDw9hcNgVI8YqWQGhx9owodNqBAllcxgjwNN+DCET5/PUskMKyWLwUGOrkglMrjXgmw4cGjVP2SIjeukKhAplcjgXntKHwjDuCKVxJDvOEuS1VVgJEOUyjX5U5Qqi2SIEjO4EivwNB0Sw55ItXHYr6q2bC7fV3I1zqLDvlTGzJfjEKVicIEjsh79ufWJIYYhtoFXgfoVjJpzxkHlisqubzfdU/W8nHOeEhdy5K4w0v1U9tdn1NlDZmvkJL+Ov6eJccwnlXt8Y5whdgz3sPqcI+/Dp4gd46zJd/qpBXo/RUjfnSNWOxjcirzDFxnp/z6JkRiJkRiJkRiJ8XfrP8PZfQ4oDBzdAAAAAElFTkSuQmCC\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">作平面<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAAB5CAAAAAAIHcC0AAADRklEQVR42u2a25arIAyGo1B1Wnz/Bx06o4iyLwSmtRiQ4M1e9mZmefrIHxIStDJw+q+Gi3ExLsbFuBgX4/iPZ98plsksBgCAVZxJ5Moqbx0USr/fWN+4LMq4qzmgevcsx3CE+saeAP0yTfZEOxRi9Eqtjmz8sMUwo5CjDPFjPoWxBwEesgDja1xnUvf+sPvv+pdpenx8DQYAgOvNeJkNgVmQGfdVbzZtT3wz+w/ZDmER3f4lhsjoV19Ai8T0TGRMqxDseV5OFMoGQejk4pxPY9gEFTSjd36oSAzUDDNjabw+akaFnIRwiq8PmhF8So+akcxYDPIUJxUjMXob2mGplBuApDD8SENPETaDsIEUHxqRysU/dKQYdE4NSjVbM3ZzTE2WymZKaAZaLsGksg5vRlq+8lIF8sh9iiHSGE4qvqtUO1Lz7r5U65xi94Fai/Ybj68FFqsYq5RG6qojjI1U3WiXvHXOcmxdTNZqI9WSsoYfrK9cheaKp17NTqu1DC2g1Tblfr9mKgMAIzqrkrTS+8OR6zHVEhk+q8p9GVRHY6CrU22T5ChIDI15TrqjE4WBSvV3vxIEBioVAK/iUVKTpApcl8GISBWpptMYEamK1NQaTmckSxWu2JMYUakWtGJPYkSl0mQ7olL5xiPfjqhUvvHAHFYTpTIJ866mSTUDleGkaqNSNTKXobGm402qW24MRqVyDRxuBsqIzirfat6yc0lMKm8Gl7mMqFTOjGbIzok6IpVvp2/ZeRftz97awPx6F21l/7aB4C7z1w8nVbW3s2gRz/w1yqeJsQ3vLK63JyD2GT5NgOKPjwHYUp19pWyY7fYG3Wstvqn+3aZxM5LWcz+rWgCAkb2YItrnvOo00t5N+Fk1iGEGWH4Y55UEeMwa3/g+wPgLQNlPygAsSr1MMexVRCrjNQC/QUzTm9te9vMJjPcAlACPaVlMwjubA4yPXHV4Uzc6r2K5qgQjlqtKMHSBaj0S59uu/ww7lqJmBBluo/VMhvN4I89jqLJShRi+Hnmex9CxKpfOKBvjYYbbdubyNIbbdmalPB5gaFPajA+GLzD5ed8zuNho5WmM4rERYKjSsUH4ZuL6TuZiXIyLcTEuxn/B+AdxA1nk6x9s9AAAAABJRU5ErkJggg==\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，使得<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，因为<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，故<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL0AAABqCAAAAADMhw97AAAE5ElEQVR42u2b25KrIBBFN0LUGPz/D40mqCDnQTFewAneKqcKn0aZyKJ7d9NAQjT+4ytCoA/0gT7QB/pAH+gDfaAP9IE+0Af6QH/JlRFCHp4tv0MvAUo8W36GnkuAFn4tv0PfaoB5tvwO/SnCuYr+HOFcRX+OcK6iP0c4F9GfJJyL6KVTHnKPcK6hz5VLHu6W36HXyiUPd8vv0J8lnEvoTxPOJfSnCecS+tOEcwX9ecK5gl4rgBV+Lb9Df55wLqDPnZGZ74zZK+i1chnY3fI79CcK53z6M4WzOnautdQa6dDDo5EaiG+zLh9NqxCx6jDh5I1sNRBFcdntmbyp/Jo+b7Vqddt/gyE2rFwoAEAt+Rg/qxUAtDVLi0OEk9d1v+xqJWFxiXsF+rXts7f1P9LBtq0YdVU15k/VHCIc/tLoHJyrWklJAIB8TR+RiBKp+rt+LszFyHfqUc780T3mxX7h8JcGaFoAeAL3Sq8J3PK4Q7iL8e0EHlATO82f7hFO98ZBg+/unvrmHMZGw+NviSh96GTZVZRqfjPm3C+cWo9DDSjikUX9MyYDkFcK7P4uwMgcPlZvPGNy1FTF5VzlN7aSGaO1ftGZJxcSSTMePjXwySRNkt3CaRfue9ItypGfcKkkEjFuo6SHz8TBU5UlrTPiTDlO+lwNVs4axGJqmgLIK42snHyGHlXjzMdAfSsFIxwCLkCNPlqMHTLA935a2nJjjaPGhxGEuuuJaGXjEQAt8krTdOYQBmQNknL5+KAap+Ij4ROncJz00gA18pN9P5HMxaCmsZ92C6fHUWKXcvLe9ITXyIq5Q5BXmlbzAMcBwjEpWSXjKaD0pO/NCVLpuLQ7ZBHgRwiHGDPXyY763uTLRtLbbCqZO2QYKTsg4zyH3up0O32fXGiNZGEiOnWIO+PUTuG4W14DfvXYSm+s3Ngwpw5xC2fbpv2n6njxjfR9eBIrJpk6xCmcbac9xUcxgm+j78NTawsmrScO+cwMtpcw5+udU9VriFclNtH3+RKKlstIJs3YIaNEdNRpjxher9It9EYMSC2RrKebd1weKhwASNi3kRut5MvxKuGDqajAicIB8EyGyK020LdmZWAtvROcKpxJ5P6hncidL2ddmLJ1EgvrwkmcwvljJv1ErvSmN1ZObJizjofS59jz5SFy1cOXXsJRMy5ND6ubDjhfHiYt6Ulv8uVMODaHHJdxMpLYpa886a2T57BSLK3CIXuF0y58bLrnfvSm6ir/HNKBwmnnRn7ettWYrY3TDIm5hZM8tgsn1wsjRwRrG1EOeruUW4eRP8LJ6mq7cLRaCLxfqFA/21snTzOkm11kBcDFqK7wF45eZJcnwcrusZPeanprPTDUzEBe6dFyy7vGaZe5sUt9lHnR2xcb9sT4CeVcyMk6xneqagEobnn5+nEuW9m//CKt95/hQsXVjozT2Vks3U2F37mV1O5gmfdrSooXMDm18hZOZzI13tPlAgBNPTPmWr5MnFMMa46oceobtxyheNh+2PVwRKd96HG1r8YxTpTyFpMCeds0AFhSeJ54WpOLNRYAUNaNNRE7V1USUVoiqxWkNDaK0hK+57Uv62rBtQjKqwbRbZ4XvIWTa9wL4AU8pGo1EBH21XdHSPhdeaAP9IE+0Af6QB/oA32gD/SBPtAH+kAf6Ddc/wASxbqcLyy3VwAAAABJRU5ErkJggg==\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">，而<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOsAAABUCAAAAABG/Z+pAAAEzklEQVR42u2b3ZajKhCFN+JfDL7/g4YkiCBzgZhoImCimXPW4E2vpFvlo3YVRRVNDP6ZK0NiTayJNbEm1sSaWBNrYk2siTWxJtbEmlj/S1f+Px03UwoaAKUFj72HHFeDabUeDHTcH5fdFtC+fxp2Xj3RsptZfV7ArkwOs9k7ichBMamOmkUm+9lnNZyv0wdp30qLrRpu5GgVrSUpC972HUjMcKYbD1CLlDbQ5AVHq6UGhhvjk7Ttz4pvZK07ALQiHEwpLSUBABox8Z06zk+FncX6DgAX4NQZQLiJ6EYFXzfGprIHUAkA4Gj7Ubthu57GFyLLKSF8V9TajoLW02Pv7GagRxX34yQXG2NT3c1d3L6GqsjhZEXOj9LvPGbUnfvGBaZKbFtfmVxMkCiiJGxRs1qL/VHFO1QUOaDZc2ASG3MJaQDQ5/GWJELCTQcA+el+gKveraboYiW4FIA2AJoxPtcbcwn2qlVe9kG7MrF5sYy2aqdHX32xFzHQ7t0rMTgiR2SLeaEkMB4DoDoEVYyzX7+gEAoYYFzQab41Hx4MgEXSkxHA74RaASjFEYtNv75yXgigxwDjMWvIrv3iMw0rmBZHoDajVt5aLQsurTGs8jzXij+lVMY7r1+lEPBYLXvY3TfTa6zZ6Jg3NncNf7IPgF6PMOu4mqw/3QQVvB6HiUsaxJRr4hIYkNEAqkMU7Hxp9elDYC58dr04z9TxkUaZYKD+MAY71KBo6o/qErkbtC6i96s2dd7/0ipkVoQV7GHl5WSuSFkafVCd42HWgGio+LDeVEzDlnX8uOgBrMYt82u7iSFGwT7WSzXNYnf+q7UlF4TXROOyiJJ/XEd8qHi58vhSrSPKaE4z3LOsRyQxvlxCPG4Wf9GsQ6RZg0mMN2+qpqfriPiUkWNYlT8XiEgOY1ifXFZGuqz+uYT9dZf4fJg3j/gUGTPx47J9tIKDuT+fwrgOGpbQQ+zqd1enYCq+7+fcqmjDXghc4WdXVq+Ep20tduhdTSlFmCKfRZLdWX0KjirRv7CyLF+JTyoqEKudDdsaD41TcFy6lgUzgimlCIYdXj7n6b8ITdsaDNkbybCVHU94OARAx/Crq3mUiPgHrK325YoxhoU4BJauF2ZmFq9JHctq9OuyEW/YIt+2u4+4Lqsvdx2NZh6sttVMV5wggtgGMl394pSDi0tNNv8yj66ZDmY1CMVsw23uIQu2O6t+QbUmqa7m6VdSrZv1lXV1JS2jqis291D3/Xa8bkthFqj9c0vODrmtJDzdwbes6t0yFFl2EhUADDda7YTL8zd5WyssauNiw/2M9nSXng7HizDtyt0x/lLuiS5xCxszBilJluXZ983m0u7FdS2W3fWsnvZxw40EtwCLXvMY2+hzg2jZdN58eOPbczDl+LjmOm85jwdgXDwOdgjfRzn95G+bUcHladcSmysZ3IozgHN5ldaoPX/sr0aVdhvONzVTjzgrKQeYUno6ifHNwZyvzjc5Q85ueJzhqt29eb/lLFfZo77j3M8OJ5XFRz7HBmX2Osu1OEQ0P4zhWrOV2HJurRVqdAqmtNEAKCkPaUZ9UBC3AwIl+XIr23Z9jEVI+j/JxJpYE2tiTayJNbEm1sSaWBNrYk2siTWxJtbEmlgTa+D6AylD0ZbwkD0LAAAAAElFTkSuQmCC\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">，故<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANQAAABqCAAAAADhdSDBAAADqUlEQVR42u2c3ZKrKhCFF4JKor7/g4Zk1DRyLvwJRjE6VVuy92luJmVSEz579aJprAiHf28kYCiGYiiGYiiGYiiGYiiGYiiGYiiGYiiGYqi/HqpMhBAFR4qhGIqhGIqhGIqhGIqhGIqhGIqhGIqh/idQauO90jlyzl2Md+1KnQVUbqLNuHpS54Akye79jH4k7YCqOtdZ1w1PLUnj/b+2v0hU3CMhtW3/outIqOyOSwO5I1Llw61/oqzt9PpRRolVP7csNahsa4kEAIhd8pMCbpr/dB9043+GojFJbQDcgEvj1hlWjMJ09HySfgH2cU9nTFGg+jjpUSM/VzG765/dT6lZSlU1AUleuELEc7XWAcheujdZ/+ewpasXU3apDYyOxlTSewalajWDgpY+JpUYmRI9Mzx5PlS3eIr0pumQ/OCrryHIy8DUebDnjpU0VmJtJkEo8pxFPwfL8aBkLBG+o8n9ZVJlX/LUDSSZmbAnUzx/WP8wSEi/OPgENaSUBHBtIJfuEK9OakovqcRaHiTbSSkNytrT3lyWcYpvW/9WfjSqr2ocPCZflqcX30NQbO4vXffdUJUbPa4hXM1SljHUJ8agtPmv9lPT3PUT2T1gimePWzrFR/8Gapx72UI2AVM8fzwmqqb4BdS4GD0c9GoE4xhfJl5bn8NQ42LUOsz3uDHVB/iFZ10ehRoM3RJkja9RH4DHZBFvxr4D6lWKaHyR+gDUU1pZfQyqmsrhtwZLZPUBQK4+m0Wyte14E1989QG45ZNZNIegaIxUji9T38wsggJMNgx9vux+h/pmZkEHoAZDh0zxdeqbmYUt9kON22ZlvlB9szWYDkANgVL4EvVdRb6eVnY31KQy8y3q6xadk3EO5V4oF5h8PPV17yG5pUer9EFlmdlQX3k5kalyi5AkYqupkASDrTZaMVVTF+dBObtInmG/KPdGKtQu8tX3pPx+bhPzzeduYqv5mGy0XNavA7g2sj7ZJ2itOpVqN1TA46ZWDMpa6rPNz5YrslFmJ9SQOgv1vSr38uG0OdkngHopm6BcVMjQTeB6nc7bS8uV8me7cgu2dq/3rSaQzb2ivKwBhOWSBFIquMJ2FPz2PzvatFw5UNwXKfpUNrwd6Zx3gkOUZsKg6p5PbD8goAKGbpbbmD785z9t0B+NXVsLotHEt++s2P9zKLp1MR6gqGoq+i8tyHYOSIRS27MQ/BsvDMVQDMVQDMVQDMVQDMVQDMVQDMVQDMVQDLV7/Ae7uGuzIVwW0AAAAABJRU5ErkJggg==\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">，故<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPIAAABqCAAAAACjNlNWAAAEfUlEQVR42u2a0bKjKhBFt2LUGPj/D72aAwpyHyJEFNRTMxVSNe1TNAmy2JvuBi0s/rWjBCETMiETMiETMiETMiETMiETMiETMiETMiETMiET8t85eFkUxYNUJmRCJmRCJmRCJmRCJmRCJmRCJmRCJmRCJmRC/vOjSn/FrdXWou3dhcekLVDf+vB3j2k2KCuVD+LVU3tfd6zTswGqpr+CLGZrZjsvL3fW7j9cGgDAqHnQ9GgAYB6rtv80qpjtbHxP2fv+YhpfF7V+DOfI3U/0B61XcZarm6rJfTTTx8V92jiKUwcAnrw/nctlweqGuTNWvNBuK98av+3Mf1achn/c0ayq2PvEfWgHs/qNPlf5NSh3uT4VMvijiQ6z+TRw2NNFnG1f98ipiF1VqyHhPxpl+7DN3lhla/ltOc/zarfr6TKVhdRA2Tzso/h9xPbfC2Veoa8a7Ya4VsB/XNuvyT1C6iWp9JugdIpsjR86ITUaGUwhRxxeLrKgLj193V1IjbIddp29YuxFuAqA2hEXC3Env6fAePlaabD7QjwnhEggC+OHqJtQL2guA/aAUBZdmPJYHtaVOGgnMF8ezIluVce+LsAlmAobWaT3xMtNWZ+D2IlTvWoH5gM010EgP1V5dhRCWdbuW+8mNEPkptmmMgPQKfi+blPZObJ2FJN+F9nvkMalN/vaETkOLw64XLk6NPwFZLG0U/ARXb9tHUJZprZto88zlZ04Qq2XQAfeK48Dv7L1EJf+QtsfmcrWxWWlV+oEWfYSsjPFpNkNu3gQSO+HJ+9U7tsJ9ZAI5FeQXXwfsV9vslD6vPHak/ERTCUC+RVkp+cUYwulz+xrL87Tok1Uj5eQlzhVRNmKUPq8vnbijHbjx7Sv4z1d4pS1ETY2BtKvkkTGFGUAJnHN11GVXRQ0LBIPimkt/SqM50xRQGjrI19HkZ1Xw2Zmtyiu+r2zMqcobMPsga+jyHq707dmM6GD8vraixN26jimlukoiFuEDWjwRb6Od+rQ1zFkp2f4Bzdrgvmd2ddenHrAZV/HkJ2eTYxtM56+7M6ZohAG1LNaoUxGwfjKKBQZUUN8OkWFAfXM1xFkYaO+jkn/Jb5mFX7h6whytJzyG0ND1Nd5lsrev/1vfB1BdsuE4XQccvs6Vese+zqCPMfaceNQpX3dPJAnRdX9ga/5/Rw5Pj3nIzlZAaAbVaapXB1sAAolH6fI0XLKjcMtPgd6gEu0mVZRxYGvJ90M58hRkaNlpXg/JxDKdn22jT6kaoVOMXlq7Hi0i+eid/gQUtfDl/h61VkuI5u816LdSfq1XJpaZUpRO1+/V1f8aWNvNiSyOEs/9tkXP0/g7E2R1FPA5XgmE3s3nKWoPnFd3sItzyTyUYpqEkU9UH38pQk/4MnCb54T41VeiILCxJ/h+f/WU849+9RRJhxSXoiCqWrGFSaNyrjRt7NuXy9jcU/MieJPXgAQakJ5q/KUm+mjHW30ha+/gQx6oZGQCZmQCZmQCZmQCZmQCZmQCZmQCZmQCZmQCZmQcx7/A+3aGhABKrZsAAAAAElFTkSuQmCC\" style=\"height:17.0px;vertical-align:baseline\" alt=\"\">，故C正确.对于D，若<img class=\"mf\" src=\"data:image/png;base64,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\" style=\"height:19.4px;vertical-align:baseline\" alt=\"\">，则<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAABUCAAAAACzL9ZcAAACpklEQVR42u2Y25qrIAyFl8VDq/j+D7ptPxU0+6IGQaOVmekdXM1kKH+ykhA6GeHr64bESIzESIzESIzE+ObKT/7WzjRPND+ezmDsBOTlM9ynrZ2AsuhiGA3BEKblt8wRRgIAaxsfokcDABgnfQDJ9u8S/Qpsyi7mflqdWE97DG53OUTkQ+WPIttEWr9WBIxTr+pXh0Z9Wau3j21v/R2P3t/COLfpvSiyrv5V70iUQ5QNPTg6vSLKhu4b9HbR0XosIi8/q5qIqFjEJCIinQOq8cyVfNJx7XpS6R7qvi+awSI3v+nB9i2uygD9og1CAcDdoDS/6nOauALawSEWMHIA9eCKlc0qkmGJTzMWHAWDs7d+A3bmGEY7scf1gLoLweodnMXOHMVYXFOd7lG5q2PGGpy67/2JY8yLaxhJ9evl5wW3VgH9kMGnac9fB+50j6rDRamOGIvHKhvIP4z99YP7KNURgz221hsWrnJr4wX3UapDxlKMoyr2dZAZX6lVwTgGh0++Uk53Y4NJaD9N1NtZ5d6MfxiDVRCcV2xx83zxeEYhtIylvEOEVAdxzDw9hcNgVI8YqWQGhx9owodNqBAllcxgjwNN+DCET5/PUskMKyWLwUGOrkglMrjXgmw4cGjVP2SIjeukKhAplcjgXntKHwjDuCKVxJDvOEuS1VVgJEOUyjX5U5Qqi2SIEjO4EivwNB0Sw55ItXHYr6q2bC7fV3I1zqLDvlTGzJfjEKVicIEjsh79ufWJIYYhtoFXgfoVjJpzxkHlisqubzfdU/W8nHOeEhdy5K4w0v1U9tdn1NlDZmvkJL+Ov6eJccwnlXt8Y5whdgz3sPqcI+/Dp4gd46zJd/qpBXo/RUjfnSNWOxjcirzDFxnp/z6JkRiJkRiJkRiJ8XfrP8PZfQ4oDBzdAAAAAElFTkSuQmCC\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">与<img class=\"mf\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABUCAAAAAANeY4BAAAB9ElEQVR42u2Y3XKkIBBGP4J/Mfj+DzpogYK9FysMZmwDU3uxqWJuphQ49mkaoRSEf/f7QIVVWIVVWIX9Ilhz1/hF2AjSJreUcx6Q/ZwNU0SOyB9XfdKwbgAAv/Q2DzYZd7oWsWF7EtbBZEYmBRADkzqEZXzSxymdA3v8DcNu5x5qOW2xvmQ2H504wdRCQDOSao8O9EZpyCdLjtv8fEhRaeyUpEwthM6+X7QueZpaCOM3liiATRQnFsoQxvlbxCWRhdLQwGT9k4UdsSEb5ihaWpewJs8nm4Xtccy4IVmK9AZMuTCXyqAzLxFLXQCLaVYLpa+NO0sWFgtjJQwX81ICi4UxbOg18iw52BGAxHpK2L0lBzsCEAvJFrmWDCwE4OkseW/JwEIADt2MbEsGtoeX1VnyB0sGFjeBRiPf8hqmAkwaFFhew6LlgBJLBnb8dxollpewYIMWRZaXsGDT6zLLS9hh8zLoJ8tL2H6dsWDZl+xOoTBaZvGLEtjO2KSWqld5MHedsXQuJ7vmRTYx6U8trevz9oAwSDPLQgPjJk1eZMmGydgrI4e8CeDKfIpHKLXQoPNOQZxlKH/behp15pHq5lwSdMc5t86YwoAI+A+W9QILx4KXMn8csOaTZUHkf1gaVkLT65seon6lqrAKq7AKq7D/DvYHX/binqw/CYsAAAAASUVORK5CYII=\" style=\"height:13.4px;vertical-align:baseline\" alt=\"\">相交或异面，故D错误.故选：C.",
+      tip:"每个选项都问自己两个问题：这条线在不在面内？它与面内直线的位置关系会不会只剩一种？"
+    },
+    {
+      id:7, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"在棱长为 2 的正方体 ABCD-A₁B₁C₁D₁ 中，异面直线 AB₁ 与 BC₁ 所成的角为（ ）",
+      opts:["30°", "45°", "90°", "60°"],
+      ans:3,
+      why:"建系最直接：A(0,0,0)、B(2,0,0)、C(2,2,0)、B₁(2,0,2)、C₁(2,2,2)。AB₁ = (2,0,2)，BC₁ = (0,2,2)，数量积 = 0+0+4 = 4，|AB₁| = |BC₁| = 2√2，所以 cosθ = 4/(2√2·2√2) = 1/2，θ = 60°，选 D。几何法是连 AC₁（或 BD₁）找平行线，把两条线平移到同一个三角形里再算，结论一样。",
+      tip:"正方体里算异面直线角，记住两组常用值：面对角线与面对角线常见 60°、90°；实在看不出就建系。"
+    },
+    {
+      id:8, lv:3, src:"原创·选择题", kind:"orig", star:3,
+      stem:"在正四面体 ABCD 中，棱 AB 与 CD 所成的角为（ ）",
+      opts:["30°", "45°", "60°", "90°"],
+      ans:3,
+      why:"取 CD 的中点 M，连 AM、BM。因为 △ACD、△BCD 都是正三角形，所以 AM⊥CD、BM⊥CD，于是 CD⊥平面 ABM，而 AB⊂平面 ABM，所以 CD⊥AB，两条对棱所成角为 90°，选 D。<b>正四面体的三组对棱两两垂直</b>，这是它的标志性结论，做选择填空可以直接用。",
+      tip:"正四面体（六条棱都相等）的对棱互相垂直；正三棱锥只有“三条侧棱相等”时没有这个结论。"
+    },
+    {
+      id:9, lv:4, src:"原创·选择题", kind:"orig", star:3,
+      stem:"在空间四边形 ABCD 中，E、F、G、H 分别是边 AB、BC、CD、DA 的中点，则四边形 EFGH 一定是（ ）",
+      opts:["梯形", "平行四边形", "矩形", "菱形"],
+      ans:1,
+      why:"在 △ABC 中，EF 是中位线，所以 EF∥AC 且 EF = AC/2；在 △ACD 中，HG 是中位线，所以 HG∥AC 且 HG = AC/2。于是 EF∥HG 且 EF = HG，四边形 EFGH 是平行四边形，选 B（这组对边相等且平行，已经足够判定）。它不一定是矩形或菱形——要成为矩形还得加 AC⊥BD，成为菱形还得加 AC = BD。",
+      tip:"空间四边形四边中点连成的四边形永远是平行四边形；“再升级”成矩形/菱形要靠对角线垂直/相等。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"正方体：数异面棱、算三个角",
+      material:"在棱长为 2 的正方体 ABCD-A₁B₁C₁D₁ 中。",
+      asks:[{q:"写出与棱 AB 异面的所有棱，并说明为什么是这几条。", pt:3}, {q:"求异面直线 A₁B 与 B₁C 所成的角。", pt:4}, {q:"求异面直线 A₁C₁ 与 BD 所成的角。", pt:5}],
+      points:[
+        ["与 AB 相交：AD、AA₁、BC、BB₁（4 条）", "与 AB 平行：CD、A₁B₁、C₁D₁（3 条）", "剩下的 12−4−3 = 5 条中，D₁C₁ 已在上面的平行类，异面的是 CC₁、DD₁、B₁C₁、A₁D₁，共 4 条", "答：CC₁、DD₁、B₁C₁、A₁D₁"],
+        ["建系：A(0,0,0)、B(2,0,0)、C(2,2,0)、A₁(0,0,2)、B₁(2,0,2)、C₁(2,2,2)", "A₁B = (2,0,−2)，B₁C = (0,2,−2)", "cosθ = |0+0+4|/(2√2·2√2) = 4/8 = 1/2", "答：所成角为 60°"],
+        ["A₁C₁ = (2,2,0)，BD = (−2,2,0)", "数量积 = −4+4+0 = 0", "所以两直线垂直，所成角为 90°", "答：所成角为 90°（这也说明正方体的两条“不同方向”的面对角线可以互相垂直）"]
+      ],
+      tip:"正方体里的角度题，<b>建系永远不亏</b>：棱长设 2 时所有坐标都是整数，数量积一算就出结果。几何法的关键则是“找到那条现成的平行线”。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"空间四边形的中点四边形",
+      material:"在空间四边形 ABCD 中，E、F、G、H 分别是 AB、BC、CD、DA 的中点。",
+      asks:[{q:"证明：四边形 EFGH 是平行四边形。", pt:3}, {q:"若 AC = BD = 2，且 AC⊥BD，求四边形 EFGH 的面积。", pt:4}, {q:"若 AC = 2，BD = 4，且 AC 与 BD 所成角为 60°，求四边形 EFGH 的面积。", pt:5}],
+      points:[
+        ["在 △ABC 中，EF 是中位线：EF∥AC，EF = AC/2", "在 △ACD 中，HG 是中位线：HG∥AC，HG = AC/2", "所以 EF∥HG 且 EF = HG，四边形 EFGH 是平行四边形（一组对边平行且相等）", "（同理还可得 EH∥BD，EH = BD/2）"],
+        ["EF = AC/2 = 1，EH = BD/2 = 1", "AC⊥BD，而 EF∥AC、EH∥BD，所以 EF⊥EH，平行四边形有一个直角 ⇒ 是正方形", "面积 = 1×1 = 1", "答：面积为 1"],
+        ["EF = AC/2 = 1，EH = BD/2 = 2", "EF 与 EH 的夹角等于 AC 与 BD 所成的角 60°", "面积 = EF·EH·sin60° = 1×2×(√3/2) = √3", "答：面积为 √3"]
+      ],
+      tip:"中点四边形是“<b>对角线的一半</b>”拼出来的：两条邻边分别等于两条对角线的一半，夹角等于两条对角线所成的角。记住这句，三问都能秒。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"三个平面两两相交：交线去哪了",
+      material:"已知三个平面 α、β、γ 两两相交，α∩β = a，β∩γ = b，γ∩α = c，且直线 a 与 b 交于点 P。",
+      asks:[{q:"证明：点 P 在直线 c 上。", pt:4}, {q:"由此说明三条交线 a、b、c 的位置关系。", pt:3}, {q:"三个平面两两相交，三条交线一定交于一点吗？若不一定，请举出三条交线互相平行的例子。", pt:5}],
+      points:[
+        ["因为 P∈a，而 a = α∩β，a⊂α，所以 P∈α", "因为 P∈b，而 b = β∩γ，b⊂γ，所以 P∈γ", "于是 P 是平面 α 与 γ 的公共点，而 α∩γ = c，所以 P∈c", "即 a、b、c 三线共点于 P"],
+        ["由上可知 a、b、c 交于同一点 P", "这就是基本事实 3 的推论：三个平面两两相交，若其中两条交线相交，则第三条交线必过这个交点", "答：三条交线共点"],
+        ["不一定。反例：三棱柱的三个侧面两两相交，三条交线就是三条侧棱所在直线，它们互相平行", "此时三条交线没有公共点，但它们两两平行（都平行于侧棱方向）", "答：三条交线要么共点，要么两两平行，只有这两种可能"]
+      ],
+      tip:"“三平面交线”题的固定套路：<b>把点搬进平面里反复用“公共点在交线上”</b>。证共点就是这么一句话来回倒。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-bx2-c3-s4-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigAXIOMS(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>三个基本事实（示意图，非原卷图）</text><g font-size='11' fill='#111827'><rect x='18' y='42' width='232' height='96' rx='10' fill='#eef2ff' stroke='#4f46e5'/><text x='32' y='66' font-weight='700' fill='#4f46e5'>基本事实 1</text><text x='32' y='90'>过不在一条直线上的三点，</text><text x='32' y='110'>有且只有一个平面。</text><text x='32' y='130' font-size='10' fill='#b45309'>三点共线 → 不能定平面</text><rect x='266' y='42' width='232' height='96' rx='10' fill='#ecfdf5' stroke='#0f766e'/><text x='280' y='66' font-weight='700' fill='#0f766e'>基本事实 2</text><text x='280' y='90'>如果一条直线上的两点在</text><text x='280' y='110'>一个平面内，那么这条直线</text><text x='280' y='130'>在此平面内。</text><rect x='514' y='42' width='232' height='96' rx='10' fill='#fffbeb' stroke='#b45309'/><text x='528' y='66' font-weight='700' fill='#b45309'>基本事实 3</text><text x='528' y='90'>如果两个不重合的平面有</text><text x='528' y='110'>一个公共点，那么它们有且</text><text x='528' y='130'>只有一条过该点的公共直线。</text></g><g font-size='11' fill='#334155'><text x='18' y='172' font-weight='700'>三条推论（都由基本事实 1 推出来）：</text><text x='18' y='196'>① 经过一条直线和这条直线外一点，有且只有一个平面；</text><text x='18' y='220'>② 经过两条相交直线，有且只有一个平面；</text><text x='18' y='244'>③ 经过两条平行直线，有且只有一个平面。</text><text x='18' y='276' fill='#b45309' font-weight='700'>“确定一个平面”＝存在且唯一；两条异面直线、三个共线点都不行。</text></g></svg></div>"; }
+  function buildFigTRANSLATE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>异面直线所成角：平移法（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.4' fill='none'><path d='M70 220 L250 260 L400 214 L220 176 Z'/></g><g stroke='#b45309' stroke-width='2.4'><line x1='120' y1='240' x2='300' y2='196'/></g><g stroke='#0f766e' stroke-width='2.4'><line x1='250' y1='260' x2='400' y2='214'/></g><g fill='#1f2937' font-size='11'><text x='108' y='256' fill='#b45309'>a</text><text x='404' y='212' fill='#0f766e'>b（异面）</text></g><g stroke='#be123c' stroke-width='2' stroke-dasharray='6 4'><line x1='480' y1='160' x2='620' y2='128'/></g><g stroke='#be123c' stroke-width='2' stroke-dasharray='6 4'><line x1='480' y1='160' x2='600' y2='196'/></g><g font-size='11' fill='#be123c' font-weight='700'><text x='626' y='124'>a′∥a</text><text x='604' y='212'>b′∥b</text><text x='530' y='176'>θ</text></g><g font-size='10.5' fill='#334155'><text x='430' y='56' font-weight='700'>做法三步：</text><text x='430' y='80'>① 在两条异面直线上各取一点，把其中一条平移，</text><text x='430' y='102'>使它和另一条相交（常用“找平行线”的现成棱）；</text><text x='430' y='124'>② 得到的锐角（或直角）就是所成角；</text><text x='430' y='146'>③ 放进三角形里用余弦定理算。</text><text x='430' y='244' fill='#b45309' font-weight='700'>所成角的范围是 0°＜θ≤90°，算出钝角要取补角。</text></g></svg></div>"; }
+  var FIG = {
+    "axioms": buildFigAXIOMS,
+    "translate": buildFigTRANSLATE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

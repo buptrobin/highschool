@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>频率与概率</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "math", "slug": "bx2-c5-s3", "n": 12, "title": "10.3 频率与概率"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=math&quiz=1">‹ 数学 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教A版 · 必修第二册 · 第十章 概率 · 第三节</span>
+        <h1>频率与概率<span class="thin">北京选择 0 道 · 外地真题 0 道 · 原创 12 道 · 12 题</span></h1>
+        <p class="lede">这一节只有一句判决：<b>频率是试验值，会晃；概率是客观值，不动</b>。频率能用来<b>估计</b>概率，永远不能用来<b>等于</b>概率——“稳定于”说的是趋势，不是某一次试验的结果。北京卷 2022—2026 的 5 道概率解答题每一道都写着“用频率估计概率”，但它只出现在解答题里，选择题位没有，所以本页 12 道题全部原创，考法逐条对着那 5 道解答题补。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>0</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='14' y='14' width='272' height='252' rx='18' fill='#eef2ff'/><g stroke='#cbd5e1' stroke-width='1'><line x1='44' y1='210' x2='256' y2='210'/><line x1='44' y1='210' x2='44' y2='70'/></g><line x1='44' y1='140' x2='256' y2='140' stroke='#b45309' stroke-width='2' stroke-dasharray='6 5'/><polyline points='58,196 76,168 94,182 112,152 130,158 148,146 166,150 184,142 202,148 220,140 238,144' fill='none' stroke='#4f46e5' stroke-width='2.5'/><g fill='#4f46e5'><circle cx='58' cy='196' r='2.6'/><circle cx='94' cy='182' r='2.6'/><circle cx='130' cy='158' r='2.6'/><circle cx='166' cy='150' r='2.6'/><circle cx='202' cy='148' r='2.6'/><circle cx='238' cy='144' r='2.6'/></g><g font-size='10' fill='#1e1b4b'><text x='196' y='132' fill='#b45309' font-weight='700'>概率 P</text><text x='196' y='228'>试验次数 n</text><text x='56' y='88' font-weight='700'>频率</text></g><g font-size='10' fill='#334155' text-anchor='middle'><text x='150' y='252'>频率稳定于概率，不是等于概率</text><text x='150' y='272' font-size='9' fill='#64748b'>估计值要写“约”</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：频率是试验值会晃，概率是客观值不动</h2></div>
+  <p class="sec-sub">左图是频率随试验次数增加逐渐稳定在概率附近——注意是“稳定于”，不是“等于”，也不是“每次都比上一次更接近”。右图是随机模拟：用等可能的数字代替试验结果，<b>数字个数之比就是概率</b>，组数就是模拟次数。两图都是示意图，不是原卷配图。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京 2022—2026 + 外地近三年</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">北京近 5 年 5 题（全部“用频率估计概率”）</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地真题 0 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">本页收录 0 真题 + 12 原创</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷 2022—2026 的 5 道概率解答题<b>每一道都写着“用频率估计概率”／“以频率估计概率”</b>——本节是北京概率大题的固定第一步。但它只以解答题第 (1) 问的形式出现，<b>选择题位 0 道</b>，所以本页 12 道题全部原创，考法逐条对着这 5 道解答题补。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2022 第 18 题</b>（铅球成绩，用频率估计概率）、<b>2023 第 18 题</b>（农产品涨跌天数，用频率估计概率）、<b>2024 第 18 题</b>（保险赔付，以频率估计概率）、<b>2025 第 18 题</b>（两校答题正确人数，用频率估计概率）、<b>2026 第 17 题</b>（数学成绩分组，以频率估计概率）。五道全是解答题，本页未收。外地卷：2022—2025 的选择题位考的是古典概型、条件概率与独立性，<b>没有一道专考“频率与概率”</b>，所以本页真题数为 0，全部原创并标 <b>orig</b>。</p>
+</div><div class="panel"><p class="panel-title">① 频率的稳定性：稳定 ≠ 相等（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>频率的稳定性：摆动、收敛，但不相等（示意图，非原卷图）</text><g stroke='#cbd5e1' stroke-width='1'><line x1='60' y1='250' x2='470' y2='250'/><line x1='60' y1='250' x2='60' y2='60'/></g><line x1='60' y1='150' x2='470' y2='150' stroke='#b45309' stroke-width='2' stroke-dasharray='7 6'/><polyline points='80,226 120,182 160,204 200,164 240,176 280,156 320,166 360,148 400,160 440,152' fill='none' stroke='#4f46e5' stroke-width='2.5'/><g fill='#4f46e5'><circle cx='80' cy='226' r='3'/><circle cx='120' cy='182' r='3'/><circle cx='160' cy='204' r='3'/><circle cx='200' cy='164' r='3'/><circle cx='240' cy='176' r='3'/><circle cx='280' cy='156' r='3'/><circle cx='320' cy='166' r='3'/><circle cx='360' cy='148' r='3'/><circle cx='400' cy='160' r='3'/><circle cx='440' cy='152' r='3'/></g><g font-size='10' fill='#334155'><text x='414' y='142' fill='#b45309' font-weight='700'>概率 P</text><text x='432' y='268'>n</text><text x='64' y='74'>频率</text></g><g font-size='11' fill='#334155'><text x='500' y='100' font-weight='700'>读图三件事</text><text x='500' y='128'>① 小 n 时上下乱跳</text><text x='500' y='154'>② n 变大后围着 P 摆动</text><text x='500' y='180'>③ 摆动幅度变小，但不等于 P</text><text x='500' y='216' font-weight='700' fill='#b45309'>“稳定于”是趋势，不是等号</text></g></svg></div></div><div class="panel"><p class="panel-title">② 随机模拟的四步流程（示意图，非原卷图）</p><div class="svg-box" id="map-fig-monte"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>随机模拟：用 10 个数字代替一次试验（示意图，非原卷图）</text><g><rect x='30' y='60' width='150' height='64' rx='8' fill='#eef2ff' stroke='#4f46e5' stroke-width='1.5'/><text x='105' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>① 产生随机数</text><text x='105' y='108' font-size='10' fill='#334155' text-anchor='middle'>0—9，等可能</text></g><g><rect x='212' y='60' width='150' height='64' rx='8' fill='#eff6ff' stroke='#0369a1' stroke-width='1.5'/><text x='287' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>② 按规定分组</text><text x='287' y='108' font-size='10' fill='#334155' text-anchor='middle'>0—5 命中，6—9 未中</text></g><g><rect x='394' y='60' width='150' height='64' rx='8' fill='#ecfdf5' stroke='#0f766e' stroke-width='1.5'/><text x='469' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>③ 数频数</text><text x='469' y='108' font-size='10' fill='#334155' text-anchor='middle'>200 组里命中的组数</text></g><g><rect x='576' y='60' width='150' height='64' rx='8' fill='#fffbeb' stroke='#b45309' stroke-width='1.5'/><text x='651' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>④ 算频率、估计</text><text x='651' y='108' font-size='10' fill='#334155' text-anchor='middle'>频率 → 概率的估计</text></g><g stroke='#94a3b8' stroke-width='1.6'><line x1='180' y1='92' x2='210' y2='92'/><line x1='362' y1='92' x2='392' y2='92'/><line x1='544' y1='92' x2='574' y2='92'/></g><rect x='30' y='150' width='700' height='120' rx='10' fill='#f8fafc' stroke='#cbd5e1' stroke-width='1'/><g font-size='11' fill='#334155'><text x='48' y='178' font-weight='700'>两个数必须对上</text><text x='48' y='206'>数字个数之比 ＝ 单次试验的概率：0—5 是 6 个数字，6/10=0.6</text><text x='48' y='232'>组数 ＝ 模拟次数，也是频率的分母：产生 200 组就除 200</text><text x='48' y='258' fill='#b45309' font-weight='700'>得到的永远是频率，只能估计概率，不能写“等于”</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把频率当概率。</b>480/1000=0.48 是频率，0.5 才是这枚硬币的概率；估计出来的数必须写“约”，不能写成等号。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“稳定于”理解成“等于”。</b>n 再大，频率也可能偏离概率一点；“稳定”说的是趋势，不是某一次的结果。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>随机模拟的数字个数与概率不对应。</b>0—9 里取 0、1、2 三个数字，模拟概率就是 3/10=0.3，不是 0.5。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>模拟题的分母写错。</b>产生 200 组数据，分母就是 200；把组数当成“随机数个数”会算出双倍的频率。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>“100 次里必然发生 1 次”。</b>概率 0.01 没有这个意思，它只说明大量重复时频率稳定在 0.01 附近。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>频率写成一个数。</b>频率是比值：480/1000=0.48，写成 480 或 48% 以外的形式都算错；它也没有单位。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第 1 关两道题先分清“算出来的频率”和“推出来的概率”，做完合上书复述一遍两者的区别。</li><li>第 2 关的概率估计题做完，把答案里的“约”字圈出来——这是本节最容易丢的过程分。</li><li>第 3 关四道题对应四种场景：数字模拟、骰子模拟、彩票、捉放法，每题都先问“分母是谁”。</li><li>第 4 关两道题连着做，都是“把估计当保证”的变式，做完去看页首考频里北京那 5 道解答题的问法。</li><li>三道综合题先自己写要点，再对照参考答案；第 3 题是统计与概率的交界，频率表的算法在这里一次性练熟。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>真题（0 道）：</b>本页没有收录选择题真题。原因写在页首「高考考频」里：北京卷的“用频率估计概率”只出现在第 17—18 题的解答题中，外地卷 2022—2025 的选择题位也没有专考本节，硬凑会把“形式沾边”的题塞进来。</li><li><b>北京卷对应考法：</b>2022 第 18 题、2023 第 18 题、2024 第 18 题、2025 第 18 题、2026 第 17 题，五道解答题的第 (1) 问都是“用频率估计概率”，本页的原创题按这五种问法补。</li><li><b>原创题（12 道）：</b>9 道选择题＋3 道综合题，全部标 <b>orig</b>，数字逐一验算（如 950/1000×2000=1900、33/200=0.165、15/300 得 4000、1−0.1³=0.999、130/200×5000=3250）。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；两张示意图为原创 SVG，已在标题标注“示意图，非原卷图”。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修第二册", chapter:"第十章 概率", section:"10.3 频率与概率"};
+  var TOPIC = {1:"频率的定义：频数÷试验次数", 2:"频率的稳定性", 3:"用频率估计概率", 4:"随机模拟：随机数代替试验", 5:"模拟次数的选取", 6:"频率与概率的区别", 7:"用频率估计总体比例"};
+  var LEVELS = [
+    {id:1, name:"频率与概率的区别", sub:"频率会晃、概率不动；频率算出来，概率推出来", badge:"基础", color:"#4f46e5", lcl:"#eef2ff"},
+    {id:2, name:"用频率估计概率", sub:"先算频率，再乘总数；答案必须带“约”", badge:"基础+", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"随机模拟", sub:"数字个数之比等于概率，组数就是模拟次数", badge:"巩固", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"本节易错", sub:"把估计当保证、把模拟次数当分母、把频率写成一个数", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"射击试验表、三次射击的随机模拟、质量抽检的合格率", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·选择", kind:"orig", star:1,
+      stem:"下列说法正确的是（　　）",
+      opts:["频率就是概率，二者没有区别", "随着试验次数的增加，事件发生的频率会逐渐稳定在某个常数附近，这个常数就是该事件的概率", "试验次数越多，频率一定越接近概率，而且每次试验算出的频率都不变", "概率是频率的算术平均值"],
+      ans:1,
+      why:"频率是<b>试验值</b>，做一次一个样，试验前算不出来；概率是事件的客观属性，不随试验次数变化。频率随 n 增大逐渐稳定于概率，所以 B 正确。A 把“稳定于”说成了“就是”；C 把趋势说成“一定、都不变”，事实上 n 再大也可能偏一点；D 没有依据——概率是频率稳定趋向的那个常数，不是频率的平均值。",
+      tip:"四个选项里凡是出现“就是”“一定”“都”的，先在旁边画个问号。"
+    },
+    {
+      id:2, lv:1, src:"原创·选择", kind:"orig", star:1,
+      stem:"掷一枚质地均匀的硬币 1000 次，其中正面朝上 480 次，则正面朝上的频率是（　　）",
+      opts:["0.5", "0.52", "0.48", "480"],
+      ans:2,
+      why:"频率＝频数÷试验次数＝480/1000=0.48，选 C。频率是一个比值，不会等于 480，也不带单位。0.5 是“质地均匀”给出的理论概率，不是这次试验的频率——<b>频率是算出来的，概率是推出来的</b>，两者数值接近但不是同一个东西。",
+      tip:"频率一定在 0 与 1 之间；选项里出现次数本身，先排除。"
+    },
+    {
+      id:3, lv:2, src:"原创·选择", kind:"orig", star:2,
+      stem:"某批种子做发芽试验，随机抽取 1000 粒，其中有 950 粒发芽。用频率估计概率，若播种 2000 粒该批种子，估计能发芽的粒数约为（　　）",
+      opts:["1950", "1850", "1000", "1900"],
+      ans:3,
+      why:"发芽频率＝950/1000=0.95，用频率估计概率得发芽的概率约为 0.95；播种 2000 粒，估计发芽 2000×0.95=1900（粒），选 D。这里的 0.95 是<b>估计值</b>，答案要带“约”字，不能理解成“一定发芽 1900 粒”。1950 是把 0.975 或 950×2 直接堆出来的，没有依据。",
+      tip:"“估计”类题目三步：先算频率，再乘总数，最后在答案前加“约”。"
+    },
+    {
+      id:4, lv:2, src:"原创·选择", kind:"orig", star:2,
+      stem:"用计算器产生 0—9 之间的随机整数来模拟一次试验，规定产生 0，1，2 时表示事件 A 发生，产生 3，4，…，9 时表示 A 不发生。若连续产生 100 个随机数，则事件 A 发生的频率最可能在（　　）",
+      opts:["0.3 附近", "0.7 附近", "0.5 附近", "0.1 附近"],
+      ans:0,
+      why:"0—9 共 10 个数字，等可能；规定 0、1、2 表示 A 发生，共 3 个数字，所以每次模拟中 A 发生的概率是 3/10=0.3。产生 100 个随机数相当于做 100 次试验，频率会稳定在 0.3 附近，选 A。<b>随机模拟的关键是“数字个数之比等于概率”</b>：要让概率为 0.7，就得规定 7 个数字。",
+      tip:"模拟前先数：代表“发生”的数字有几个，除以 10 就是模拟的概率。"
+    },
+    {
+      id:5, lv:3, src:"原创·选择", kind:"orig", star:2,
+      stem:"用随机模拟的方法估计“同时掷两枚骰子，点数之和为 7”的概率：用 1—6 的随机整数分别表示两枚骰子的点数，每两个随机数为一组，共产生 200 组，其中点数之和为 7 的有 33 组。则估计该事件的概率约为（　　）",
+      opts:["0.33", "0.66", "0.165", "0.0165"],
+      ans:2,
+      why:"每两个随机数一组，相当于“掷一次两枚骰子”，所以模拟次数是 200 组，不是 100。频率＝33/200=0.165，用频率估计概率得约 0.165，选 C。理论值是 6/36≈0.167，两者很接近，说明模拟次数够用。0.33 是把分母错写成 100，0.66 又在此基础上翻了一倍。",
+      tip:"模拟题的分母永远是“组数”：几组数据，就除几。"
+    },
+    {
+      id:6, lv:3, src:"原创·选择", kind:"orig", star:2,
+      stem:"某种彩票的中奖概率为 1/1000，下列说法正确的是（　　）",
+      opts:["买 1000 张彩票，一定有一张中奖", "买 1000 张彩票，中奖的可能性较大，但不能保证中奖", "买 1 张彩票一定不会中奖", "中奖概率 1/1000 表示每 1000 张彩票里恰好有 1 张中奖"],
+      ans:1,
+      why:"概率 1/1000 描述的是<b>大量重复</b>下频率的稳定值，不是某 1000 张里的精确张数，所以 A、D 都把“估计”偷换成了“保证”。买 1 张也可能中奖，概率虽小但不为 0，C 错。B 留了余地——“可能性较大、不保证”，正合概率的含义。",
+      tip:"概率题里出现“一定”“恰好”“必然”，基本都是把随机性抹掉了。"
+    },
+    {
+      id:7, lv:3, src:"原创·选择", kind:"orig", star:3,
+      stem:"某养殖户想估计鱼塘中鱼的总数：先从塘中捕出 200 条鱼，做上记号后放回；过一段时间再从塘中捕出 300 条鱼，发现其中带记号的有 15 条。据此估计塘中鱼的总数约为（　　）",
+      opts:["3000 条", "6000 条", "1000 条", "4000 条"],
+      ans:3,
+      why:"第二次捕出的 300 条里，带记号的频率是 15/300=0.05。把“带记号的鱼在塘中的比例”用这个频率去估计：设塘中共有 N 条鱼，则 200/N≈0.05，解得 N≈200÷0.05=4000，选 D。<b>“捉放法”的本质是用样本频率估计总体比例</b>，列的是一个“部分÷总体＝频率”的方程。",
+      tip:"捉放法就一个方程：带记号的条数 ÷ 总条数 ＝ 样本中带记号的频率。"
+    },
+    {
+      id:8, lv:4, src:"原创·选择", kind:"orig", star:3,
+      stem:"某射手在相同条件下射击 500 次，其中命中 450 次。用频率估计概率，若该射手独立射击 3 次，则至少命中 1 次的概率约为（　　）",
+      opts:["0.999", "0.729", "0.9", "0.271"],
+      ans:0,
+      why:"命中频率＝450/500=0.9，用它估计每次命中的概率。三次独立，“至少命中一次”的反面是“三次都没命中”，概率约 0.1³=0.001，所以所求约为 1−0.001=0.999，选 A。0.729=(0.9)³ 是三次都命中，0.271=1−0.729 是“至少一次没命中”，两个都把事件认反了。",
+      tip:"先由频率得到单次概率，再套“至少一次＝1−(1−p)ⁿ”。"
+    },
+    {
+      id:9, lv:4, src:"原创·选择", kind:"orig", star:3,
+      stem:"已知某事件发生的概率为 0.01，则下列说法正确的是（　　）",
+      opts:["做 100 次试验，该事件一定发生 1 次", "做 100 次试验，该事件发生的次数一定不超过 1 次", "做大量重复试验，该事件发生的频率会稳定在 0.01 附近", "每做 1 次试验该事件发生的可能性都是 1/100，所以做 100 次必然发生"],
+      ans:2,
+      why:"概率 0.01 说的是<b>大量重复试验下频率的稳定值</b>，不是 100 次试验里的精确次数。A、D 把“稳定”当成了“必然”，B 也没有任何依据——100 次里发生 2 次、3 次完全可能。只有 C 说的是频率的稳定性，这正是概率的定义来源。",
+      tip:"概率小 ≠ 不发生，概率大 ≠ 一定发生；只有“大量重复＋频率稳定”这半句永远成立。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"射击试验表：从频率到估计值",
+      material:"某射手在同一条件下进行射击试验，结果如下表（n 为射击次数，m 为命中次数）：<br>n＝50 时 m＝44；n＝100 时 m＝92；n＝200 时 m＝182；n＝500 时 m＝451；n＝1000 时 m＝902。",
+      asks:[{q:"分别计算各次试验中命中目标的频率（结果保留三位小数）。", pt:4}, {q:"估计该射手射击一次命中目标的概率，并说明理由。", pt:4}, {q:"若该射手独立射击 3 次，用第 (2) 问的估计值求至少命中 1 次的概率。", pt:5}],
+      points:[
+        ["频率＝m/n，依次为 44/50=0.880，92/100=0.920，182/200=0.910，451/500=0.902，902/1000=0.902"],
+        ["随着 n 从 50 增到 1000，频率在 0.9 附近摆动且逐渐稳定（0.910→0.902→0.902）", "所以估计该射手射击一次命中目标的概率约为 0.9", "注意写“约”：频率只是概率的估计值，不能写 P(命中)=0.902"],
+        ["设每次命中的概率约为 0.9，则每次未命中的概率约为 0.1", "三次独立，“至少命中一次”的反面是“三次都没命中”，概率约 0.1³=0.001", "所以 P(至少命中一次)≈1−0.001=0.999"]
+      ],
+      tip:"频率表题三步：<b>逐行算 m/n → 看它稳定在哪个数附近 → 用这个数当概率的估计值</b>；最后一步永远写“约”。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"随机模拟：用 10 个数字代替一次射击",
+      material:"用随机模拟的方法估计“某射手射击 3 次，至少命中 1 次”的概率。已知该射手每次命中的概率为 0.6，各次射击相互独立。用计算器产生 0—9 的随机整数，规定产生 0，1，2，3，4，5 时表示该次命中，产生 6，7，8，9 时表示未命中；每 3 个随机数为一组，表示射击 3 次。",
+      asks:[{q:"说明为什么可以用 0—9 这 10 个数字模拟一次射击，并写出一次射击命中的模拟概率。", pt:4}, {q:"某次模拟得到 20 组数据，其中至少有 1 次命中的有 18 组，求这次模拟得到的频率，并与理论值比较。", pt:4}, {q:"若要使模拟结果更接近理论值，应当怎样改进？由此说明模拟得到的频率与概率的关系。", pt:5}],
+      points:[
+        ["0—9 共 10 个数字，产生时等可能，正好符合古典概型的“有限且等可能”", "其中 0—5 共 6 个数字表示命中，所以一次射击命中的模拟概率为 6/10=0.6，与题意一致"],
+        ["频率＝18/20=0.9", "理论值＝1−0.4³=1−0.064=0.936", "0.9 与 0.936 有差距，因为只模拟了 20 组，数据太少，频率还在波动"],
+        ["增加模拟的组数（如 1000 组、10000 组），频率会逐渐稳定在 0.936 附近", "但无论模拟多少次，得到的都只是频率，只能用来<b>估计</b>概率，不能写成“概率等于这个频率”", "随机模拟的价值在于省时间、可重复：它把“真做试验”换成“产生随机数”，估计的是同一个概率"]
+      ],
+      tip:"随机模拟三问：<b>数字怎么规定（个数比＝概率）→ 组数是多少（分母）→ 频率怎么用（估计，不是等于）</b>。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"质量抽检：频率表、概率估计与合格率",
+      material:"某工厂对一批产品进行质量抽检，随机抽取 200 件，测得质量指标（单位：g）的分组及频数如下：<br>[95，100) 10 件；[100，105) 30 件；[105，110) 70 件；[110，115) 60 件；[115，120] 30 件。",
+      asks:[{q:"求各组的频率，并说明各频率之和为什么等于 1。", pt:4}, {q:"以频率估计概率，求任取 1 件产品，其质量指标不低于 110 g 的概率。", pt:4}, {q:"规定质量指标在 [105，115) 内为合格品，估计这批产品的合格率；若这批产品共 5000 件，估计合格品的件数。", pt:5}],
+      points:[
+        ["各组频率＝频数/200：0.05，0.15，0.35，0.30，0.15", "五个频率之和＝0.05+0.15+0.35+0.30+0.15=1", "五组频数相加正好是 200，所以频率之和必然为 1——这也说明分组既没漏也没重"],
+        ["不低于 110 g 的是 [110，115) 与 [115，120] 两组，共 60+30=90 件", "频率＝90/200=0.45，所以估计概率约为 0.45"],
+        ["合格品是 [105，110) 与 [110，115) 两组，共 70+60=130 件", "合格率估计为 130/200=0.65", "5000 件中合格品约为 5000×0.65=3250（件）", "注意这是估计值：只能说“约 3250 件”，不能说“一定 3250 件”"]
+      ],
+      tip:"频率表题的通用套路：<b>先补全频率（或用频数直接算比值）→ 把要求的区间对应的频数相加 → 除以总数</b>；最后一步回答“多少件”时再乘总量。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "math-prob-freq-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigSTABILITY(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>频率的稳定性：摆动、收敛，但不相等（示意图，非原卷图）</text><g stroke='#cbd5e1' stroke-width='1'><line x1='60' y1='250' x2='470' y2='250'/><line x1='60' y1='250' x2='60' y2='60'/></g><line x1='60' y1='150' x2='470' y2='150' stroke='#b45309' stroke-width='2' stroke-dasharray='7 6'/><polyline points='80,226 120,182 160,204 200,164 240,176 280,156 320,166 360,148 400,160 440,152' fill='none' stroke='#4f46e5' stroke-width='2.5'/><g fill='#4f46e5'><circle cx='80' cy='226' r='3'/><circle cx='120' cy='182' r='3'/><circle cx='160' cy='204' r='3'/><circle cx='200' cy='164' r='3'/><circle cx='240' cy='176' r='3'/><circle cx='280' cy='156' r='3'/><circle cx='320' cy='166' r='3'/><circle cx='360' cy='148' r='3'/><circle cx='400' cy='160' r='3'/><circle cx='440' cy='152' r='3'/></g><g font-size='10' fill='#334155'><text x='414' y='142' fill='#b45309' font-weight='700'>概率 P</text><text x='432' y='268'>n</text><text x='64' y='74'>频率</text></g><g font-size='11' fill='#334155'><text x='500' y='100' font-weight='700'>读图三件事</text><text x='500' y='128'>① 小 n 时上下乱跳</text><text x='500' y='154'>② n 变大后围着 P 摆动</text><text x='500' y='180'>③ 摆动幅度变小，但不等于 P</text><text x='500' y='216' font-weight='700' fill='#b45309'>“稳定于”是趋势，不是等号</text></g></svg></div>"; }
+  function buildFigMONTE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#1e1b4b'>随机模拟：用 10 个数字代替一次试验（示意图，非原卷图）</text><g><rect x='30' y='60' width='150' height='64' rx='8' fill='#eef2ff' stroke='#4f46e5' stroke-width='1.5'/><text x='105' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>① 产生随机数</text><text x='105' y='108' font-size='10' fill='#334155' text-anchor='middle'>0—9，等可能</text></g><g><rect x='212' y='60' width='150' height='64' rx='8' fill='#eff6ff' stroke='#0369a1' stroke-width='1.5'/><text x='287' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>② 按规定分组</text><text x='287' y='108' font-size='10' fill='#334155' text-anchor='middle'>0—5 命中，6—9 未中</text></g><g><rect x='394' y='60' width='150' height='64' rx='8' fill='#ecfdf5' stroke='#0f766e' stroke-width='1.5'/><text x='469' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>③ 数频数</text><text x='469' y='108' font-size='10' fill='#334155' text-anchor='middle'>200 组里命中的组数</text></g><g><rect x='576' y='60' width='150' height='64' rx='8' fill='#fffbeb' stroke='#b45309' stroke-width='1.5'/><text x='651' y='86' font-size='11' fill='#1e1b4b' text-anchor='middle' font-weight='700'>④ 算频率、估计</text><text x='651' y='108' font-size='10' fill='#334155' text-anchor='middle'>频率 → 概率的估计</text></g><g stroke='#94a3b8' stroke-width='1.6'><line x1='180' y1='92' x2='210' y2='92'/><line x1='362' y1='92' x2='392' y2='92'/><line x1='544' y1='92' x2='574' y2='92'/></g><rect x='30' y='150' width='700' height='120' rx='10' fill='#f8fafc' stroke='#cbd5e1' stroke-width='1'/><g font-size='11' fill='#334155'><text x='48' y='178' font-weight='700'>两个数必须对上</text><text x='48' y='206'>数字个数之比 ＝ 单次试验的概率：0—5 是 6 个数字，6/10=0.6</text><text x='48' y='232'>组数 ＝ 模拟次数，也是频率的分母：产生 200 组就除 200</text><text x='48' y='258' fill='#b45309' font-weight='700'>得到的永远是频率，只能估计概率，不能写“等于”</text></g></svg></div>"; }
+  var FIG = {
+    "stability": buildFigSTABILITY,
+    "monte": buildFigMONTE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>
