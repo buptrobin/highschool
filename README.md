@@ -134,3 +134,31 @@ python tools/quiz-install.py C:/wangxp/script/geo-cosmic.html geo bx1-c1-s1 --bu
 所以**新增精练页后要重跑一次 `build.py`**，列表上的「精练 17」徽标、首页的题数、
 解析页里的「去刷题」按钮才会一起出现。解析页本身不用改：`page.js` 会按
 `window.PAGE` 的 `sid/slug` 去查 `assets/quiz-map.js`，查到才插入按钮。
+
+## 发布到 Cloudflare
+
+线上跑在 **Cloudflare Workers 静态资源**上，配置在 `wrangler.toml`：`directory = "."`，
+**直接把仓库根目录当站点上传**，不打包、不生成 `dist/`。
+
+```bash
+npx wrangler deploy         # 首次会要求 npx wrangler login
+```
+
+Windows 的 PowerShell 如果拦 `npm.ps1`（`禁止运行脚本`），把 `npx` 换成 `npx.cmd` 即可，
+不用改执行策略。
+
+根目录还有 `tools/`、`content/`、`.workbuddy/` 这些不该公开的东西，由根目录的
+`.assetsignore`（语法同 `.gitignore`）挡掉，wrangler 上传时会跳过。这个站的公开内容只有
+`index.html`、`subject.html`、`404.html`、`assets/`、`pages/`、`quiz/`。
+
+发布后地址是 `https://highschool.<你的 workers.dev 子域>.workers.dev`。要绑自己的域名，
+在 Cloudflare 后台该 Worker 的 Settings → Domains & Routes 里加。
+
+几点说明：
+
+- 新增本地目录（截图、临时稿件、别的工具输出）记得往 `.assetsignore` 里加一行，
+  否则它会被当成静态文件公开
+- `.html` 链接会 307 跳到无扩展名的地址（`pages/geo/bx1-c1-s1.html` → `pages/geo/bx1-c1-s1`），
+  这是 Workers 默认的 `auto-trailing-slash` 行为，两个地址都能打开，不用改页面
+- 找不到的地址返回根目录 `404.html`（带 404 状态码）
+- 本地双击 `index.html` 的用法完全不受影响，Node / wrangler 只在发布时需要
