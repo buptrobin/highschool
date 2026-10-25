@@ -3,7 +3,8 @@
 //   node tools/qa-quiz.mjs bx1-c4-s2 bx1-c5-s1 ...
 // 输出每页一行 JSON；任何一页有 errs 或 broken 图即以非零码退出。
 const BASE = process.env.CDP || 'http://127.0.0.1:9229';
-const ROOT = 'file:///C:/wangxp/mygit/highschool/quiz/geo/';
+const SUBJ = process.env.QUIZ_SUBJ || 'geo';
+const ROOT = 'file:///C:/wangxp/mygit/highschool/quiz/' + SUBJ + '/';
 const slugs = process.argv.slice(2);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -35,6 +36,7 @@ for (const slug of slugs) {
   await send('Page.navigate', { url: ROOT + slug + '.html' });
   await sleep(1600);
   const r = await ev(`JSON.stringify({
+    page: location.pathname.split('/').pop(),
     q: document.querySelectorAll('.q').length,
     essay: document.querySelectorAll('.essay').length,
     hud: document.getElementById('hud-total')?.textContent,
@@ -47,9 +49,14 @@ for (const slug of slugs) {
     store: (function(){try{return Object.keys(localStorage).filter(k=>k.indexOf(location.pathname.split('/').pop())>=0).length}catch(e){return -1}})()
   })`);
   const o = JSON.parse(r || '{}');
-  const ok = !errs.length && o.broken === 0 && o.sw <= 1440 && o.q > 0;
+  // page 校验：并发跑时如果连到了别人的浏览器，这里会显示别的页名，
+  // 那些 q/hud 数字就不可信（2026-10 生物组踩到过）
+  const pageOk = o.page === slug + '.html';
+  const ok = pageOk && !errs.length && o.broken === 0 && o.sw <= 1440 && o.q > 0;
   if (!ok) bad++;
-  console.log(slug.padEnd(12), ok ? 'OK ' : 'BAD', r, errs.length ? 'errs=' + JSON.stringify(errs) : '');
+  console.log(slug.padEnd(12), ok ? 'OK ' : 'BAD', r,
+    errs.length ? 'errs=' + JSON.stringify(errs) : '',
+    pageOk ? '' : '!! 拿到的是 ' + o.page + '，不是本页 —— 端口被别的进程占了');
 }
 ws.close();
 process.exit(bad ? 1 : 0);

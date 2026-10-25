@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>协同进化与生物多样性的形成</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "bio", "slug": "bx2-c6-s4", "n": 11, "title": "协同进化与生物多样性的形成"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=bio&quiz=1">‹ 生物 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 必修2 遗传与进化 · 第六章第四节</span>
+        <h1>协同进化与生物多样性的形成<span class="thin">北京卷 1 道 · 外地真题 5 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一节回答两个问题：<b>物种之间、生物与环境之间为什么会“互相塑造”</b>（协同进化），以及<b>生物多样性为什么会有基因、物种、生态系统三个层次</b>。抓住“相互影响、共同进化”这八个字，捕食、寄生、传粉、共生就都能归位。</p>
+        <div class="facts"><div class="fact"><b>8</b><span>选择题</span></div><div class="fact"><b>5</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='246' rx='18' fill='#fdf2f6'/><g font-size='10' text-anchor='middle'><circle cx='150' cy='132' r='44' fill='#fff' stroke='#c46a8a' stroke-width='2'/><text x='150' y='128' font-weight='700' fill='#8f1f48'>协同进化</text><text x='150' y='144' font-size='9' fill='#a05a72'>相互影响 共同进化</text><rect x='42' y='54' width='82' height='34' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='83' y='75' fill='#8f1f48'>捕食</text><rect x='176' y='54' width='82' height='34' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='217' y='75' fill='#8f1f48'>寄生</text><rect x='42' y='178' width='82' height='34' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='83' y='199' fill='#8f1f48'>传粉</text><rect x='176' y='178' width='82' height='34' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='217' y='199' fill='#8f1f48'>互利共生</text></g><g stroke='#c46a8a' stroke-width='1.6' fill='none'><path d='M124 120 L102 88'/><path d='M176 120 L198 88'/><path d='M124 146 L102 176'/><path d='M176 146 L198 176'/></g><text x='150' y='246' font-size='9.5' fill='#7a4a5a' text-anchor='middle'>协同进化是生物多样性形成的原因</text></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：相互作用，共同进化，形成多样性</h2></div>
+  <p class="sec-sub">左图是协同进化的四种常见关系：<b>捕食、寄生、传粉、互利共生</b>，都是两个物种在相互影响中共同进化。右图是生物多样性的三个层次：<b>基因多样性</b>是底子，<b>物种多样性</b>是中间层，<b>生态系统多样性</b>是最高层；三个层次都是长期协同进化的结果。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京等级考 2022—2026（越近权重越高）</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 3 年北京 1 题</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 6 年北京 1 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地近 3 年 5 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 6 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷近 6 年只有 <b>2025 年第 8 题</b>直接考本节（萝藦与斑蝶的协同进化），<b>已收入</b>；其余靠外地卷的共生、传粉、捕食类题补。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2025 年第 8 题</b>（萝藦产生 CA、斑蝶 N 酶突变，考适应与协同进化）收入本页。北京其余相关题均已归章：<b>2024 年第 2 题</b>与 <b>2022 年第 6 题</b>归第一节（共同祖先的证据）；<b>2023 年第 6 题</b>归第二节（自然选择）；<b>2026 年第 6 题</b>归第三节（基因频率）；<b>2024 年第 10 题</b>（朱鹮）、<b>2022 年第 15 题</b>（国家植物园易地保护）、<b>2025 年第 12 题</b>（塞罕坝）归选择性必修2 的生物多样性保护与群落演替。<b>本节近 6 年北京真题只有 2025 年第 8 题，已收入。</b>外地卷收入 <b>2023 辽宁第 6 题</b>（昆虫与共生微生物）、<b>2024 湖南第 7 题</b>（噬菌体与细菌）、<b>2025 黑吉辽蒙第 7 题</b>（海蟑螂与红藻）、<b>2023 湖南第 4 题</b>（油菜花与蜂蝶）、<b>2025 陕晋青宁第 13 题</b>（菌根真菌与小麦）。另配 <b>3 道原创选择题 + 3 道原创综合题</b>，补协同进化概念、生物多样性三层次与形成原因。</p>
+</div><div class="panel"><p class="panel-title">① 协同进化的四种关系（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 320'><rect width='760' height='320' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#8f1f48'>协同进化的四种常见关系（示意图，非原卷图）</text><g font-size='11' fill='#3a2a30'><circle cx='380' cy='158' r='54' fill='#fdf2f6' stroke='#c46a8a' stroke-width='2'/><text x='380' y='154' font-size='12' text-anchor='middle' font-weight='700' fill='#8f1f48'>协同进化</text><text x='380' y='172' font-size='9.5' text-anchor='middle' fill='#a05a72'>相互影响 共同进化</text><rect x='54' y='66' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='70' y='90' font-weight='700'>捕食</text><text x='70' y='110'>猎豹与羚羊：速度军备竞赛</text><rect x='516' y='66' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='532' y='90' font-weight='700'>寄生</text><text x='532' y='110'>噬菌体与细菌：相互选择</text><rect x='54' y='196' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='70' y='220' font-weight='700'>传粉</text><text x='70' y='240'>兰花与长喙蛾：花距与喙长</text><rect x='516' y='196' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='532' y='220' font-weight='700'>互利共生</text><text x='532' y='240'>菌根真菌与小麦：磷与有机物</text></g><g stroke='#c46a8a' stroke-width='2' fill='none'><path d='M326 142 L250 118'/><path d='M434 142 L510 118'/><path d='M326 176 L250 210'/><path d='M434 176 L510 210'/></g><text x='18' y='300' font-size='10.5' fill='#8a5a12'>注意：协同进化强调“双方相互影响”，不是一方对另一方的单向适应；结果也不一定是迅速形成新物种。</text></svg></div></div><div class="panel"><p class="panel-title">② 生物多样性的三个层次（示意图，非原卷图）</p><div class="svg-box" id="map-fig-bioDiv"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#8f1f48'>生物多样性的三个层次（示意图，非原卷图）</text><g font-size='11' fill='#3a2a30'><rect x='40' y='54' width='680' height='60' rx='10' fill='#eef4fb' stroke='#9db8d2'/><text x='58' y='78' font-weight='700' fill='#244a73'>生态系统多样性</text><text x='58' y='100'>不同生态系统类型、生境和生态过程的多样（森林、草原、湿地、农田……）</text><rect x='100' y='132' width='560' height='60' rx='10' fill='#eef7f6' stroke='#9ecfca'/><text x='118' y='156' font-weight='700' fill='#0f7f7c'>物种多样性</text><text x='118' y='178'>不同物种之间的差异（物种丰富度、物种均匀度）</text><rect x='180' y='210' width='400' height='52' rx='10' fill='#fdf2f6' stroke='#dcb4c4'/><text x='198' y='232' font-weight='700' fill='#8f1f48'>基因多样性</text><text x='198' y='252'>同一物种内不同个体之间基因的差异（种内差异）</text></g><text x='40' y='286' font-size='10.5' fill='#8a5a12'>三个层次都是长期协同进化的结果；种内看基因，种间看物种，生境看生态系统。</text></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把“协同进化”只理解成“物种之间”。</b>协同进化还包括<b>生物与无机环境之间</b>在相互影响中共同进化。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“适应”当成“生殖隔离”。</b>斑蝶类对 CA 不敏感只是适应，不能据此说它与其他蝴蝶已经生殖隔离。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把“附生”当成“寄生”。</b>附生只是附着生活，寄生要有一方受益、一方受损，且通常有营养依赖。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把传粉关系一律说成“互利共生”。</b>蜂蝶与油菜的传粉关系更准确的说法是<b>原始合作</b>；互利共生通常指长期紧密、相互依存。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把三个层次张冠李戴。</b>种内差异是基因多样性，种间差异是物种多样性，生境/生态系统类型差异是生态系统多样性。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>认为“物种数少就没有多样性价值”。</b>农田、果园等人工生态系统可能物种数少，但保存了作物品种的基因多样性，也是生态系统多样性的一部分。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>第一遍：先默画图 ②，把基因、物种、生态系统三个层次各写一个例子；再做第 1 关两道概念题。</li><li>第二遍：第 2 关是共生与寄生，重点分清“双方受益/一方受损/只是附着”。</li><li>第三遍：第 3 关是北京 2025 第 8 题和两道传粉/附生题，做完把“相互影响、共同进化”写在旁边。</li><li>综合题先列要点再对照答案，重点检查有没有写“双方都有变异、互为选择压力”。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（1 道）：</b>2025 年第 8 题（萝藦产生 CA、斑蝶 N 酶突变，考适应与协同进化）。</li><li><b>外地真题（5 道）：</b>2023 辽宁第 6 题（昆虫与共生微生物）、2024 湖南第 7 题（噬菌体与细菌）、2025 黑吉辽蒙第 7 题（海蟑螂与红藻）、2023 湖南第 4 题（油菜花与蜂蝶）、2025 陕晋青宁第 13 题（菌根真菌与小麦）。</li><li><b>原创题（6 道）：</b>协同进化概念、生物多样性三层次、生物多样性形成 3 道选择题，以及“花距与蛾喙”“猎豹与羚羊”“三个层次的多样性”3 道综合题，均标 <b>orig</b>。</li><li><b>未收的北京题及原因：</b>2024 年第 2 题、2022 年第 6 题归第一节（共同祖先的证据）；2023 年第 6 题归第二节（自然选择）；2026 年第 6 题归第三节（基因频率）；2024 年第 10 题（朱鹮）、2022 年第 15 题（国家植物园易地保护）、2025 年第 12 题（塞罕坝）归选择性必修2 的生物多样性保护与群落演替。<b>本节近 6 年北京真题只有 2025 年第 8 题，已收入。</b></li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；本页无原卷配图，两张示意图均为原创手绘 SVG，已在标题上标注“示意”。</li><li>2025 年陕晋青宁卷第 13 题（群落物种组成与生物多样性）已收入选择性必修 2「群落的结构」一页，本页不重复收录。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修2", chapter:"第六章 生物的进化", section:"第四节 协同进化与生物多样性的形成"};
+  var TOPIC = {1:"互利共生与协同进化", 2:"噬菌体与细菌的协同进化", 3:"萝藦与斑蝶：适应与协同进化", 4:"海蟑螂与红藻：互惠还是寄生", 5:"传粉关系与互利共生", 6:"菌根真菌与小麦：化学信息与能量流动", 7:"协同进化的概念边界", 8:"生物多样性的三个层次", 9:"生物多样性的形成原因", 10:"综合：花距与传粉蛾", 11:"综合：捕食者与猎物的军备竞赛", 12:"综合：三个层次的多样性"};
+  var LEVELS = [
+    {id:1, name:"协同进化与三个层次", sub:"先把概念边界和基因、物种、生态系统三层分清楚", badge:"基础", color:"#8f1f48", lcl:"#fdf2f6"},
+    {id:2, name:"共生与寄生", sub:"辽宁微生物、湖南噬菌体：谁受益、谁受损", badge:"基础+", color:"#0f7f7c", lcl:"#e6f7f6"},
+    {id:3, name:"传粉与捕食", sub:"北京 2025 第 8 题、黑吉辽蒙海蟑螂、湖南油菜花", badge:"巩固", color:"#a06412", lcl:"#fdf3e3"},
+    {id:4, name:"协同进化与多样性形成", sub:"陕西菌根真菌 + 多样性形成的原因", badge:"应用", color:"#2050c8", lcl:"#eef2ff"},
+    {id:5, name:"综合题", sub:"花距与蛾喙、捕食军备竞赛、三个层次", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:2, src:"2023·辽宁卷 第6题", kind:"real", star:2,
+      stem:"某些微生物与昆虫构建了互利共生的关系，共生微生物参与昆虫的生命活动并促进其生态功能的发挥。下列叙述错误的是",
+      opts:["昆虫为共生微生物提供了相对稳定生存环境", "与昆虫共生的微生物降低了昆虫的免疫力", "不同生境中同种昆虫的共生微生物可能不同", "昆虫与微生物共生的关系是长期协同进化的结果"],
+      ans:1,
+      why:"互利共生对双方都有利：昆虫为微生物提供稳定的生存环境和营养，微生物参与昆虫的代谢、营养或防御，往往<b>增强</b>而不是降低昆虫的免疫力，B 错。A、C、D 都符合互利共生与协同进化的含义：不同生境可选择不同的共生微生物，这种关系是长期协同进化的结果。",
+      tip:"互利共生的关键词是“<b>双方都受益</b>”；说“降低免疫力”这种单方受损的表述，先怀疑。"
+    },
+    {
+      id:2, lv:2, src:"2024·湖南卷 第7题", kind:"real", star:2,
+      stem:"我国科学家成功用噬菌体治疗方法治愈了耐药性细菌引起的顽固性尿路感染。下列叙述错误的是",
+      opts:["运用噬菌体治疗时，噬菌体特异性侵染病原菌", "宿主菌经噬菌体侵染后，基因定向突变的几率变大", "噬菌体和细菌在自然界长期的生存斗争中协同进化", "噬菌体繁殖消耗宿主菌的核苷酸、氨基酸和能量等"],
+      ans:1,
+      why:"噬菌体侵染细菌具有特异性，A 对；噬菌体侵染<b>不会</b>使宿主菌发生定向突变，突变是随机、不定向的，噬菌体只起选择作用，B 错；噬菌体与细菌长期相互选择、共同进化，C 对；噬菌体繁殖需要利用宿主菌的核苷酸、氨基酸和能量，D 对。",
+      tip:"“<b>定向突变</b>”四个字本身就是错的；突变不定向，选择才定向。"
+    },
+    {
+      id:3, lv:3, src:"2025·北京卷 第8题", kind:"real", star:3,
+      stem:"蝴蝶幼虫取食植物叶片，萝藦类植物进化出产生 CA 的能力，CA 抑制动物细胞膜上 N 酶的活性，对动物产生毒性，从而阻止大部分蝴蝶幼虫取食。斑蝶类蝴蝶因 N 酶发生了一个氨基酸替换而对 CA 不敏感，其幼虫可以取食萝藦。下列叙述错误的是",
+      opts:["斑蝶类蝴蝶对 CA 的适应主要源自基因突变和选择", "斑蝶类蝴蝶取食萝藦可减少与其他蝴蝶竞争食物", "N 酶基因突变导致斑蝶类蝴蝶与其他蝴蝶发生生殖隔离", "萝藦类植物和斑蝶类蝴蝶的进化是一个协同进化的实例"],
+      ans:2,
+      why:"斑蝶类 N 酶发生氨基酸替换，属于基因突变；自然选择保留了对 CA 不敏感的个体，A 对；斑蝶类取食萝藦，利用了其他蝴蝶不能利用的食物，减少了竞争，B 对；N 酶基因突变只是让斑蝶类<b>适应</b>萝藦，并不必然导致与其他蝴蝶的<b>生殖隔离</b>，C 错；萝藦产生 CA、斑蝶类 N 酶改变，两者相互影响、共同进化，是协同进化的实例，D 对。",
+      tip:"“<b>适应</b>”不等于“<b>生殖隔离</b>”；一个基因突变能带来适应，但不能单独判定新物种形成。"
+    },
+    {
+      id:4, lv:3, src:"2025·黑吉辽蒙卷 第7题", kind:"real", star:2,
+      stem:"红藻兼具无性生殖和有性生殖。海蟑螂依赖红藻躲避天敌，并取食红藻表面附生的硅藻，在此过程中携带了红藻的雄配子，使红藻有性生殖成功率提升。下列叙述错误的是",
+      opts:["海蟑螂与红藻存在互惠关系，二者协同进化", "海蟑螂数量减少不利于红藻形成多样的变异", "硅藻附生于红藻，因此二者存在寄生关系", "海蟑螂与红藻的关系类似传粉昆虫与虫媒花"],
+      ans:2,
+      why:"海蟑螂获得庇护和食物，红藻获得雄配子传播，双方受益，属互惠关系，长期互动可协同进化，A 对；海蟑螂帮助红藻进行有性生殖，增加基因重组，海蟑螂减少会使红藻的有性繁殖和变异减少，B 对；硅藻只是<b>附生</b>在红藻表面，题干没有说明它从红藻体内获取营养并造成损害，不能直接判定为寄生，C 错；海蟑螂携带雄配子，类似传粉昆虫与虫媒花，D 对。",
+      tip:"“<b>附生</b>”不一定是寄生；寄生要有一方受益、一方受损，且通常有营养依赖。"
+    },
+    {
+      id:5, lv:3, src:"2023·湖南卷 第4题", kind:"real", star:2,
+      stem:"“油菜花开陌野黄，清香扑鼻蜂蝶舞。”菜籽油是主要的食用油之一，秸秆和菜籽饼可作为肥料还田。下列叙述错误的是",
+      opts:["油菜花通过物理、化学信息吸引蜂蝶", "蜜蜂、蝴蝶和油菜之间存在协同进化", "蜂蝶与油菜的种间关系属于互利共生", "秸秆和菜籽饼还田后可提高土壤物种丰富度"],
+      ans:2,
+      why:"油菜花的颜色（物理信息）和香味（化学信息）能吸引蜂蝶，A 对；蜂蝶传粉、油菜提供花蜜，双方长期相互影响，存在协同进化，B 对；蜂蝶与油菜的传粉关系属于<b>原始合作</b>（双方受益但并非长期紧密、相互依存），不是严格的互利共生，C 错；秸秆和菜籽饼还田增加土壤有机质，可提高土壤生物物种丰富度，D 对。",
+      tip:"传粉关系常被归为“<b>原始合作</b>”，不是“互利共生”；互利共生通常指长期紧密、相互依存的关系。"
+    },
+    {
+      id:6, lv:1, src:"原创·教材改编", kind:"orig", star:1,
+      stem:"关于协同进化，下列叙述正确的是",
+      opts:["协同进化只发生在不同物种之间", "生物与无机环境之间在相互影响中共同进化，也属于协同进化", "协同进化就是生物对环境的单向适应", "协同进化一定能迅速形成新物种"],
+      ans:1,
+      why:"协同进化包括<b>不同物种之间</b>以及<b>生物与无机环境之间</b>在相互影响中不断进化和发展，A 错、B 对；协同进化强调“相互影响、共同进化”，不是生物对环境的单向适应，C 错；协同进化是长期过程，不一定迅速形成新物种，D 错。",
+      tip:"协同进化的两个方向：<b>物种与物种</b>、<b>生物与无机环境</b>；关键词是“相互影响”，不是“单向适应”。"
+    },
+    {
+      id:7, lv:1, src:"原创·教材改编", kind:"orig", star:1,
+      stem:"生物多样性包括三个层次，下列对应正确的是",
+      opts:["基因多样性——不同物种之间的差异", "物种多样性——同一物种内不同个体之间的差异", "生态系统多样性——不同生态系统类型及生态过程的多样", "生物多样性只有基因、物种两个层次"],
+      ans:2,
+      why:"基因多样性指<b>同一物种内</b>不同个体之间基因的差异，A 错；物种多样性指<b>不同物种</b>之间的差异，B 错；生态系统多样性指不同生态系统类型、生境和生态过程的多样，C 对；生物多样性包括基因、物种、生态系统三个层次，D 错。",
+      tip:"三层对应：<b>种内差异→基因；种间差异→物种；生境差异→生态系统</b>。"
+    },
+    {
+      id:8, lv:4, src:"原创·教材改编", kind:"orig", star:2,
+      stem:"关于生物多样性的形成，下列叙述正确的是",
+      opts:["生物多样性是长期协同进化的结果", "生物多样性形成过程中只有自然选择起作用", "生物多样性一旦形成就不会改变", "生物多样性只包括物种多样性"],
+      ans:0,
+      why:"不同物种之间、生物与无机环境之间长期相互影响、共同进化，形成了基因、物种、生态系统三个层次的多样性，A 对；生物多样性的形成是突变、基因重组、自然选择、隔离等多种因素共同作用的结果，B 错；生物多样性会随环境变化和生物进化而改变，C 错；生物多样性包括基因、物种、生态系统三个层次，D 错。",
+      tip:"生物多样性形成的完整表述：<b>突变和基因重组提供原材料，自然选择定向，隔离促成物种分化，长期协同进化形成三个层次</b>。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"花距与蛾喙：一场漫长的互相塑造",
+      material:"某地一种兰花的花距很深，花蜜藏在距的底部。当地只有一种长喙蛾的喙能够伸到距底取蜜，取蜜时头部沾上花粉，飞到另一朵花时完成传粉。调查发现，兰花的花距长度与长喙蛾的喙长存在对应关系：花距较长的年份/地区，长喙个体比例较高；花距较短的年份/地区，短喙个体比例较高。",
+      asks:[{q:"说明兰花与长喙蛾之间协同进化的证据。", pt:6}, {q:"如果花距突然变短，预测长喙蛾和短喙蛾的数量变化，并说明理由。", pt:4}, {q:"有人把这种关系概括为“兰花为了被传粉，主动让花距变长”，请评价这一说法。", pt:4}],
+      points:[
+        ["兰花的花距深度与蛾的喙长相互匹配", "长喙蛾能取到花蜜并获得食物，同时为兰花传粉；兰花获得传粉、繁殖成功", "花距较长的地区长喙个体比例高，花距较短地区短喙个体比例高，说明两者相互选择", "这种相互影响、共同进化就是协同进化"],
+        ["花距变短后，短喙蛾也能取到花蜜，短喙个体比例上升", "长喙蛾不再具有取蜜优势，甚至可能因维持长喙耗能更多而比例下降", "兰花的传粉者可能发生改变，花距与蛾喙的匹配关系随之改变", "选择方向由“花距深度”决定，环境一变，优势性状也变"],
+        ["该说法不准确", "变异是不定向的，兰花种群中原本就存在花距长短不同的个体", "是长喙蛾的取食和传粉对不同花距个体进行选择，使匹配的性状组合被保留", "不是兰花“为了”被传粉而主动改变，而是自然选择的结果"]
+      ],
+      tip:"协同进化题固定句式：<b>“双方相互选择、共同进化”</b>；不要写成“为了适应而主动改变”（拉马克式目的论）。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"猎豹与羚羊：谁在推动谁",
+      material:"非洲草原上，猎豹奔跑速度很快，羚羊也有很强的奔跑能力。研究发现，猎豹的加速能力与羚羊的急转能力相互“追赶”：猎豹速度提高后，羚羊中急转能力强的个体更容易逃脱；羚羊急转能力提高后，猎豹中加速能力强的个体更容易捕到猎物。类似地，某些植物产生毒素，取食它的昆虫则演化出解毒酶。",
+      asks:[{q:"用协同进化解释猎豹与羚羊奔跑能力的关系。", pt:6}, {q:"为什么“猎豹越跑越快”不会导致羚羊很快灭绝？", pt:4}, {q:"从协同进化角度，解释植物毒素与昆虫解毒酶的关系。", pt:4}],
+      points:[
+        ["猎豹和羚羊种群中都存在奔跑能力不同的变异", "猎豹中跑得快、加速强的个体更容易捕到猎物，存活繁殖率高", "羚羊中跑得快、急转强的个体更容易逃脱，存活繁殖率高", "双方互为选择压力，长期相互选择、共同进化，形成“军备竞赛”"],
+        ["羚羊也在进化：捕食压力使羚羊种群的奔跑、急转能力提高", "猎豹不能无限提速，奔跑耗能高、受伤风险大", "捕食者与猎物相互制约，猎物不会因单一选择压力迅速灭绝", "协同进化维持的是动态平衡，不是一方绝对压倒另一方"],
+        ["植物种群中存在毒素含量不同的变异，昆虫种群中存在解毒能力不同的变异", "毒素高的植物减少被取食，解毒能力强的昆虫能利用该植物", "植物被选择产生更多毒素，昆虫被选择提高解毒能力", "两者相互选择、共同进化，是协同进化的另一实例"]
+      ],
+      tip:"军备竞赛题的关键：<b>双方都有变异、互为选择压力、结果是动态平衡</b>；不要说“捕食者越强，猎物越弱”。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"三个层次的多样性怎么看",
+      material:"某研究小组比较了三块样地：热带雨林、温带草原和农田。热带雨林中乔木、灌木、草本层次分明，昆虫、鸟类种类多；温带草原以草本为主，物种数较少；农田物种数最少，但同一作物不同品种间的抗病性差异明显。三块样地的土壤、气候和人类活动强度也不同。",
+      asks:[{q:"分别指出材料中体现基因多样性、物种多样性和生态系统多样性的证据。", pt:6}, {q:"从协同进化角度，解释热带雨林物种多样性高的原因。", pt:4}, {q:"农田物种数少，是否意味着农田没有保护生物多样性的价值？说明理由。", pt:4}],
+      points:[
+        ["基因多样性：同一作物不同品种间抗病性差异明显（种内基因差异）", "物种多样性：热带雨林乔木、灌木、草本及昆虫、鸟类种类多，草原和农田物种数较少", "生态系统多样性：热带雨林、温带草原、农田是不同生态系统类型，土壤、气候、人类活动强度不同", "三个层次依次对应“种内—种间—生境”"],
+        ["热带雨林物种丰富，物种之间形成复杂的捕食、寄生、竞争、互利共生关系", "不同物种相互选择、共同进化，促使生态位分化，减少竞争", "长期协同进化使更多物种能够共存，形成较高的物种多样性", "复杂的群落结构又为更多生物提供栖息空间，进一步提高多样性"],
+        ["不能这样说", "农田虽然物种数少，但保存了大量作物品种及其野生近缘种，具有重要的基因多样性", "农田也是人工生态系统，是区域生态系统多样性的组成部分", "保护生物多样性不仅是“物种数多”，还包括基因资源和生态系统类型的保护"]
+      ],
+      tip:"三层次题先对号入座：<b>种内差异→基因；种间差异→物种；生境/生态系统类型→生态系统</b>；最后一问要落到“基因资源与生态系统类型也是多样性”。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "bio-c6-coevolution-biodiversity-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigCOEVO(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 320'><rect width='760' height='320' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#8f1f48'>协同进化的四种常见关系（示意图，非原卷图）</text><g font-size='11' fill='#3a2a30'><circle cx='380' cy='158' r='54' fill='#fdf2f6' stroke='#c46a8a' stroke-width='2'/><text x='380' y='154' font-size='12' text-anchor='middle' font-weight='700' fill='#8f1f48'>协同进化</text><text x='380' y='172' font-size='9.5' text-anchor='middle' fill='#a05a72'>相互影响 共同进化</text><rect x='54' y='66' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='70' y='90' font-weight='700'>捕食</text><text x='70' y='110'>猎豹与羚羊：速度军备竞赛</text><rect x='516' y='66' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='532' y='90' font-weight='700'>寄生</text><text x='532' y='110'>噬菌体与细菌：相互选择</text><rect x='54' y='196' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='70' y='220' font-weight='700'>传粉</text><text x='70' y='240'>兰花与长喙蛾：花距与喙长</text><rect x='516' y='196' width='190' height='66' rx='9' fill='#fff' stroke='#dcb4c4'/><text x='532' y='220' font-weight='700'>互利共生</text><text x='532' y='240'>菌根真菌与小麦：磷与有机物</text></g><g stroke='#c46a8a' stroke-width='2' fill='none'><path d='M326 142 L250 118'/><path d='M434 142 L510 118'/><path d='M326 176 L250 210'/><path d='M434 176 L510 210'/></g><text x='18' y='300' font-size='10.5' fill='#8a5a12'>注意：协同进化强调“双方相互影响”，不是一方对另一方的单向适应；结果也不一定是迅速形成新物种。</text></svg></div>"; }
+  function buildFigBIODIV(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#8f1f48'>生物多样性的三个层次（示意图，非原卷图）</text><g font-size='11' fill='#3a2a30'><rect x='40' y='54' width='680' height='60' rx='10' fill='#eef4fb' stroke='#9db8d2'/><text x='58' y='78' font-weight='700' fill='#244a73'>生态系统多样性</text><text x='58' y='100'>不同生态系统类型、生境和生态过程的多样（森林、草原、湿地、农田……）</text><rect x='100' y='132' width='560' height='60' rx='10' fill='#eef7f6' stroke='#9ecfca'/><text x='118' y='156' font-weight='700' fill='#0f7f7c'>物种多样性</text><text x='118' y='178'>不同物种之间的差异（物种丰富度、物种均匀度）</text><rect x='180' y='210' width='400' height='52' rx='10' fill='#fdf2f6' stroke='#dcb4c4'/><text x='198' y='232' font-weight='700' fill='#8f1f48'>基因多样性</text><text x='198' y='252'>同一物种内不同个体之间基因的差异（种内差异）</text></g><text x='40' y='286' font-size='10.5' fill='#8a5a12'>三个层次都是长期协同进化的结果；种内看基因，种间看物种，生境看生态系统。</text></svg></div>"; }
+  var FIG = {
+    "coevo": buildFigCOEVO,
+    "bioDiv": buildFigBIODIV
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

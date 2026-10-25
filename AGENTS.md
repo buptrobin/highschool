@@ -49,9 +49,35 @@
 | `C:\wangxp\script\bj-geo.json` | 2021—2026 北京等级考 112 题（含综合题与材料） |
 | `C:\wangxp\script\gk2.py` | 解析卷抽取器（两遍：题目区取题干选项、答案区按「1. A 2. C」+「【N 题详解】」对齐） |
 | `C:\wangxp\script\getfig.py` | 按题干关键词从原卷 docx 里取出该题配图 |
+| `C:\wangxp\script\bio-gk.json` | **生物** 选择题 1047 道（2022—2026 为主），北京 2022—2026 每年 15 道全 |
+| `tools/bio-bank.py` | 生物题库抽取器，用法 `python tools/bio-bank.py <真题根> <输出.json> [文件名过滤词]` |
+| `tools/bio-find.py` | 生物题库检索：`python tools/bio-find.py 关键词 [--bj] [--year 2023] [--n 20] [--full]` |
 
-原始卷宗：`C:\baidunetdiskdownload\历年高考真题合集\地理历年高考真题`（2008—2025，按年份分目录，解析卷/空白卷成对）、
+地理卷宗：`C:\baidunetdiskdownload\历年高考真题合集\地理历年高考真题`（2008—2025，按年份分目录，解析卷/空白卷成对）、
 `C:\baidunetdiskdownload\【2】北京2026高考真题`（北京 2021—2026）。
+
+生物卷宗：`C:\baidunetdiskdownload\历年高考真题合集\生物历年高考真题`（2008—2025 解析卷 docx）、
+`C:\baidunetdiskdownload\【2】北京2026高考真题`（北京 2021—2026；2026 只有空白卷+答案卷）。
+
+生物题库抽取踩过的坑（改 `bio-bank.py` 前先看）：
+
+- 选项字母 `[A-D]` 前面必须排除英文字母/数字，否则 `DNA`、`ATP`、`C3` 里的字母会被当选项切碎
+- 北京卷一段常只放两个选项（`A. 自养　B. 单细胞`），不能要求「一段切满 3 个」才收
+- 还有 `A 乙烯抑制主根生长`（无点号）与 `A 吗啡…　B. 阿片…`（混排）两种写法：
+  先把段首无点号标记补成 `A. `，再统一按点号切
+- 部分解析卷没有 `【答案】`（江苏、河北、天津），答案在卷末 `1-5 BDDCB　6-10 DACAC` 块里
+- 2026 北京这类只有空白卷+答案卷的年份，走「空白卷取题干、答案卷取『第 N 题 / 答案：X』」配对
+- 抽完仍有 30 余道题的选项在原卷里是图片，抽出来只剩单字母，这些不要用
+
+**北京答案已交叉核对**（`python tools/bio-audit.py`：用另一份【答案卷】独立抽一遍再对）：
+2023—2026 共 60 道选择题 **0 冲突**；2022 的答案卷是残卷（文档自述"题目 6-15 解析此处略去"），
+只核到 5 道也 0 冲突，其余只能以解析卷为准。
+
+### 验收脚本的科目参数
+
+`tools/qa-quiz.ps1` / `qa-quiz.mjs` 默认测 `quiz/geo/`，测别的科目必须显式给科目：
+
+    powershell -NoProfile -ExecutionPolicy Bypass -File tools\qa-quiz.ps1 -Subject bio bx1-c1-s1
 
 新科目要复用时，先按 `gk2.py` 的路子批量抽题建库，再按上面的优先级选题。
 
@@ -98,3 +124,76 @@
 - 改目录结构改 `content/*.txt`，然后 `python tools/build.py`
 - `build.py` **不会覆盖**已存在的内容页，所以 `pages/` 里的正文安全
 - 优先复用 `assets/app.css` 的既有变量与类，不要为单个页面造一套样式
+
+## 多人并行做同一科目时踩过的坑（2026-10 生物全册）
+
+### 1. `qa-quiz.ps1` 的端口必须动态分配
+
+原来写死 `--remote-debugging-port=9333`，七八个组同时验收时会连到别人起的 Chrome，
+拿到**别的页**的 `q` / `hud`，看起来"通过"其实没测。现在已经改成：每次用
+`TcpListener(0)` 找一个空闲端口，等 `/json/version` 真有应答再跑，失败重试三次；
+`qa-quiz.mjs` 的返回值里也多了 `page` 字段，页名不符直接判 `BAD`。
+
+自查口诀：**`q` = 选择题数 + 综合题数，`hud` = 选择题数，`page` = 本页文件名**，三者
+对不上就是串台，重跑。
+
+### 2. `qa-dupcheck.py` 认不出同一道题的几种写法
+
+同一道题在一页写成 `2024·北京 第3题`、另一页写成 `2024·北京卷 第3题` 或
+`2024·湖南卷第9题`（"卷"字紧贴"第"、没空格），旧版正则两条都识别不了，于是
+**跨页重复整批漏检**。现在比对前会去掉「卷」字、且「第」前空格可有可无。
+改完之后生物全册立刻从 5 条重复涨到 11 条——说明以前是真的在漏。
+
+### 3. 专题页和教材节页会抢同一批真题
+
+`content/bio.extra.txt` 里那 7 个专题（系谱图、光合曲线、细胞分裂图像……）本质上是
+教材节页的子集，两边都想用北京真题。裁决原则（用户认可）：
+
+**教材节页优先，专题页让位。** 专题页换同考点的**外地真题或原创题**，页脚注明
+「XX 题已收入 XX 页」，并让读者去那一页做原题。专题页真正提供的价值是**方法训练**
+（读图三步、曲线四看、判断顺序），不是原题本身。
+
+新建专题页时，最好一开始就只用外地真题＋原创，省得事后返工。
+
+### 4. `qx.py` 会取到相邻题的图
+
+`python tools/qx.py <docx> "<关键词>" --fig <out.png>` 是按"关键词邻近"猜图的。
+一道题一段图的版式没问题，但**多题共用一段排版**时（2026 北京卷第 4、5 题就是），
+会把第 4 题的减数分裂照片塞给第 5 题的家系图位置。
+
+改用 `tools/qx-rid.py`：
+
+    python tools/qx-rid.py <docx> --list          # 列出每个 rId 前后是哪道题的题干
+    python tools/qx-rid.py <docx> rId7 out.png    # 按 rId 精确导出
+
+**凡是配图与题意对不上，先怀疑取图这一步**，直接用肉眼看一遍 `figs/` 下的 png。
+
+### 5. 脚本写回必须带 BOM
+
+`tools/qa-quiz.ps1` 被 `write` 工具重写成 UTF-8 无 BOM 后，`powershell -File`（5.1）
+按 ANSI 解码中文注释，直接报 `意外的标记")"`。修法：
+
+    $t = [IO.File]::ReadAllText($p, [Text.Encoding]::UTF8)
+    [IO.File]::WriteAllText($p, $t, [Text.UTF8Encoding]::new($true))
+
+### 6. 组里重新安装旧 spec 会覆盖主控的改动
+
+主控从某个 spec 里删掉一道题后，如果该页的负责组随后又用旧内存里的 spec 生成并
+`--build`/`--force` 安装一次，被删的题会**复活**。所以：
+
+- 边建边查重没有意义，**最终查重必须等所有组停手后再跑一遍**
+- 要改别人负责的 spec，改完必须**通知那个组**，别指望它自己发现
+
+### 7. `star` 只能取 1—3，写 4 会炸
+
+模板里画难度星是 `'☆'.repeat(...)`，`star:4` 会让它拿到负数个数，直接抛
+`RangeError`。表现很迷惑：QA 报 `q` 少一半、`lv` 只到 3，看着像端口串台，其实是
+难度星溢出。写 spec 时 `star` 一律 ≤3。
+
+### 8. 主控收尾的顺序（生物全册用过一遍）
+
+1. 所有组停手 → `python tools/qa-dupcheck.py quiz/bio` 跑到 0 重复
+2. 全量 QA：`powershell -NoProfile -ExecutionPolicy Bypass -File tools\qa-quiz.ps1 -Subject bio <所有 slug>`
+3. 抽查版式：`node tools/shot.mjs bio <slug> out/shots/x.png`，肉眼看图与页首统计
+4. `python tools/build.py`（**只在这里跑一次**，接通目录徽标、首页入口、解析页的「去刷题」）
+5. 清理临时物（`out/`、`tmp-*/` 已在 `.gitignore`），提交

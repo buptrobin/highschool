@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>细胞中的无机物</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "bio", "slug": "bx1-c2-s2", "n": 12, "title": "细胞中的无机物"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=bio&quiz=1">‹ 生物 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 必修1 分子与细胞 · 第二章第二节</span>
+        <h1>细胞中的无机物<span class="thin">北京卷 0 道 · 外地真题 3 道 · 5 关 12 题</span></h1>
+        <p class="lede">这一节只有两个主角：<b>水</b>和<b>无机盐</b>。水的考点集中在一句话——<b>自由水与结合水的比值决定代谢强弱</b>；无机盐的考点集中在“以什么形式存在、起什么作用”。种子萌发、种子储藏、抗寒抗旱，这三类情境几乎年年出现。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>3</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='246' rx='18' fill='#eff6ff'/><g><circle cx='110' cy='110' r='16' fill='#93c5fd'/><circle cx='150' cy='92' r='12' fill='#bfdbfe'/><circle cx='186' cy='124' r='14' fill='#93c5fd'/><circle cx='128' cy='156' r='11' fill='#bfdbfe'/><circle cx='176' cy='166' r='9' fill='#93c5fd'/></g><text x='150' y='74' font-size='10.5' fill='#1e3a8a' text-anchor='middle' font-weight='700'>自由水：溶剂 · 运输 · 反应</text><rect x='92' y='196' width='116' height='34' rx='8' fill='#fff' stroke='#2563eb' stroke-width='2'/><text x='150' y='218' font-size='10.5' fill='#1e3a8a' text-anchor='middle' font-weight='700'>结合水：结构</text><text x='150' y='258' font-size='10.5' fill='#475569' text-anchor='middle'>比值高 → 代谢强；比值低 → 抗逆强</text></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：水看比值，盐看形式</h2></div>
+  <p class="sec-sub">左图把水的两种存在形式与功能分开；右图是无机盐的三类作用。所有“种子能不能发芽、植株抗不抗寒”的题，都从这两张图出发。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京等级考 2022—2026（越近权重越高）</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 3 年北京 0 题</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 6 年北京 0 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地近 3 年 3 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 3 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷近 5 年（2022—2026）没有单独考“细胞中的无机物”的选择题。与水和无机盐有关的北京题都落在别的节：2025 年第 15 题考质壁分离（第 4 章物质跨膜运输），2026 年第 9 题考运动时的渗透压与抗利尿激素（内环境），均不属本节。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>近 3 年 0 道、近 6 年 0 道</b>。2025 年第 15 题（植物细胞吸水和失水）虽涉及水，但考点是质壁分离与水分进出方式，归第四章第一节；2026 年第 9 题（运动出汗、细胞外液渗透压）归内环境与稳态，故本页均未收。外地卷：<b>2024 年江西第 5 题</b>（种子萌发与水）、<b>2025 年湖北第 7 题</b>（种子受潮，结合水与自由水）、<b>2024 年贵州第 1 题</b>（水与无机盐）收入。</p>
+</div><div class="panel"><p class="panel-title">① 自由水与结合水（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#1e3a8a'>自由水与结合水（示意图，非原卷图）</text><rect x='26' y='48' width='330' height='150' rx='12' fill='#eff6ff' stroke='#93c5fd'/><text x='44' y='72' font-size='12' font-weight='700' fill='#1e3a8a'>自由水（约占 95% 以上的水）</text><text x='44' y='98' font-size='11'>· 良好溶剂，溶解营养物质</text><text x='44' y='120' font-size='11'>· 参与运输</text><text x='44' y='142' font-size='11'>· 参与化学反应（反应物 / 产物）</text><text x='44' y='164' font-size='11'>· 提供液体环境</text><text x='44' y='186' font-size='11'>→ 越多，代谢越旺盛</text><rect x='380' y='48' width='350' height='150' rx='12' fill='#f0fdf3' stroke='#86efac'/><text x='398' y='72' font-size='12' font-weight='700' fill='#166534'>结合水（与蛋白质等结合）</text><text x='398' y='98' font-size='11'>· 细胞结构的重要组成成分</text><text x='398' y='120' font-size='11'>· 失去流动性和溶解性</text><text x='398' y='142' font-size='11'>· 晒干去不掉，烘干才失去</text><text x='398' y='164' font-size='11'>→ 比例越高，抗逆性越强</text><rect x='26' y='216' width='704' height='46' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='42' y='238' font-size='11.5' font-weight='700' fill='#9a3412'>判断口诀：</text><text x='120' y='238' font-size='11.5'>自由水/结合水比值升高 → 代谢旺盛、生长快、抗逆性下降；比值降低 → 代谢减弱、抗逆性增强。</text><text x='42' y='256' font-size='11' fill='#9a3412'>例：种子萌发比值升高；越冬、抗旱、休眠时比值降低。</text></svg></div></div><div class="panel"><p class="panel-title">② 无机盐的三类作用（示意图，非原卷图）</p><div class="svg-box" id="map-fig-salt"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#166534'>无机盐的三类作用（示意图，非原卷图）</text><rect x='26' y='46' width='220' height='120' rx='10' fill='#eff6ff' stroke='#93c5fd'/><text x='44' y='70' font-size='12' font-weight='700' fill='#1e3a8a'>① 参与结构</text><text x='44' y='94' font-size='11'>Mg → 叶绿素</text><text x='44' y='116' font-size='11'>Fe → 血红蛋白</text><text x='44' y='138' font-size='11'>Ca、P → 骨骼、牙齿</text><text x='44' y='158' font-size='11'>I → 甲状腺激素</text><rect x='266' y='46' width='220' height='120' rx='10' fill='#f0fdf3' stroke='#86efac'/><text x='284' y='70' font-size='12' font-weight='700' fill='#166534'>② 维持稳态</text><text x='284' y='94' font-size='11'>维持渗透压（Na⁺、Cl⁻）</text><text x='284' y='116' font-size='11'>维持酸碱平衡（HCO₃⁻）</text><text x='284' y='138' font-size='11'>维持神经肌肉兴奋性</text><text x='284' y='158' font-size='11'>（Ca²⁺ 过低会抽搐）</text><rect x='506' y='46' width='228' height='120' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='524' y='70' font-size='12' font-weight='700' fill='#9a3412'>③ 参与信息传递</text><text x='524' y='94' font-size='11'>Ca²⁺ 参与肌肉收缩</text><text x='524' y='116' font-size='11'>Ca²⁺ 参与神经递质释放</text><text x='524' y='138' font-size='11'>作为酶的激活剂</text><rect x='26' y='186' width='708' height='70' rx='10' fill='#f8fafc' stroke='#cbd5e1'/><text x='42' y='208' font-size='11.5' font-weight='700'>存在形式：</text><text x='116' y='208' font-size='11.5'>细胞中无机盐大多以离子形式存在；少数以化合物形式参与结构（如 Mg 在叶绿素中）。</text><text x='42' y='234' font-size='11.5'>缺素实验：</text><text x='116' y='234' font-size='11.5'>完全培养液 vs 缺素培养液，单一变量、其余条件相同且适宜，观察生长状况与叶片颜色。</text></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>六个最容易丢分的点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>把“受潮”说成结合水升高。</b>受潮＝自由水升高＝代谢增强；结合水升高是抗逆时的变化方向。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>“晒干”与“烘干”混用。</b>晒干只失自由水、种子仍活；烘干破坏结构、种子死亡。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>认为水能供能。</b>水是溶剂、反应物、结构成分，但不供能；直接供能的是 ATP。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>把 Mg 当微量元素。</b>Mg 是大量元素；Fe、Mn、Zn、Cu、B、Mo 才是微量元素。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>认为钙只以化合物形式存在。</b>Ca²⁺ 参与信息传递与肌肉收缩，是离子形式的功能。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>忘记“水也是产物”。</b>脱水缩合、有氧呼吸第三阶段都生成水；只说“水是反应物”会丢分。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先默写“自由水/结合水比值”的两条结论，再进第 1 关。</li><li>第 2 关三道真题都带情境（种子、农谚、幼苗），读题时先圈出“水多还是水少”。</li><li>缺素培养那题按模板自己写一遍分组与预期结果。</li><li>综合题第 12 题要把“冰点”和“自由水”两条线都写上。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（0 道）：</b>北京卷近 5 年没有单独考“细胞中的无机物”的选择题。2025 年第 15 题（植物细胞吸水和失水）考点是质壁分离与水分进出方式，归第四章第一节；2026 年第 9 题（运动时细胞外液渗透压与抗利尿激素）归内环境与稳态，故均未收入本页。</li><li><b>外地真题（3 道）：</b>2024 年江西第 5 题（种子萌发与水）、2025 年湖北第 7 题（种子受潮与结合水）、2024 年贵州第 1 题（水与无机盐）。</li><li><b>原创题（9 道）：</b>自由水与结合水、无机盐的存在形式与功能、缺镁实验、水的功能对应、水分管理、水与无机盐综合判断 6 道选择题，以及种子储藏、缺素培养、越冬抗寒 3 道综合题，均标 <b>orig</b>。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；页内两张示意图为原创手绘 SVG，已在标题标注“示意图，非原卷图”；收入的选择题原卷均无配图。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修1", chapter:"第二章 组成细胞的分子", section:"第二节 细胞中的无机物"};
+  var TOPIC = {1:"水与种子萌发", 2:"结合水与自由水", 3:"水与无机盐的功能", 4:"自由水与结合水的比值", 5:"无机盐的存在形式与功能", 6:"缺素培养实验", 7:"水的作用", 8:"生产中的水分管理", 9:"无机盐与稳态"};
+  var LEVELS = [
+    {id:1, name:"细胞中的水", sub:"江西 2024 第 5 题、湖北 2025 第 7 题：种子萌发与受潮", badge:"基础", color:"#2563eb", lcl:"#eff6ff"},
+    {id:2, name:"无机盐的功能", sub:"贵州 2024 第 3 题：水与无机盐一起考", badge:"基础+", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:3, name:"水与代谢、抗逆", sub:"自由水/结合水的比值：本节最高频的判断依据", badge:"巩固", color:"#16a34a", lcl:"#f0fdf3"},
+    {id:4, name:"本节易错", sub:"结合水比例、无机盐存在形式、烘干与晒干", badge:"易错", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"种子储藏与萌发、缺素培养、抗逆与自由水", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"2024·江西 第5题", kind:"real", star:2,
+      stem:"农谚有云：“雨生百谷”。“雨”有利于种子的萌发，是“百谷”丰收的基础。下列关于种子萌发的说法，错误的是",
+      opts:["种子萌发时，细胞内自由水所占的比例升高", "水可借助通道蛋白以协助扩散方式进入细胞", "水直接参与了有氧呼吸过程中丙酮酸的生成", "光合作用中，水的光解发生在类囊体薄膜上"],
+      ans:2,
+      why:"种子萌发时吸水，自由水比例升高，代谢增强，A 对；水可通过水通道蛋白以协助扩散方式进出细胞，B 对；有氧呼吸第一阶段（葡萄糖分解为丙酮酸）不消耗水，水参与的是第二阶段，C 错（本题选错误项）；水的光解发生在类囊体薄膜上，D 对。",
+      tip:"有氧呼吸三个阶段的“水账”：<b>第一阶段不耗水、第二阶段耗水、第三阶段生成水</b>。"
+    },
+    {
+      id:2, lv:1, src:"2025·湖北 第7题", kind:"real", star:2,
+      stem:"我国农学家贾思勰所著《齐民要术》记载：“凡五谷种子，浥郁则不生，生者亦寻死。”意思是种子如果受潮发霉就不会发芽，即使发芽也会很快死亡。下列叙述错误的是",
+      opts:["农业生产中，种子储藏需要干燥的环境", "种子受潮导致细胞内结合水比例升高，自由水比例降低，细胞代谢减弱", "霉菌在种子上大量繁殖，消耗了种子的营养物质，不利于种子正常萌发", "发霉过程中，微生物代谢产生的有害物质可能抑制种子萌发相关酶的活性"],
+      ans:1,
+      why:"干燥环境可降低种子的呼吸消耗，利于储藏，A 对；种子受潮后<b>自由水比例升高</b>、结合水比例降低，细胞代谢增强，种子容易发芽或霉变，B 错（本题选错误项）；霉菌繁殖会消耗种子营养物质，C 对；霉菌产生的毒素或有害代谢物可抑制酶活性，D 对。",
+      tip:"方向别反：<b>受潮＝自由水↑＝代谢↑</b>；干燥＝自由水↓＝代谢↓，才利于储藏。"
+    },
+    {
+      id:3, lv:2, src:"2024·贵州 第1题", kind:"real", star:2,
+      stem:"种子萌发形成幼苗离不开糖类等能源物质，也离不开水和无机盐。下列叙述正确的是",
+      opts:["种子吸收的水与多糖等物质结合后，水仍具有溶解性", "种子萌发过程中糖类含量逐渐下降，有机物种类不变", "幼苗细胞中的无机盐可参与细胞构建，水不参与", "幼苗中的水可参与形成NADPH，也可参与形成NADH"],
+      ans:3,
+      why:"水与多糖等结合后成为结合水，失去流动性和溶解性，A 错；萌发过程中糖类被消耗，同时转化为其他有机物，有机物种类会变化，B 错；水也参与细胞构建（如结合水是结构组成成分），C 错；水参与光合作用的光解形成 NADPH，也参与有氧呼吸第二阶段形成 NADH，D 对。",
+      tip:"“水不参与结构”是常见错误；<b>结合水就是结构水</b>，而 NADPH/NADH 的生成都有水参与。"
+    },
+    {
+      id:4, lv:2, src:"原创·教材改编", kind:"orig", star:2,
+      stem:"下列关于自由水与结合水的叙述，正确的是",
+      opts:["自由水与结合水的比值越高，细胞代谢越弱", "结合水是细胞内的良好溶剂，参与物质运输", "越冬植物细胞内结合水比例升高，有利于增强抗寒能力", "种子晒干过程中失去的主要是结合水"],
+      ans:2,
+      why:"自由水与结合水的比值越高，代谢越旺盛，A 错；良好溶剂、参与运输的是<b>自由水</b>，B 错；结合水比例升高可降低代谢、增强抗逆性（抗寒、抗旱），C 对；晒干失去的主要是自由水，烘干才失去结合水，D 错。",
+      tip:"一句话：<b>比值高＝代谢旺，比值低＝抗逆强</b>；晒干丢自由水，烘干丢结合水。"
+    },
+    {
+      id:5, lv:2, src:"原创·教材改编", kind:"orig", star:2,
+      stem:"下列关于细胞中无机盐的叙述，错误的是",
+      opts:["无机盐在细胞中大多以离子的形式存在", "Mg是构成叶绿素的元素，缺Mg会影响光合作用", "无机盐参与维持细胞的酸碱平衡和渗透压", "钙在细胞中只以化合物的形式存在，不参与信息传递"],
+      ans:3,
+      why:"无机盐大多以离子形式存在，A 对；Mg 是叶绿素的组成元素，缺 Mg 叶片发黄、光合作用受影响，B 对；无机盐参与维持酸碱平衡和渗透压，C 对；钙既以化合物形式存在（骨骼、牙齿），也以 Ca²⁺ 形式参与信息传递（如肌细胞收缩、神经递质释放），D 错（本题选错误项）。",
+      tip:"无机盐的“两副面孔”：<b>离子形式</b>维持渗透压、pH、信息传递；<b>化合物形式</b>参与结构（骨骼、叶绿素、血红蛋白）。"
+    },
+    {
+      id:6, lv:3, src:"原创·实验设计", kind:"orig", star:2,
+      stem:"用完全培养液和缺镁培养液分别培养同种植物幼苗，其他条件相同且适宜。一段时间后，缺镁组叶片发黄。下列分析错误的是",
+      opts:["该实验的自变量是培养液中是否含镁", "叶片发黄是因为缺镁影响了叶绿素的合成", "若在缺镁培养液中补充镁，发黄叶片可能恢复绿色", "该实验说明镁是植物体内的微量元素"],
+      ans:3,
+      why:"两组唯一差别是培养液是否含镁，自变量是镁的有无，A 对；Mg 是叶绿素的组成元素，缺 Mg 叶绿素合成受阻、叶片发黄，B 对；补充镁后若植株仍能生长，新叶可恢复绿色，C 对；镁属于<b>大量元素</b>，不是微量元素，D 错（本题选错误项）。",
+      tip:"大量元素记“<b>C、H、O、N、P、S、K、Ca、Mg</b>”，Mg 在其中；Fe、Mn、Zn、Cu、B、Mo 才是微量元素。"
+    },
+    {
+      id:7, lv:3, src:"原创·功能辨析", kind:"orig", star:2,
+      stem:"下列生理过程与水的功能，对应错误的是",
+      opts:["作为良好溶剂——营养物质溶解后运输", "作为反应物——参与光合作用的光解和有氧呼吸第二阶段", "作为结构成分——结合水参与构成细胞结构", "作为能源物质——为细胞生命活动直接供能"],
+      ans:3,
+      why:"自由水是良好溶剂，可溶解并运输物质，A 对；水是反应物，参与光解和有氧呼吸第二阶段，B 对；结合水是细胞结构的重要组成成分，C 对；水不能为生命活动供能，直接供能物质是 ATP，D 错（本题选错误项）。",
+      tip:"水不是能源物质——这是送分点，也是很多人凭直觉选错的地方。"
+    },
+    {
+      id:8, lv:4, src:"原创·生产应用", kind:"orig", star:2,
+      stem:"下列关于生产、生活中水分管理的叙述，错误的是",
+      opts:["种子入库前要晒干，目的是降低自由水含量、减弱呼吸作用", "低温储藏蔬菜可减少水分散失，保持细胞活性", "给花卉施肥过多会造成“烧苗”，原因是土壤溶液浓度过高使根细胞失水", "种子烘干后仍能正常萌发，因为烘干只失去自由水"],
+      ans:3,
+      why:"晒干降低自由水，减弱呼吸消耗，利于储藏，A 对；低温、保湿可减少失水并抑制呼吸，B 对；施肥过多使土壤溶液浓度高于细胞液，根细胞失水，C 对；烘干会破坏蛋白质等结构与结合水，种子失去活性、不能萌发，D 错（本题选错误项）。",
+      tip:"晒干（活）与烘干（死）是本节最经典的一组对照：<b>烘干杀死种子</b>。"
+    },
+    {
+      id:9, lv:4, src:"原创·易错辨析", kind:"orig", star:2,
+      stem:"关于细胞中水和无机盐的叙述，正确的是",
+      opts:["水既是良好的溶剂，也是细胞内许多化学反应的产物", "无机盐在细胞内含量很高，是主要的结构物质", "细胞中自由水越多，抗逆性越强", "无机盐只能以离子形式被细胞吸收和利用"],
+      ans:0,
+      why:"水是良好溶剂，同时脱水缩合、有氧呼吸第三阶段等反应都生成水，A 对；无机盐在细胞中含量很少（1%～1.5%），不是主要结构物质，B 错；自由水越多代谢越旺、抗逆性越弱，C 错；无机盐可以离子形式被吸收，也可以化合物形式参与结构（如 Mg 参与叶绿素），D 错。",
+      tip:"“水既是反应物又是产物”要能各举一例：反应物——光解；产物——脱水缩合。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"种子从入库到萌发：水分怎么管",
+      material:"某仓库要储存一批小麦种子，入库前测得其含水量为 18%，储藏期间部分种子发热、发霉。另一组同学把同一批种子分成甲、乙两组：甲组晒干后密闭保存，乙组保持湿润并置于温暖处，一段时间后甲组不萌发、乙组萌发。",
+      asks:[{q:"入库前为什么要晒干？从自由水与代谢的角度解释。", pt:4}, {q:"甲组晒干后不萌发、乙组萌发，说明种子萌发需要什么条件？", pt:4}, {q:"若把甲组种子放在火上烘干后再播种，能萌发吗？为什么？", pt:6}],
+      points:[
+        ["晒干降低自由水含量，自由水与结合水的比值下降", "细胞呼吸减弱，有机物消耗减少", "同时抑制霉菌等微生物的生长，防止发热霉变"],
+        ["种子萌发需要充足的水分（自由水）", "还需要适宜的温度和充足的氧气", "甲组缺水分，代谢被抑制，故不萌发"],
+        ["不能萌发", "烘干温度高，会破坏蛋白质的空间结构和细胞膜结构，并失去结合水", "细胞死亡，失去活性，因此不能萌发", "（对比：晒干只失去自由水，种子仍保持活性）"]
+      ],
+      tip:"这题的得分点在“<b>晒干与烘干</b>”的对照：一个保活性，一个杀活性。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"缺素培养：设计一个证明镁是必需元素的实验",
+      material:"现有完全培养液、缺镁培养液、同种植物幼苗若干、蒸馏水、含镁的无机盐。某小组要证明镁是植物生长的必需元素。",
+      asks:[{q:"写出实验思路（分组、变量、观察指标）。", pt:6}, {q:"预期结果与结论是什么？", pt:4}, {q:"若缺镁组叶片发黄，从叶绿素的组成角度解释原因，并说明为什么该实验要设完全培养液组。", pt:4}],
+      points:[
+        ["取生长状况相同的幼苗若干，随机均分为甲、乙两组", "甲组用完全培养液培养，乙组用缺镁培养液培养，其他条件相同且适宜", "一段时间后观察并比较两组植株的生长状况和叶片颜色"],
+        ["甲组生长正常、叶片绿色；乙组生长不良、叶片发黄", "在缺镁培养液中补充镁后，乙组新叶恢复绿色", "说明镁是植物生长的必需元素"],
+        ["Mg 是叶绿素的组成元素，缺 Mg 时叶绿素合成受阻，叶片发黄", "完全培养液组是对照组，排除培养液其他成分和培养条件对结果的影响", "只有对照才能说明“缺镁”是唯一原因"]
+      ],
+      tip:"缺素实验的答题模板：<b>分组→单一变量→相同适宜条件→观察指标→预期结果→结论</b>。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"为什么寒冬的麦苗更“抗冻”",
+      material:"研究表明，冬小麦在越冬前细胞内自由水与结合水的比值会下降，细胞液浓度升高；而同一品种若在温暖环境中持续生长，越冬时更容易受冻害。",
+      asks:[{q:"越冬前自由水与结合水的比值下降，对小麦有什么意义？", pt:4}, {q:"细胞液浓度升高为什么有利于抗冻？", pt:4}, {q:"从水的角度解释：为什么刚浇过水、土壤含水量高的地块，麦苗反而更容易受冻害？", pt:6}],
+      points:[
+        ["自由水减少、结合水增多，细胞代谢减弱，消耗的有机物减少", "细胞内可溶性糖等物质积累，细胞液浓度升高", "有利于增强抗寒、抗旱能力"],
+        ["细胞液浓度升高，冰点降低，细胞内不易结冰", "结冰会刺破细胞膜和细胞器膜，浓度高可减少冰晶形成", "同时结合水比例高，自由水少，结冰的水量也少"],
+        ["土壤含水量高，植株吸水多，自由水含量升高", "自由水多、细胞液浓度被稀释，冰点升高，更容易结冰", "自由水多使代谢旺盛、抗逆性下降", "因此越冬前要适当控水，提高细胞液浓度"]
+      ],
+      tip:"抗逆题的万能逻辑：<b>结合水↑、自由水↓、细胞液浓度↑ → 冰点↓、代谢↓ → 抗逆↑</b>。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "bio-inorganic-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigWATER(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#1e3a8a'>自由水与结合水（示意图，非原卷图）</text><rect x='26' y='48' width='330' height='150' rx='12' fill='#eff6ff' stroke='#93c5fd'/><text x='44' y='72' font-size='12' font-weight='700' fill='#1e3a8a'>自由水（约占 95% 以上的水）</text><text x='44' y='98' font-size='11'>· 良好溶剂，溶解营养物质</text><text x='44' y='120' font-size='11'>· 参与运输</text><text x='44' y='142' font-size='11'>· 参与化学反应（反应物 / 产物）</text><text x='44' y='164' font-size='11'>· 提供液体环境</text><text x='44' y='186' font-size='11'>→ 越多，代谢越旺盛</text><rect x='380' y='48' width='350' height='150' rx='12' fill='#f0fdf3' stroke='#86efac'/><text x='398' y='72' font-size='12' font-weight='700' fill='#166534'>结合水（与蛋白质等结合）</text><text x='398' y='98' font-size='11'>· 细胞结构的重要组成成分</text><text x='398' y='120' font-size='11'>· 失去流动性和溶解性</text><text x='398' y='142' font-size='11'>· 晒干去不掉，烘干才失去</text><text x='398' y='164' font-size='11'>→ 比例越高，抗逆性越强</text><rect x='26' y='216' width='704' height='46' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='42' y='238' font-size='11.5' font-weight='700' fill='#9a3412'>判断口诀：</text><text x='120' y='238' font-size='11.5'>自由水/结合水比值升高 → 代谢旺盛、生长快、抗逆性下降；比值降低 → 代谢减弱、抗逆性增强。</text><text x='42' y='256' font-size='11' fill='#9a3412'>例：种子萌发比值升高；越冬、抗旱、休眠时比值降低。</text></svg></div>"; }
+  function buildFigSALT(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#166534'>无机盐的三类作用（示意图，非原卷图）</text><rect x='26' y='46' width='220' height='120' rx='10' fill='#eff6ff' stroke='#93c5fd'/><text x='44' y='70' font-size='12' font-weight='700' fill='#1e3a8a'>① 参与结构</text><text x='44' y='94' font-size='11'>Mg → 叶绿素</text><text x='44' y='116' font-size='11'>Fe → 血红蛋白</text><text x='44' y='138' font-size='11'>Ca、P → 骨骼、牙齿</text><text x='44' y='158' font-size='11'>I → 甲状腺激素</text><rect x='266' y='46' width='220' height='120' rx='10' fill='#f0fdf3' stroke='#86efac'/><text x='284' y='70' font-size='12' font-weight='700' fill='#166534'>② 维持稳态</text><text x='284' y='94' font-size='11'>维持渗透压（Na⁺、Cl⁻）</text><text x='284' y='116' font-size='11'>维持酸碱平衡（HCO₃⁻）</text><text x='284' y='138' font-size='11'>维持神经肌肉兴奋性</text><text x='284' y='158' font-size='11'>（Ca²⁺ 过低会抽搐）</text><rect x='506' y='46' width='228' height='120' rx='10' fill='#fff7ed' stroke='#fdba74'/><text x='524' y='70' font-size='12' font-weight='700' fill='#9a3412'>③ 参与信息传递</text><text x='524' y='94' font-size='11'>Ca²⁺ 参与肌肉收缩</text><text x='524' y='116' font-size='11'>Ca²⁺ 参与神经递质释放</text><text x='524' y='138' font-size='11'>作为酶的激活剂</text><rect x='26' y='186' width='708' height='70' rx='10' fill='#f8fafc' stroke='#cbd5e1'/><text x='42' y='208' font-size='11.5' font-weight='700'>存在形式：</text><text x='116' y='208' font-size='11.5'>细胞中无机盐大多以离子形式存在；少数以化合物形式参与结构（如 Mg 在叶绿素中）。</text><text x='42' y='234' font-size='11.5'>缺素实验：</text><text x='116' y='234' font-size='11.5'>完全培养液 vs 缺素培养液，单一变量、其余条件相同且适宜，观察生长状况与叶片颜色。</text></svg></div>"; }
+  var FIG = {
+    "water": buildFigWATER,
+    "salt": buildFigSALT
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

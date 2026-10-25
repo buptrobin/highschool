@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>胚胎工程</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "bio", "slug": "xx3-c2-s3", "n": 12, "title": "胚胎工程"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=bio&quiz=1">‹ 生物 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 选择性必修3 生物技术与工程 · 第二章第三节</span>
+        <h1>胚胎工程<span class="thin">北京真题 0 道 · 外地真题 7 道 · 5 关 12 题</span></h1>
+        <p class="lede">胚胎工程的题几乎都在问“这一步属于什么、为什么必须这样做”：<b>超数排卵用促性腺激素、精子要获能、卵母细胞要培养到 MⅡ 期、胚胎移植前要同期发情</b>。本页用六道外地真题把流程串起来，再配三道原创综合题。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>7</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='246' rx='18' fill='#fdf2f8'/><g fill='none' stroke='#db2777' stroke-width='2.5'><circle cx='96' cy='96' r='26' fill='#fce7f3'/><circle cx='96' cy='96' r='10' fill='#f9a8d4' stroke='none'/><circle cx='170' cy='96' r='26' fill='#fce7f3'/><g fill='#f9a8d4' stroke='none'><circle cx='163' cy='96' r='4'/><circle cx='177' cy='96' r='4'/><circle cx='170' cy='86' r='4'/><circle cx='170' cy='106' r='4'/></g><path d='M122 96 h22'/><path d='M170 122 v18'/><circle cx='170' cy='164' r='22' fill='#fce7f3'/><g fill='#f472b6' stroke='none'><circle cx='162' cy='158' r='5'/><circle cx='178' cy='158' r='5'/><circle cx='162' cy='172' r='5'/><circle cx='178' cy='172' r='5'/><circle cx='170' cy='165' r='5'/><circle cx='154' cy='165' r='5'/><circle cx='186' cy='165' r='5'/><circle cx='170' cy='151' r='5'/><circle cx='170' cy='179' r='5'/></g></g><g font-size='10' fill='#9d174d' text-anchor='middle'><text x='96' y='140' font-weight='700'>卵母细胞</text><text x='170' y='140' font-weight='700'>精子（获能）</text><text x='170' y='200' font-weight='700'>受精卵→卵裂</text><text x='150' y='238' fill='#3d4a6b'>桑葚胚 → 囊胚 → 原肠胚</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：体外受精造胚胎，胚胎移植借腹怀胎</h2></div>
+  <p class="sec-sub">左图是试管动物的完整流程，右图标出胚胎发育各期的形态与“能不能分割、能不能取样”的判断点。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京等级考 2022—2026（越近权重越高）</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 3 年北京 0 题</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 6 年北京 2 题（已收入他页）</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地近 3 年 6 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 7 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷近 3 年<b>没有直接考“胚胎工程”</b>这一节；近 6 年有 2 道沾边的题（2022 年第 11 题黑白相间小鼠、2024 年第 11 题类囊胚），但两题都已被必修 1、必修 2 的页面收走。本页因此全部采用外地真题与原创题。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2022 年第 11 题</b>（内细胞团注射形成黑白相间小鼠）已收入必修 2「胚胎工程与细胞工程」相关页面，<b>2024 年第 11 题</b>（体外诱导食蟹猴类囊胚）已收入必修 1「细胞的分化」一页，按“选择题全站唯一”原则本页不重复收录，也<b>没有拿北京合格考的题充数</b>。外地卷：<b>2023 年广东第 3 题</b>（紫羚羊体外受精与胚胎移植）、<b>2024 年湖北第 5 题</b>（波尔山羊快速繁殖）、<b>2025 年江苏第 7 题</b>（梅花鹿人工授精与胚胎工程）、<b>2025 年陕晋青宁第 7 题</b>（基因编辑绵羊与桑葚胚体积）、<b>2025 年黑吉辽蒙第 9 题</b>（核移植胚胎的发育率）、<b>2024 年贵州第 13 题</b>（胚胎分割的时期）、<b>2022 年江苏第 4 题</b>（动物细胞工程与胚胎工程综合辨析）共 7 道全部收入。另配 3 道原创选择题与 3 道原创综合题。</p>
+</div><div class="panel"><p class="panel-title">① 试管动物（体外受精＋胚胎移植）流程（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#9d174d'>试管动物流程（示意图，非原卷图）</text><g font-size='11'><rect x='18' y='44' width='172' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='32' y='66' font-weight='700' fill='#9d174d'>① 超数排卵</text><text x='32' y='86' fill='#374151'>促性腺激素处理供体母畜</text><rect x='206' y='44' width='172' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='220' y='66' font-weight='700' fill='#9d174d'>② 采卵与采精</text><text x='220' y='86' fill='#374151'>卵母细胞培养至 MⅡ 期</text><rect x='394' y='44' width='172' height='56' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='408' y='66' font-weight='700' fill='#1d4ed8'>③ 体外受精</text><text x='408' y='86' fill='#374151'>精子先获能（培养法／化学法）</text><rect x='582' y='44' width='164' height='56' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='596' y='66' font-weight='700' fill='#0f766e'>④ 早期胚胎培养</text><text x='596' y='86' fill='#374151'>培养到桑葚胚或囊胚</text><g stroke='#9ca3af' stroke-width='2' fill='none'><path d='M190 72 h16'/><path d='M378 72 h16'/><path d='M566 72 h16'/></g><rect x='18' y='118' width='356' height='56' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='32' y='140' font-weight='700' fill='#b45309'>⑤ 同期发情处理</text><text x='32' y='160' fill='#374151'>使受体母畜的生理状态与供体一致</text><rect x='394' y='118' width='352' height='56' rx='9' fill='#f0fdf3' stroke='#86efac'/><text x='408' y='140' font-weight='700' fill='#166534'>⑥ 胚胎移植</text><text x='408' y='160' fill='#374151'>移入同种、同期发情、健康的受体母畜</text><rect x='18' y='192' width='728' height='44' rx='9' fill='#f1ecfe' stroke='#c4b5fd'/><text x='32' y='220' fill='#5b34b8'>⑦ 妊娠检查与产仔：受体母畜产下的后代，核基因来自供体母畜与供精公畜</text><rect x='18' y='248' width='728' height='42' rx='9' fill='#f8fafc' stroke='#cbd5e1'/><text x='32' y='274' fill='#374151'>一句话：<tspan font-weight='700'>有受精＝有性生殖；只有核移植、没有受精＝克隆（无性生殖）</tspan></text></g></svg></div></div><div class="panel"><p class="panel-title">② 早期胚胎发育各期与操作窗口（示意图，非原卷图）</p><div class="svg-box" id="map-fig-stages"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#9d174d'>早期胚胎发育各期与操作窗口（示意图，非原卷图）</text><g font-size='11'><rect x='20' y='46' width='168' height='76' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='34' y='68' font-weight='700' fill='#9d174d'>受精卵→卵裂期</text><text x='34' y='90' fill='#374151'>细胞数增加，总体积基本不变</text><text x='34' y='110' fill='#9d174d'>透明带内进行</text><rect x='204' y='46' width='168' height='76' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='218' y='68' font-weight='700' fill='#9d174d'>桑葚胚</text><text x='218' y='90' fill='#374151'>约 32 个细胞，形似桑葚</text><text x='218' y='110' fill='#9d174d'>全能细胞，可胚胎分割</text><rect x='388' y='46' width='168' height='76' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='402' y='68' font-weight='700' fill='#1d4ed8'>囊胚</text><text x='402' y='90' fill='#374151'>内细胞团＋滋养层＋囊胚腔</text><text x='402' y='110' fill='#1d4ed8'>可分割；可采滋养层检测</text><rect x='572' y='46' width='176' height='76' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='586' y='68' font-weight='700' fill='#0f766e'>原肠胚</text><text x='586' y='90' fill='#374151'>出现三个胚层</text><text x='586' y='110' fill='#0f766e'>细胞已分化，不能分割</text><rect x='20' y='136' width='364' height='60' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='34' y='158' font-weight='700' fill='#b45309'>移植的“窗口期”</text><text x='34' y='180' fill='#374151'>桑葚胚或囊胚——既可脱离输卵管，又保持高全能性</text><rect x='396' y='136' width='352' height='60' rx='9' fill='#f0fdf3' stroke='#86efac'/><text x='410' y='158' font-weight='700' fill='#166534'>鉴定的“窗口期”</text><text x='410' y='180' fill='#374151'>囊胚期取滋养层细胞做遗传学检测，不损伤内细胞团</text><rect x='20' y='210' width='728' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='34' y='232' font-weight='700' fill='#9d174d'>两个必错表述</text><text x='34' y='252' fill='#374151'>① 卵裂期“胚胎总体积增大”——错，总体积基本不变；② 原肠胚期做胚胎分割——错，应在桑葚胚或囊胚期</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>最容易丢分的几个点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先背三句：<b>超数排卵用促性腺激素</b>、<b>精子要获能、卵母细胞要到 MⅡ 期</b>、<b>移植前要同期发情</b>。</li><li>第 1、3 关有两道题都考“桑葚胚体积不增”（原创第 1 题与 2025 陕晋青宁第 7 题），一起做能立刻发现这是命题人最爱的错项。</li><li>第 2 关两道题专治“受体要不要优良”“人工授精要不要获能”两个混淆点。</li><li>第 4 关的 2022 江苏第 4 题跨了动物细胞工程与胚胎工程，适合当小结题做；做完能分清“获能”与“获得能量”、“胚胎分割”与“有性生殖”。</li><li>综合题先写要点再对答案，重点检查“同期发情”“滋养层取样”“纯合选育”三处。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（0 道）：</b>近 3 年北京卷没有直接考胚胎工程这一节。近 6 年有两道沾边的题——2022 年第 11 题（内细胞团注射形成黑白相间小鼠）已收入必修 2 相关页面，2024 年第 11 题（体外诱导食蟹猴类囊胚）已收入必修 1「细胞的分化」一页，按“选择题全站唯一”原则本页不再收录，也<b>没有用北京合格考的题充数</b>。</li><li><b>外地真题（7 道）：</b>2023 年广东第 3 题（紫羚羊）、2024 年湖北第 5 题（波尔山羊）、2025 年江苏第 7 题（梅花鹿）、2025 年陕晋青宁第 7 题（基因编辑绵羊）、2025 年黑吉辽蒙第 9 题（核移植胚胎）、2024 年贵州第 13 题（胚胎分割时期）、2022 年江苏第 4 题（动物细胞与胚胎工程综合），均按原卷表述录入。</li><li><b>原创题（6 道）：</b>发育分期、技术方案辨析 2 道选择题（第 1、9 题），以及“借腹怀胎”“胚胎分割与性别鉴定”“基因编辑绵羊”3 道综合题，均标 <b>orig</b>；第 9 题为原创技术选择，用于替代缺失的北京真题。</li><li><b>配图说明：</b>本页所选题均不依赖原卷图片即可作答，未从原卷取图；两张流程与分期示意图为原创 SVG，标题已注明“示意图，非原卷图”。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修3", chapter:"第二章 细胞工程", section:"第三节 胚胎工程"};
+  var TOPIC = {1:"受精与早期胚胎发育", 2:"体外受精的操作", 3:"超数排卵与同期发情", 4:"胚胎移植的生理学基础", 5:"卵裂期与桑葚胚的体积变化", 6:"核移植胚胎的发育率", 7:"胚胎分割的时期与份数", 8:"滋养层细胞与遗传学检测", 9:"胚胎工程与克隆、基因编辑的关系"};
+  var LEVELS = [
+    {id:1, name:"受精与早期发育", sub:"原创发育分期 + 2023 广东 紫羚羊", badge:"基础", color:"#16a34a", lcl:"#f0fdf3"},
+    {id:2, name:"胚胎移植的程序", sub:"2024 湖北 波尔山羊 + 2025 江苏 梅花鹿", badge:"巩固", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"体外受精与培养", sub:"2025 陕晋青宁 基因编辑绵羊 + 2025 黑吉辽蒙 核移植胚胎", badge:"进阶", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:4, name:"分割、检测与克隆", sub:"2024 贵州 材料与方法 + 2022 江苏 动物细胞与胚胎工程", badge:"应用", color:"#b45309", lcl:"#fffbeb"},
+    {id:5, name:"综合题", sub:"试管动物全流程 + 胚胎分割与性别鉴定 + 基因编辑与伦理", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"原创·发育分期", kind:"orig", star:1,
+      stem:"下列关于哺乳动物受精和早期胚胎发育的叙述，正确的是",
+      opts:["受精完成的标志是精子头部进入卵细胞", "卵裂期细胞数目不断增加，胚胎总体积也不断增大", "桑葚胚的细胞属于全能细胞，囊胚的内细胞团将来发育成胎儿的各种组织", "原肠胚时期细胞尚未发生分化，全能性最高"],
+      ans:2,
+      why:"桑葚胚（约 32 个细胞）的细胞仍属全能细胞；囊胚中个体较大的内细胞团细胞将来发育成胎儿的各种组织，C 正确。受精完成的标志是<b>雌、雄原核融合</b>（或出现第二极体），精子头部进入卵细胞只是受精的开始，A 错误。卵裂期细胞数目增加，但胚胎总体积<b>基本不变或略有减小</b>，B 错误。原肠胚已分化出三个胚层，全能性大大降低，D 错误。",
+      tip:"卵裂期必背一句：<b>细胞数增多、总体积不增</b>（因为受透明带限制且不断消耗营养）。这是本节最高频的错项。"
+    },
+    {
+      id:2, lv:1, src:"2023·广东 第3题", kind:"real", star:2,
+      stem:"科学家采用体外受精技术获得紫羚羊胚胎，并将其移植到长角羚羊体内，使后者成功妊娠并产仔，该工作有助于恢复濒危紫羚羊的种群数量。此过程不涉及的操作是",
+      opts:["超数排卵", "精子获能处理", "细胞核移植", "胚胎培养"],
+      ans:2,
+      why:"该过程是<b>体外受精＋胚胎移植</b>：供体母羊需用促性腺激素处理以超数排卵，A 涉及；采集的精子必须经获能处理才能受精，B 涉及；受精卵需在体外培养到桑葚胚或囊胚才能移植，D 涉及。整个过程由精卵结合形成受精卵，属于<b>有性生殖</b>，不需要把体细胞核移入去核卵母细胞，C 不涉及。",
+      tip:"一句话分清：<b>有受精＝有性生殖（不需要核移植）；无受精、只有核移植＝克隆（无性生殖）</b>。"
+    },
+    {
+      id:3, lv:2, src:"2024·湖北 第5题", kind:"real", star:2,
+      stem:"波尔山羊享有“世界山羊之王”的美誉，具有生长速度快、肉质细嫩等优点。生产中常采用胚胎工程技术快速繁殖波尔山羊。下列叙述错误的是",
+      opts:["选择遗传性状优良的健康波尔母山羊进行超数排卵处理", "胚胎移植前可采集滋养层细胞进行遗传学检测", "普通品质的健康杜泊母绵羊不适合作为受体", "生产中对提供精子的波尔公山羊无需筛选"],
+      ans:3,
+      why:"应选择遗传性状优良、健康的波尔母山羊作供体并做超数排卵，A 正确。囊胚的滋养层细胞将来发育成胎膜和胎盘，采集少量滋养层细胞做遗传学检测不影响胎儿发育，B 正确。受体必须是<b>同种</b>、健康的雌性动物，山羊胚胎不能移植到绵羊子宫内（存在生殖隔离），C 正确。提供精子的公山羊同样要选择品质良好者，否则后代性状无法保证，D 错误。",
+      tip:"胚胎移植的三条“同”：<b>同种、同期发情、同生理状态</b>。受体只要求健康、繁殖能力正常，不要求品种优良。"
+    },
+    {
+      id:4, lv:2, src:"2025·江苏 第7题", kind:"real", star:3,
+      stem:"梅花鹿和马鹿杂交后代生命力强、茸质好，但自然杂交很难完成，人工授精能解决此难题。胚胎工程技术的应用，可提高繁殖率，增加鹿场经济效益。下列相关叙述合理的是",
+      opts:["采集的精液无需固定、稀释，即可用血细胞计数板检测精子密度", "人工授精时，采集的精液经获能处理后才能输入雌性生殖道", "超数排卵处理时，常用含促性腺激素的促排卵剂", "母体子宫对胚胎的免疫耐受性低下是胚胎移植的生理学基础"],
+      ans:2,
+      why:"超数排卵的原理是用<b>促性腺激素</b>促进卵巢中更多卵泡发育并排卵，C 合理。检测精子密度前需对精液稀释、固定，否则活动精子会影响计数，A 不合理。<b>人工授精</b>时精子在雌性生殖道内自然获能，不必在体外预先处理；只有<b>体外受精</b>才需要体外获能，B 不合理。胚胎移植的生理学基础之一是母体子宫对胚胎的<b>免疫耐受性高</b>（不发生免疫排斥），而不是“低下”，D 不合理。",
+      tip:"本题两个高频陷阱：<b>人工授精 ≠ 体外受精</b>（前者不需要体外获能）；<b>免疫耐受性高</b>才是不发生排斥的原因，写成“低”就错。"
+    },
+    {
+      id:5, lv:3, src:"2025·陕晋青宁 第7题", kind:"real", star:3,
+      stem:"科研人员通过对绵羊受精卵进行基因编辑和胚胎移植等操作，获得了羊毛长度显著长于对照组的优良品系。下列叙述错误的是",
+      opts:["为获取足够的卵子，需对供体绵羊注射促性腺激素进行超数排卵处理", "为确保受体绵羊与供体绵羊生理状态一致，需进行同期发情处理", "受精卵发育至桑葚胚阶段，细胞数量和胚胎总体积均增加", "对照组绵羊的选择需考虑年龄、性别等无关变量的影响"],
+      ans:2,
+      why:"注射促性腺激素可使供体超数排卵，获得更多卵子，A 正确。受体与供体需<b>同期发情</b>处理，使二者生殖器官处于相同生理状态，B 正确。受精卵发育至桑葚胚阶段，细胞通过卵裂不断增殖，<b>细胞数量增加，但胚胎总体积基本不变或略有减小</b>，C 错误。本实验的自变量是是否进行基因编辑，对照组与实验组的无关变量（年龄、性别等）应保持一致，D 正确。",
+      tip:"这道题的错误点与第 1 题完全相同——<b>桑葚胚体积不增</b>。同一个知识点连考两年（2025 陕晋青宁、多省模考），务必记死。"
+    },
+    {
+      id:6, lv:3, src:"2025·黑吉辽蒙 第9题", kind:"real", star:3,
+      stem:"研究显示，约 70% 的小鼠体细胞核移植胚胎未能成功发育至囊胚期，且仅有约 2% 的胚胎移植到代孕母鼠后可正常发育。下列叙述错误的是",
+      opts:["体细胞核进入去核的 MⅡ 期卵母细胞形成重构胚", "移植前胚胎发育率低，可能是植入的体细胞核不能完全恢复分化前的功能状态", "胚胎移植到代孕母鼠后成活率低，可能是早期胚胎未能及时从滋养层内孵化", "为提高胚胎成活率，可用胚胎细胞核移植代替体细胞核移植"],
+      ans:2,
+      why:"体细胞核移入去核的 MⅡ 期卵母细胞即形成重构胚，A 正确。体细胞已高度分化，其核若不能完全恢复分化前的功能状态，胚胎发育率就低，B 正确。胚胎从透明带中出来称为<b>孵化</b>，不是从“滋养层内”孵化，且胚胎移植后成活率低更可能与着床失败、核重编程不完全等有关，C 错误。胚胎细胞分化程度低、全能性高，用胚胎细胞核移植可提高成活率，D 正确。",
+      tip:"“孵化”的准确含义：<b>囊胚从透明带中孵出</b>。凡是写“从滋养层内孵化”“从子宫内孵化”的都错。"
+    },
+    {
+      id:7, lv:3, src:"2024·贵州 第13题", kind:"real", star:2,
+      stem:"生物学实验中合理选择材料和研究方法是顺利完成实验的前提条件。下列叙述错误的是",
+      opts:["稀释涂布平板法既可分离菌株又可用于计数", "进行胚胎分割时通常是在原肠胚期进行分割", "获取马铃薯脱毒苗常选取茎尖进行组织培养", "使用不同的限制酶也能产生相同的黏性末端"],
+      ans:1,
+      why:"稀释涂布平板法既能分离菌株，也能通过菌落数推算活菌数，A 正确。胚胎分割应选择发育良好、形态正常的<b>桑葚胚或囊胚</b>，此时细胞全能性高、分割后仍能发育成完整个体；原肠胚细胞已明显分化，不能用于分割，B 错误。茎尖分生区几乎不含病毒，可用于培养脱毒苗，C 正确。不同限制酶识别序列不同，但切割后可以产生相同的黏性末端，D 正确。",
+      tip:"胚胎分割的两个“必须”：<b>必须是桑葚胚或囊胚</b>、<b>必须均等分割</b>，否则会影响同卵双胎的发育。"
+    },
+    {
+      id:8, lv:4, src:"2022·江苏 第4题", kind:"real", star:3,
+      stem:"下列关于动物细胞工程和胚胎工程的叙述，正确的是",
+      opts:["通常采用培养法或化学诱导法使精子获得能量后进行体外受精", "哺乳动物体外受精后的早期胚胎培养不需要额外提供营养物质", "克隆牛技术涉及体细胞核移植、动物细胞培养、胚胎移植等过程", "将小鼠桑葚胚分割成 2 等份获得同卵双胎的过程属于有性生殖"],
+      ans:2,
+      why:"克隆牛需要先做体细胞核移植得到重构胚，经动物细胞培养发育为早期胚胎，再经胚胎移植到受体母牛体内，C 正确。培养法、化学诱导法使精子获得的是<b>受精能力（获能）</b>，不是“能量”，A 错误。早期胚胎培养需要糖、氨基酸、无机盐等营养物质，还需加入血清等天然成分，B 错误。胚胎分割得到同卵双胎属于<b>无性生殖</b>（克隆），D 错误。",
+      tip:"两个措辞陷阱：<b>获能 ≠ 获得能量</b>；<b>胚胎分割 = 无性生殖</b>。这两条在多省卷中反复出现。"
+    },
+    {
+      id:9, lv:4, src:"原创·技术辨析", kind:"orig", star:3,
+      stem:"某牧场希望通过胚胎工程从一头高产奶牛获得多头皮毛、性状相同的后代。下列方案最合理的是",
+      opts:["用该奶牛的体细胞进行核移植，再把重构胚移植给受体母牛", "将该奶牛与优良公牛交配，用其受精卵进行胚胎分割后移植", "采集该奶牛的卵母细胞，与优良公牛的精子体外受精后移植", "对该奶牛注射促性腺激素进行超数排卵，再与优良公牛自然交配"],
+      ans:0,
+      why:"题目要求后代“性状相同”且“多头”，即需要<b>无性繁殖</b>。用该奶牛的体细胞核移植得到重构胚，再分割、移植，后代核基因与供体奶牛基本相同，A 最合理。B、C 都经过精卵结合（有性生殖），后代会同时具有父本性状，个体间也不完全相同。D 只是提高产仔数量，后代仍是有性生殖产物，性状分离明显。",
+      tip:"看清题干要“<b>性状相同</b>”还是有性繁殖的“<b>优良组合</b>”：前者＝克隆／核移植＋胚胎分割，后者＝人工授精或体外受精。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题", star:3, title:"一头优良奶牛的“借腹怀胎”计划",
+      material:"某奶牛场有一头产奶量极高的母牛（甲），希望尽快扩大其优质后代的数量。技术方案为：用促性腺激素处理甲，收集卵母细胞；同时对公牛（乙）采精并处理精子；在体外完成受精，受精卵培养至桑葚胚或囊胚；再将胚胎移植到数头普通母牛（丙）体内，使其妊娠产仔。",
+      asks:[{q:"说明用促性腺激素处理甲的目的，以及卵母细胞在体外需培养到什么时期才能受精。", pt:4}, {q:"精子在体外受精前需要什么处理？处理的目的和常用方法是什么？", pt:4}, {q:"胚胎移植前为什么要对丙进行同期发情处理？移植的胚胎通常处于什么时期？说明理由。", pt:6}],
+      points:[
+        ["促性腺激素可促进卵巢中更多卵泡发育并排卵，即超数排卵，一次获得更多卵母细胞", "从卵巢采集的卵母细胞需在体外培养到减数分裂Ⅱ中期（MⅡ 期）才能与获能精子受精"],
+        ["需要获能处理，使精子获得受精能力", "常用方法：培养法（在获能溶液中培养）和化学诱导法（如用肝素等化学物质诱导）"],
+        ["同期发情处理使受体丙的生殖器官处于与供体相同的生理状态", "这样移植的胚胎才能与子宫内膜的发育同步，便于着床（着床需要子宫处于接受状态）", "移植的胚胎通常为桑葚胚或囊胚：此时细胞全能性高，且已发育到可以脱离输卵管、进入子宫的阶段", "移植后还需对丙进行妊娠检查，确认其是否受孕"]
+      ],
+      tip:"本题三问对应胚胎工程的三大步骤，答题时每一问都要落到“<b>为什么</b>”：超数排卵为了多、获能为了能受精、同期发情为了能着床。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"同卵双胎与性别鉴定：胚胎分割能做什么、不能做什么",
+      material:"某良种猪场希望通过胚胎分割从一头优良母猪的同一批胚胎中获得更多后代，并希望在移植前就确定胚胎的性别，以便只保留所需性别的个体。技术员拟采用的办法是：将囊胚分割成 2 等份或 4 等份，其中一部分用于性别鉴定，另一部分用于移植。",
+      asks:[{q:"说明胚胎分割应选择什么时期的胚胎，并说明分割时要注意的问题。", pt:4}, {q:"说明如何用分割得到的材料进行性别鉴定，并解释为什么不直接取内细胞团的细胞。", pt:6}, {q:"从遗传物质的角度说明分割得到的同卵双胎之间的关系，并指出该技术在生产上的局限性。", pt:4}],
+      points:[
+        ["选择发育良好、形态正常的桑葚胚或囊胚", "分割时必须均等分割（尤其是内细胞团要均分），否则会影响分割后胚胎的恢复和发育", "操作在无菌条件下进行，分割后的胚胎需经培养或直接移植"],
+        ["采集囊胚的滋养层细胞进行 DNA 分析（如检测性染色体特异性片段），可判断胚胎性别", "滋养层细胞将来发育成胎膜和胎盘，不参与胎儿本身的形成，取样不影响胎儿发育", "内细胞团将来发育成胎儿各种组织，取内细胞团细胞会损伤胚胎，导致其不能正常发育"],
+        ["同卵双胎来自同一受精卵，核基因完全相同，性别相同，互为克隆关系", "局限：分割份数越多，每一份的细胞数越少，发育成功率越低；通常只能分 2 份或 4 份", "此外该技术仍依赖供体提供胚胎，不能无限扩繁，且操作要求高、成本较大"]
+      ],
+      tip:"采分点集中在“<b>滋养层可取样、内细胞团不能取</b>”和“<b>均等分割</b>”两处，其余表述围绕“不损伤胎儿”展开即可。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"基因编辑绵羊：胚胎工程在育种中扮演什么角色",
+      material:"科研人员将编辑好的 CRISPR 体系导入绵羊受精卵，筛选出编辑成功的受精卵，体外培养至桑葚胚或囊胚，再移植到同期发情的受体母羊体内，最终获得羊毛更长的优良品系。该品系的后代中，部分个体仍表现出长毛性状，部分个体则恢复为普通羊毛长度。",
+      asks:[{q:"说明为什么选择受精卵而不是体细胞作为基因编辑的受体细胞，并说明编辑后为什么还要做胚胎移植。", pt:6}, {q:"解释该品系后代中出现“长毛”与“普通毛长”两种个体的原因。", pt:4}, {q:"若要获得性状稳定遗传的长毛纯合品系，可采取什么措施？", pt:4}],
+      points:[
+        ["受精卵是全能的，编辑后可直接发育成完整个体，无需再做核移植", "受精卵体积较大、便于显微操作，且编辑结果可传递给体内所有细胞（包括生殖细胞）", "编辑后的受精卵需在体外培养至桑葚胚或囊胚，再移植到同种、同期发情的受体母羊体内，才能继续发育并产仔", "胚胎移植是“体外操作的胚胎”回到母体的唯一途径"],
+        ["导入的编辑体系可能只修饰了受精卵中的一条染色体（杂合），也可能编辑不完全", "若编辑个体为杂合子，其自交（或与普通个体交配）后代会发生性状分离，出现长毛与普通毛长两类个体"],
+        ["让编辑成功的长毛个体与长毛个体交配，逐代筛选长毛个体", "通过分子检测（PCR、测序）鉴定基因型，选择纯合的长毛个体留种", "也可结合体细胞核移植（克隆）快速扩繁同一优良基因型，缩短育种年限"]
+      ],
+      tip:"这道题把“基因工程＋胚胎工程”连在一起：<b>编辑在受精卵阶段做，扩繁靠胚胎移植，稳定靠纯合与选育</b>。三层写清就是满分结构。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "bio-xx3-c2-s3-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigIVF(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#9d174d'>试管动物流程（示意图，非原卷图）</text><g font-size='11'><rect x='18' y='44' width='172' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='32' y='66' font-weight='700' fill='#9d174d'>① 超数排卵</text><text x='32' y='86' fill='#374151'>促性腺激素处理供体母畜</text><rect x='206' y='44' width='172' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='220' y='66' font-weight='700' fill='#9d174d'>② 采卵与采精</text><text x='220' y='86' fill='#374151'>卵母细胞培养至 MⅡ 期</text><rect x='394' y='44' width='172' height='56' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='408' y='66' font-weight='700' fill='#1d4ed8'>③ 体外受精</text><text x='408' y='86' fill='#374151'>精子先获能（培养法／化学法）</text><rect x='582' y='44' width='164' height='56' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='596' y='66' font-weight='700' fill='#0f766e'>④ 早期胚胎培养</text><text x='596' y='86' fill='#374151'>培养到桑葚胚或囊胚</text><g stroke='#9ca3af' stroke-width='2' fill='none'><path d='M190 72 h16'/><path d='M378 72 h16'/><path d='M566 72 h16'/></g><rect x='18' y='118' width='356' height='56' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='32' y='140' font-weight='700' fill='#b45309'>⑤ 同期发情处理</text><text x='32' y='160' fill='#374151'>使受体母畜的生理状态与供体一致</text><rect x='394' y='118' width='352' height='56' rx='9' fill='#f0fdf3' stroke='#86efac'/><text x='408' y='140' font-weight='700' fill='#166534'>⑥ 胚胎移植</text><text x='408' y='160' fill='#374151'>移入同种、同期发情、健康的受体母畜</text><rect x='18' y='192' width='728' height='44' rx='9' fill='#f1ecfe' stroke='#c4b5fd'/><text x='32' y='220' fill='#5b34b8'>⑦ 妊娠检查与产仔：受体母畜产下的后代，核基因来自供体母畜与供精公畜</text><rect x='18' y='248' width='728' height='42' rx='9' fill='#f8fafc' stroke='#cbd5e1'/><text x='32' y='274' fill='#374151'>一句话：<tspan font-weight='700'>有受精＝有性生殖；只有核移植、没有受精＝克隆（无性生殖）</tspan></text></g></svg></div>"; }
+  function buildFigSTAGES(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 280'><rect width='760' height='280' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#9d174d'>早期胚胎发育各期与操作窗口（示意图，非原卷图）</text><g font-size='11'><rect x='20' y='46' width='168' height='76' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='34' y='68' font-weight='700' fill='#9d174d'>受精卵→卵裂期</text><text x='34' y='90' fill='#374151'>细胞数增加，总体积基本不变</text><text x='34' y='110' fill='#9d174d'>透明带内进行</text><rect x='204' y='46' width='168' height='76' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='218' y='68' font-weight='700' fill='#9d174d'>桑葚胚</text><text x='218' y='90' fill='#374151'>约 32 个细胞，形似桑葚</text><text x='218' y='110' fill='#9d174d'>全能细胞，可胚胎分割</text><rect x='388' y='46' width='168' height='76' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='402' y='68' font-weight='700' fill='#1d4ed8'>囊胚</text><text x='402' y='90' fill='#374151'>内细胞团＋滋养层＋囊胚腔</text><text x='402' y='110' fill='#1d4ed8'>可分割；可采滋养层检测</text><rect x='572' y='46' width='176' height='76' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='586' y='68' font-weight='700' fill='#0f766e'>原肠胚</text><text x='586' y='90' fill='#374151'>出现三个胚层</text><text x='586' y='110' fill='#0f766e'>细胞已分化，不能分割</text><rect x='20' y='136' width='364' height='60' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='34' y='158' font-weight='700' fill='#b45309'>移植的“窗口期”</text><text x='34' y='180' fill='#374151'>桑葚胚或囊胚——既可脱离输卵管，又保持高全能性</text><rect x='396' y='136' width='352' height='60' rx='9' fill='#f0fdf3' stroke='#86efac'/><text x='410' y='158' font-weight='700' fill='#166534'>鉴定的“窗口期”</text><text x='410' y='180' fill='#374151'>囊胚期取滋养层细胞做遗传学检测，不损伤内细胞团</text><rect x='20' y='210' width='728' height='56' rx='9' fill='#fdf2f8' stroke='#f9a8d4'/><text x='34' y='232' font-weight='700' fill='#9d174d'>两个必错表述</text><text x='34' y='252' fill='#374151'>① 卵裂期“胚胎总体积增大”——错，总体积基本不变；② 原肠胚期做胚胎分割——错，应在桑葚胚或囊胚期</text></g></svg></div>"; }
+  var FIG = {
+    "ivf": buildFigIVF,
+    "stages": buildFigSTAGES
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

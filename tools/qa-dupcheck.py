@@ -14,7 +14,8 @@ pat_src = re.compile(r'src:"([^"]+)"')
 pat_kind = re.compile(r'kind:"([^"]+)"')
 
 # 只认 "2024·江苏卷 第1题" 这类能定位的出处；原创/模拟不参与
-real = re.compile(r"(\d{4})·(.+?) 第\s*(\d+)\s*题")
+# 空格可有可无："2024·北京 第5题" 和 "2024·湖南卷第9题" 都要认（后者以前整条漏检）
+real = re.compile(r"(\d{4})·(.+?)\s*第\s*(\d+)\s*题")
 
 
 def book_of(slug):
@@ -46,7 +47,13 @@ for path in sorted(glob.glob(os.path.join(root, "*.html"))):
             k = real.match(m.group(1))
             if not k:
                 continue
-            key = (k.group(1), k.group(2).replace(" 卷", "卷").strip(), k.group(3))
+            # 卷名归一：各页写「2024·北京 第3题」与「2024·北京卷 第3题」的都有，
+            # 不归一就会漏查重（2026-10 生物组发现）
+            # 卷名归一：「卷」字去掉、「1 月」与不加月份视为同一张卷（浙江 1 月是主卷），
+            # 「6 月」必须保留（浙江同年有 1 月、6 月两套）——2026-10 生物组发现漏检
+            area = k.group(2).replace("卷", "").replace("　", "").replace(" ", "").strip()
+            area = re.sub(r"1月$", "", area)
+            key = (k.group(1), area, k.group(3))
             seen[key].append((slug, label))
 
 bad, reused = {}, {}

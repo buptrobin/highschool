@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>降低化学反应活化能的酶</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "bio", "slug": "bx1-c5-s1", "n": 12, "title": "降低化学反应活化能的酶"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=bio&quiz=1">‹ 生物 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 必修1 分子与细胞 · 第五章第一节</span>
+        <h1>降低化学反应活化能的酶<span class="thin">北京卷 2 道 · 外地真题 4 道 · 5 关 12 题</span></h1>
+        <p class="lede">酶这一节的高考套路非常固定：<b>本质（多数是蛋白质，少数是 RNA）→ 作用原理（降低活化能）→ 三大特性（高效、专一、条件温和）→ 影响因素（温度、pH）</b>。北京 2025 年考加酶洗衣粉、2026 年考酶的热稳定性改造，都在这条线上。</p>
+        <div class="facts"><div class="fact"><b>9</b><span>选择题</span></div><div class="fact"><b>6</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='18' y='18' width='264' height='250' rx='18' fill='#fefce8'/><path d='M40 220 Q90 220 110 170 Q130 120 170 120 Q210 120 260 90' stroke='#a16207' stroke-width='3' fill='none'/><path d='M40 220 Q90 220 110 190 Q130 160 170 160 Q210 160 260 150' stroke='#16a34a' stroke-width='3' fill='none' stroke-dasharray='7 4'/><g font-size='11' fill='#713f12'><text x='44' y='242'>无催化剂</text><text x='44' y='262' fill='#15803d'>有酶（活化能降低）</text><text x='150' y='60' text-anchor='middle' font-size='10'>酶不改变产物，只降低“翻山”的高度</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>酶的三件事：是什么、怎么催化、受什么影响</h2></div>
+  <p class="sec-sub">左图是活化能曲线，右图是温度/pH 对酶活性的影响。均为<b>示意图，非原卷图</b>。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京等级考 2022—2026（越近权重越高）</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 3 年北京 2 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 6 年北京 2 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地近 3 年 4 题</span><span style="background:#f3e8ff;color:#6d28d9;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 6 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷近 3 年连续命中本节——<b>2025 年第 3 题</b>考加酶洗衣粉（专一性、温度），<b>2026 年第 13 题</b>考 MT 酶的热稳定性改造（温度、专一性、蛋白质工程），两题都已收入本页；外地再补 4 道近 3 年真题。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2025 年第 3 题</b>以包装说明考酶专一性、浸泡时间、加水倍数与高温失活；<b>2026 年第 13 题</b>以海藻糖生产用酶的热稳定性改造考温度/pH、专一性与蛋白质工程。两题均已收入。外地卷：2024 浙江 6 月第 14 题（脲酶与镍）、2023 广东第 1 题（制茶与多酚氧化酶）、2024 河北第 2 题（酶的本质、保存与分布）、2024 广西第 5 题（纳米酶），共 4 道。第 7—9 题与第 10—12 题综合题为原创。</p>
+</div><div class="panel"><p class="panel-title">① 活化能与酶（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#713f12'>活化能与酶（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.5'><line x1='70' y1='250' x2='700' y2='250'/><line x1='70' y1='250' x2='70' y2='60'/></g><text x='26' y='70' font-size='11' fill='#475569'>能量</text><text x='640' y='270' font-size='11' fill='#475569'>反应进程</text><path d='M90 230 Q200 60 330 110 Q460 160 690 170' stroke='#a16207' stroke-width='3' fill='none'/><path d='M90 230 Q200 150 330 175 Q460 200 690 178' stroke='#16a34a' stroke-width='3' fill='none' stroke-dasharray='7 4'/><line x1='90' y1='230' x2='690' y2='230' stroke='#cbd5e1' stroke-dasharray='4 4'/><g font-size='11.5'><text x='250' y='52' fill='#a16207'>无催化剂：需要较高活化能</text><text x='420' y='152' fill='#15803d'>有酶：活化能降低</text><text x='90' y='222' fill='#475569'>反应物</text><text x='620' y='222' fill='#475569'>产物</text><text x='200' y='290' font-size='10.5' fill='#64748b'>酶只改变反应路径、降低活化能，不改变产物和平衡点。</text></g></svg></div></div><div class="panel"><p class="panel-title">② 温度、pH 与酶活性（示意图，非原卷图）</p><div class="svg-box" id="map-fig-enzymeCurve"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#713f12'>温度、pH 与酶活性（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.5'><line x1='60' y1='240' x2='350' y2='240'/><line x1='60' y1='240' x2='60' y2='60'/><line x1='430' y1='240' x2='720' y2='240'/><line x1='430' y1='240' x2='430' y2='60'/></g><path d='M70 230 Q180 60 240 90 Q290 120 340 235' stroke='#dc2626' stroke-width='3' fill='none'/><path d='M440 232 Q520 70 570 80 Q620 95 710 232' stroke='#2563eb' stroke-width='3' fill='none'/><g font-size='11' fill='#475569'><text x='170' y='52' fill='#b91c1c'>温度</text><text x='190' y='268'>最适温度</text><text x='540' y='52' fill='#1d4ed8'>pH</text><text x='540' y='268'>最适 pH</text><text x='66' y='60' font-size='10.5'>酶活性</text><text x='436' y='60' font-size='10.5'>酶活性</text><text x='70' y='222' font-size='10'>低温抑制（可恢复）</text><text x='280' y='222' font-size='10'>高温变性</text><text x='540' y='222' fill='#1d4ed8'>过酸、过碱变性</text></g><text x='18' y='292' font-size='10.5' fill='#64748b'>注意：曲线右侧下降是“结构被破坏”，不可恢复；左侧低温只是抑制。</text></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">03 / 收口</span><h2>酶这一节最容易丢分的四个点</h2></div>
+  <p class="sec-sub">每个错项都对应一个固定表述。</p>
+  <div class="traps"><div class="trap"><span class="x">✕</span><div><p><b>酶只降低活化能，不提供能量、不改平衡点。</b>“酶为反应供能”“酶使产物增多”都是错项。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>低温不破坏结构，高温才变性。</b>低温抑制、可恢复；高温、过酸、过碱不可逆。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>酶应在最适 pH、低温下保存。</b>“最适温度保存”是高频错项。</p></div></div><div class="trap"><span class="x">✕</span><div><p><b>少数酶是 RNA。</b>“酶都是蛋白质”已被修正，但绝大多数酶仍是蛋白质。</p></div></div></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先看图 ① 的活化能曲线，再用一句话说清“酶为什么能加快反应”。</li><li>第 1、2 题是北京近两年真题，重点看“专一性”与“热稳定性”的区分。</li><li>第 11 题温度实验，先自己写“先分别保温再混合”，再对照要点。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（2 道）：</b>2025 年第 3 题（加酶洗衣粉）、2026 年第 13 题（MT 酶热稳定性改造）。</li><li><b>外地真题（4 道）：</b>2024 浙江 6 月第 14 题（脲酶与镍）、2023 广东第 1 题（制茶与多酚氧化酶）、2024 河北第 2 题（酶的本质与保存）、2024 广西第 5 题（纳米酶）。</li><li><b>原创题（6 道）：</b>第 7—9 题与第 10—12 题综合题，标 <b>orig</b>；页内两幅图为手绘 SVG 示意图，非原卷图。</li><li>本页<b>不含北京合格考题目</b>，也没有用模拟题充数。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"必修1", chapter:"第五章 细胞的能量供应和利用", section:"第一节 降低化学反应活化能的酶"};
+  var TOPIC = {1:"加酶洗衣粉与酶的特性", 2:"酶的热稳定性改造", 3:"脲酶与金属元素", 4:"制茶工艺中的多酚氧化酶", 5:"酶的本质、保存与分布", 6:"纳米酶", 7:"活化能与高效性", 8:"专一性实验", 9:"温度与 pH 的影响", 10:"酶的发现史", 11:"影响酶活性因素实验", 12:"抑制剂与酶活性"};
+  var LEVELS = [
+    {id:1, name:"生活中的酶", sub:"洗衣粉、制茶，先看酶在干什么", badge:"基础", color:"#2563eb", lcl:"#eff6ff"},
+    {id:2, name:"本质与条件", sub:"蛋白质还是 RNA、需不需要金属、pH 怎么影响", badge:"基础+", color:"#0e7490", lcl:"#ecfeff"},
+    {id:3, name:"特性与探究", sub:"高效、专一、条件温和，对应三类实验", badge:"巩固", color:"#b45309", lcl:"#fffbeb"},
+    {id:4, name:"曲线与易错", sub:"低温不破坏结构、高温才变性，别写反", badge:"易错", color:"#be123c", lcl:"#fff1f2"},
+    {id:5, name:"综合题", sub:"发现史、因素实验、抑制剂", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"2025·北京 第3题", kind:"real", star:2,
+      stem:"某种加酶洗衣粉包装袋上注有下列信息：本品含有蛋白酶、脂肪酶和淀粉酶；洗涤前先浸泡 15～20 min，特别脏的衣物可减少浸泡用水量；请勿使用 60℃ 以上热水。下列叙述<b>错误</b>的是",
+      opts:["该洗衣粉含多种酶，不适合洗涤纯棉衣物", "洗涤前浸泡有利于酶与污渍结合催化其分解", "减少浸泡衣物的用水量可提高酶的浓度", "水温过高导致酶活性下降"],
+      ans:0,
+      why:"纯棉衣物的主要成分是纤维素，而该洗衣粉含的是蛋白酶、脂肪酶和淀粉酶，都不能分解纤维素，所以不会损坏纯棉衣物，A 错；浸泡能延长酶与污渍的接触时间，B 对；减少用水量相当于提高酶的浓度，C 对；超过 60℃ 会使酶（蛋白质）空间结构改变而失活，D 对。",
+      tip:"“不适合洗纯棉”的推理方向是“酶能不能分解纤维素”，答案是否定的，所以这句话错。"
+    },
+    {
+      id:2, lv:1, src:"2026·北京 第13题", kind:"real", star:3,
+      stem:"MT 是工业化生产海藻糖必需的酶，但天然 MT 热稳定性差。研究者将 MT 第 216 位的丙氨酸变为苏氨酸，获得热稳定性高的 MT，提高了海藻糖生产效率。下列叙述<b>错误</b>的是",
+      opts:["温度和 pH 会影响 MT 的催化活性", "第 216 位的丙氨酸对 MT 的专一性至关重要", "为筛选热稳定性高的 MT，应在较高温度下测定酶活性", "对 MT 结构的改造属于蛋白质工程"],
+      ans:1,
+      why:"酶的活性受温度和 pH 影响，A 对；改造 216 位氨基酸后酶的热稳定性提高，但并未丧失催化专一性，说明该位点主要影响<b>热稳定性</b>而不是专一性，B 错；要筛选耐高温的酶，应在较高温度下测定酶活性，C 对；定向改造蛋白质结构属于蛋白质工程，D 对。",
+      tip:"“改造后仍能催化原来的反应”= 专一性没丢，所以不能说该位点“对专一性至关重要”。"
+    },
+    {
+      id:3, lv:2, src:"2024·浙江6月 第14题", kind:"real", star:2,
+      stem:"脲酶催化尿素水解，产生的氨可作为细菌的氮源。脲酶被去除镍后失去活性。下列叙述<b>错误</b>的是",
+      opts:["镍是组成脲酶的重要元素", "镍能提高尿素水解反应的活化能", "产脲酶细菌可在以 NH₄Cl 为唯一氮源的培养基上生长繁殖", "以尿素为唯一氮源的培养基可用于筛选产脲酶细菌"],
+      ans:1,
+      why:"去除镍后脲酶失活，说明镍是脲酶的重要组成元素，A 对；酶的作用是<b>降低</b>化学反应的活化能，镍作为脲酶的组成成分参与催化，不可能提高活化能，B 错；产脲酶细菌能利用尿素分解产生的氨，也能利用 NH₄Cl 作氮源，C 对；以尿素为唯一氮源可选择出能分解尿素的细菌，D 对。",
+      tip:"“酶提高活化能”是本节最直白的错项：<b>酶只会降低活化能</b>。"
+    },
+    {
+      id:4, lv:2, src:"2023·广东 第1题", kind:"real", star:2,
+      stem:"中国制茶工艺源远流长。红茶制作包括萎凋、揉捻、发酵、高温干燥等工序，其间多酚氧化酶催化茶多酚生成适量茶黄素是红茶风味形成的关键。下列叙述<b>错误</b>的是",
+      opts:["揉捻能破坏细胞结构使多酚氧化酶与茶多酚接触", "发酵时保持适宜的温度以维持多酚氧化酶的活性", "发酵时有机酸含量增加不会影响多酚氧化酶活性", "高温灭活多酚氧化酶以防止过度氧化影响茶品质"],
+      ans:2,
+      why:"揉捻破坏细胞结构，使酶与底物接触，A 对；发酵需要适宜温度以维持酶活性，B 对；酶的活性受 pH 影响，发酵时有机酸积累会<b>降低 pH</b>，从而影响多酚氧化酶的活性，C 错；高温使酶变性失活，可终止反应、防止过度氧化，D 对。",
+      tip:"“有机酸增加→pH 下降→酶活性改变”是一条常考的暗线，看到“酸”就要想到 pH。"
+    },
+    {
+      id:5, lv:3, src:"2024·河北 第2题", kind:"real", star:3,
+      stem:"下列关于酶的叙述，正确的是",
+      opts:["作为生物催化剂，酶作用的反应物都是有机物", "胃蛋白酶应在酸性、37℃ 条件下保存", "醋酸杆菌中与发酵产酸相关的酶，分布于其线粒体内膜上", "从成年牛、羊等草食类动物的肠道内容物中可获得纤维素酶"],
+      ans:3,
+      why:"酶作用的反应物不一定是有机物，如过氧化氢酶催化 H₂O₂ 分解，A 错；酶应在<b>最适 pH、低温</b>条件下保存，37℃ 接近体温、容易使酶失活或降解，B 错；醋酸杆菌是原核生物，没有线粒体，C 错；草食动物肠道中的微生物能产生纤维素酶，可从肠道内容物中获取，D 对。",
+      tip:"酶保存的两个关键词：<b>最适 pH + 低温</b>，不是“最适温度”。"
+    },
+    {
+      id:6, lv:3, src:"2024·广西 第5题", kind:"real", star:2,
+      stem:"我国科研工作者利用病毒衣壳蛋白 VP16 作为纳米骨架，包裹大肠杆菌碱性磷酸酶，构建了高效、易调控的蛋白类纳米酶。关于该纳米酶的说法，<b>错误</b>的是",
+      opts:["催化效率受 pH、温度影响", "可在细胞内发挥作用", "显著降低反应的活化能", "可催化肽键的断裂"],
+      ans:3,
+      why:"该纳米酶的本质是蛋白质（碱性磷酸酶），其催化效率受 pH、温度影响，A 对；纳米酶可进入细胞发挥作用，B 对；酶通过显著降低反应活化能加快反应，C 对；碱性磷酸酶催化磷酸酯键水解，<b>不催化肽键断裂</b>，D 错。",
+      tip:"“酶的名称”往往提示底物：碱性磷酸酶作用于磷酸酯键，蛋白酶才作用于肽键。"
+    },
+    {
+      id:7, lv:4, src:"原创·活化能", kind:"orig", star:2,
+      stem:"关于酶的作用原理，下列叙述正确的是",
+      opts:["酶能为化学反应提供能量，使反应更容易进行", "酶能降低化学反应的活化能，从而加快反应速率", "酶能改变反应平衡点，使产物生成量增多", "酶在反应前后自身结构和数量都会发生改变"],
+      ans:1,
+      why:"酶不提供能量，而是降低化学反应的活化能，A 错、B 对；酶只加快反应速率，<b>不改变反应的平衡点</b>，产物最终量不变，C 错；酶在反应前后自身结构和数量基本不变，可重复使用，D 错。",
+      tip:"酶“三不”：<b>不供能、不改平衡、不被消耗</b>。"
+    },
+    {
+      id:8, lv:4, src:"原创·专一性实验", kind:"orig", star:3,
+      stem:"为验证酶的专一性，某同学用淀粉酶分别催化淀粉和蔗糖水解，再用斐林试剂检测。下列叙述<b>错误</b>的是",
+      opts:["该实验的自变量是底物种类（淀粉或蔗糖）", "淀粉酶能催化淀粉水解，不能催化蔗糖水解", "两组都应在相同且适宜的温度下反应", "无论哪一组，加入斐林试剂水浴加热后都会出现砖红色沉淀"],
+      ans:3,
+      why:"实验的自变量是底物种类，A 对；淀粉酶只能催化淀粉水解，体现专一性，B 对；无关变量（温度、pH 等）应相同且适宜，C 对；淀粉水解产生还原糖，与斐林试剂水浴加热出现砖红色沉淀；蔗糖不水解、本身也不是还原糖，<b>不会</b>出现砖红色沉淀，D 错。",
+      tip:"专一性实验的“因变量”是<b>底物是否被分解</b>，检测手段要能区分底物和产物（斐林试剂只认还原糖）。"
+    },
+    {
+      id:9, lv:4, src:"原创·温度与 pH", kind:"orig", star:3,
+      stem:"关于温度、pH 对酶活性的影响，下列叙述<b>错误</b>的是",
+      opts:["低温会抑制酶活性，但一般不会破坏酶的空间结构", "高温、过酸、过碱都会使酶的空间结构遭到破坏而失活", "酶的最适 pH 因酶的种类不同而不同", "将酶从低温恢复到最适温度，酶活性不能恢复"],
+      ans:3,
+      why:"低温只是抑制酶活性，酶的空间结构一般不被破坏，A 对；高温、过酸、过碱会破坏酶的空间结构，使酶永久失活，B 对；不同酶的最适 pH 不同（如胃蛋白酶偏酸、胰蛋白酶偏碱），C 对；低温处理后再恢复到最适温度，酶活性<b>可以恢复</b>，D 错。",
+      tip:"记住一组对比：<b>低温“冻住”可恢复，高温“烫坏”不可逆</b>。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:10, lv:5, src:"原创·综合题（酶的发现史）", star:3, title:"从“发酵”到“酶”",
+      material:"19 世纪，巴斯德认为酒精发酵是酵母细胞生命活动的结果，而李比希认为发酵是由细胞中的某种化学物质引起的。后来，毕希纳把酵母细胞破碎，得到不含细胞的提取液，发现它仍能使糖液发酵；萨姆纳从刀豆中提取出脲酶并证明其是蛋白质；20 世纪 80 年代，科学家又发现少数 RNA 也具有催化作用。",
+      asks:[{q:"毕希纳的实验结果支持谁的观点？说明理由。", pt:4}, {q:"综合上述史实，写出酶的本质，并说明“酶都是蛋白质”这一说法为什么被修正。", pt:6}],
+      points:[
+        ["支持李比希（发酵由细胞中的化学物质引起）", "理由：破碎细胞后的无细胞提取液仍能催化发酵", "说明起催化作用的物质不在完整细胞结构中，而是细胞内的化学物质"],
+        ["酶是活细胞产生的具有催化作用的有机物", "绝大多数酶是蛋白质，少数酶是 RNA", "萨姆纳证明脲酶是蛋白质，20 世纪 80 年代发现少数 RNA 也有催化作用", "因此“酶都是蛋白质”被修正为“大多数酶是蛋白质，少数是 RNA”"]
+      ],
+      tip:"科学史题答“支持谁”要写<b>实验结果→推理</b>，不能只写结论；答“本质”要写全“有机物、多数蛋白质、少数 RNA”。"
+    },
+    {
+      id:11, lv:5, src:"原创·综合题（温度实验）", star:3, title:"温度对酶活性影响的实验设计",
+      material:"某同学想探究温度对唾液淀粉酶活性的影响，准备了 1% 淀粉溶液、唾液淀粉酶溶液、碘液，以及 0℃、37℃、100℃ 三种温度的水浴。",
+      asks:[{q:"写出实验思路（包括自变量、因变量、观测指标和关键操作）。", pt:6}, {q:"有同学提出“先加碘液再保温”，这样做是否可行？说明理由。", pt:4}],
+      points:[
+        ["自变量：温度（0℃、37℃、100℃）", "因变量：唾液淀粉酶的活性", "观测指标：淀粉是否被完全分解（碘液是否变蓝及蓝色的深浅）", "关键操作：先将酶液与淀粉溶液分别在对应温度下保温，再混合；反应相同时间后加碘液观察", "其他条件相同且适宜（pH、酶浓度、淀粉浓度等）"],
+        ["不可行", "碘液用于检测淀粉是否存在，应在反应一段时间后加入", "若先加碘液，碘会与淀粉结合，影响酶与底物的接触，干扰反应", "且无法通过颜色变化判断反应进程"]
+      ],
+      tip:"温度实验的关键是“<b>先分别保温、再混合</b>”，否则混合瞬间温度不达标，自变量就失控了。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题（抑制剂）", star:3, title:"两种抑制剂，两种机制",
+      material:"研究发现，物质甲能降低某酶的催化速率，但不改变酶的最适 pH；物质乙也能降低该酶活性，且加入过量底物后抑制效果明显减弱。进一步检测发现，甲与酶结合后酶的的空间结构发生改变，乙则与底物竞争酶的活性部位。",
+      asks:[{q:"根据材料，判断甲、乙分别属于哪类抑制剂，并说明依据。", pt:6}, {q:"若要在实验中区分甲、乙，可设置怎样的对照？预期结果是什么？", pt:4}],
+      points:[
+        ["乙是竞争性抑制剂：与底物竞争活性部位，增加底物浓度可减弱抑制", "甲是非竞争性抑制剂：与酶结合后改变酶的空间结构，增加底物浓度不能解除抑制", "甲不改变最适 pH，说明其作用不是通过改变 pH 实现"],
+        ["设置“抑制剂 + 不同浓度底物”的系列组，分别测定反应速率", "乙组：底物浓度增大，抑制效果减弱，速率可接近无抑制剂组", "甲组：底物浓度增大，抑制效果基本不变", "通过比较两组速率随底物浓度的变化曲线即可区分"]
+      ],
+      tip:"区分两类抑制剂只看一句话：<b>加大底物能否“解救”</b>——能解救是竞争性，不能是非竞争性。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "bio-enzyme-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigACTIVATION(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#713f12'>活化能与酶（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.5'><line x1='70' y1='250' x2='700' y2='250'/><line x1='70' y1='250' x2='70' y2='60'/></g><text x='26' y='70' font-size='11' fill='#475569'>能量</text><text x='640' y='270' font-size='11' fill='#475569'>反应进程</text><path d='M90 230 Q200 60 330 110 Q460 160 690 170' stroke='#a16207' stroke-width='3' fill='none'/><path d='M90 230 Q200 150 330 175 Q460 200 690 178' stroke='#16a34a' stroke-width='3' fill='none' stroke-dasharray='7 4'/><line x1='90' y1='230' x2='690' y2='230' stroke='#cbd5e1' stroke-dasharray='4 4'/><g font-size='11.5'><text x='250' y='52' fill='#a16207'>无催化剂：需要较高活化能</text><text x='420' y='152' fill='#15803d'>有酶：活化能降低</text><text x='90' y='222' fill='#475569'>反应物</text><text x='620' y='222' fill='#475569'>产物</text><text x='200' y='290' font-size='10.5' fill='#64748b'>酶只改变反应路径、降低活化能，不改变产物和平衡点。</text></g></svg></div>"; }
+  function buildFigENZYMECURVE(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 300'><rect width='760' height='300' fill='#fff'/><text x='18' y='24' font-size='13' font-weight='700' fill='#713f12'>温度、pH 与酶活性（示意图，非原卷图）</text><g stroke='#94a3b8' stroke-width='1.5'><line x1='60' y1='240' x2='350' y2='240'/><line x1='60' y1='240' x2='60' y2='60'/><line x1='430' y1='240' x2='720' y2='240'/><line x1='430' y1='240' x2='430' y2='60'/></g><path d='M70 230 Q180 60 240 90 Q290 120 340 235' stroke='#dc2626' stroke-width='3' fill='none'/><path d='M440 232 Q520 70 570 80 Q620 95 710 232' stroke='#2563eb' stroke-width='3' fill='none'/><g font-size='11' fill='#475569'><text x='170' y='52' fill='#b91c1c'>温度</text><text x='190' y='268'>最适温度</text><text x='540' y='52' fill='#1d4ed8'>pH</text><text x='540' y='268'>最适 pH</text><text x='66' y='60' font-size='10.5'>酶活性</text><text x='436' y='60' font-size='10.5'>酶活性</text><text x='70' y='222' font-size='10'>低温抑制（可恢复）</text><text x='280' y='222' font-size='10'>高温变性</text><text x='540' y='222' fill='#1d4ed8'>过酸、过碱变性</text></g><text x='18' y='292' font-size='10.5' fill='#64748b'>注意：曲线右侧下降是“结构被破坏”，不可恢复；左侧低温只是抑制。</text></svg></div>"; }
+  var FIG = {
+    "activation": buildFigACTIVATION,
+    "enzymeCurve": buildFigENZYMECURVE
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>

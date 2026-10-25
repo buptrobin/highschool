@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>免疫学的应用</title>
+<style>
+  :root{
+    --bg:#f5f7fc;
+    --card:#ffffff;
+    --ink:#161a2b;
+    --ink2:#3d4460;
+    --muted:#6b7391;
+    --line:#e4e8f4;
+    --brand:#4858d4;
+    --brand-l:#eef0ff;
+    --warm:#e08a1e;
+    --ok:#0f9d76;
+    --ok-l:#e8f8f2;
+    --bad:#d93a5c;
+    --bad-l:#fdeef1;
+    --shadow:0 1px 2px rgba(22,26,43,.04), 0 8px 24px -12px rgba(22,26,43,.14);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 380px at 12% -10%, #e6e9ff 0%, rgba(230,233,255,0) 62%),
+      radial-gradient(700px 320px at 92% 8%, #fdf1e2 0%, rgba(253,241,226,0) 60%),
+      linear-gradient(180deg,#fbfcff 0%, #f5f7fc 100%);
+    border-bottom:1px solid var(--line);
+    padding:44px 0 34px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 18%, #a8b2dd 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 62%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.8px 1.8px at 41% 14%, #b3bce4 50%, transparent 51%),
+      radial-gradient(1.3px 1.3px at 63% 48%, #c9cfe9 50%, transparent 51%),
+      radial-gradient(1.7px 1.7px at 78% 20%, #aab4df 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 66%, #c2c9e8 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 52% 80%, #c9cfe9 50%, transparent 51%);
+  }
+  .hero .wrap{position:relative}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 282px;gap:34px;align-items:center}
+  .hero-art{width:282px;justify-self:end}
+  .hero-art svg{display:block;width:100%;height:auto}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.08em;color:var(--brand);
+    background:var(--brand-l);border:1px solid #dfe3ff;
+    padding:5px 12px;border-radius:999px;
+  }
+  .kicker::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  h1{
+    font-size:clamp(30px,5.2vw,44px);
+    line-height:1.22;letter-spacing:-.01em;
+    margin:16px 0 10px;font-weight:800;
+  }
+  h1 .thin{font-weight:400;color:var(--muted);font-size:.52em;display:block;margin-top:10px;letter-spacing:.02em}
+  .lede{margin:0;color:var(--ink2);font-size:16.5px;max-width:640px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .fact{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:10px 15px;min-width:104px;box-shadow:var(--shadow);
+  }
+  .fact b{display:block;font-size:21px;line-height:1.3;letter-spacing:-.02em}
+  .fact span{font-size:12px;color:var(--muted)}
+
+  /* ---------- hud ---------- */
+  .hud{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(245,247,252,.88);
+    border-bottom:1px solid var(--line);
+  }
+  .hud .wrap{display:flex;align-items:center;gap:14px;height:52px;font-size:13px;color:var(--ink2)}
+  .hud-bar{flex:1;height:5px;background:#e3e7f3;border-radius:99px;overflow:hidden}
+  .hud-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4858d4,#7b61ff);border-radius:99px;transition:width .35s ease}
+  .hud-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hud-num b{color:var(--ink);font-size:14px}
+  .reset{
+    border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{border-color:#c9d0e6;color:var(--ink)}
+
+  /* ---------- section ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{
+    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);
+    border-bottom:2px solid var(--brand);padding-bottom:2px;
+  }
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;font-weight:750}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+
+  /* ---------- knowledge map ---------- */
+  .kmap{display:grid;gap:16px}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);min-width:0;
+  }
+  .panel-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 16px}
+
+  /* nested boxes */
+  .nest{border-radius:12px;padding:30px 15px 14px;border:1px dashed;position:relative}
+  .nest > .lb{
+    position:absolute;top:7px;left:14px;
+    font-size:12.8px;font-weight:700;letter-spacing:.02em;
+  }
+  .nest .hint{font-size:11.5px;font-weight:400;color:var(--muted);margin-left:6px}
+  .n1{border-color:#c8cfe8;background:#f7f9ff}
+  .n1>.lb{color:#4a5a8f}
+  .n2{border-color:#c3c9f0;background:#f0f2ff}
+  .n2>.lb{color:#4655c0}
+  .n3{border-color:#b8bdf0;background:#e8ebff}
+  .n3>.lb{color:#3f4dbb}
+  .n4{border-color:#a9aef0;background:#dee3ff;margin-top:14px}
+  .n4>.lb{color:#3542ad}
+  .n4 .body{font-size:13px;color:#3b4780;padding-top:2px}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.cards2{grid-template-columns:1fr}}
+  .note{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fcfdff;min-width:0;
+  }
+  .note h4{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .note h4 i{
+    font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--brand-l);
+    color:var(--brand);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;
+  }
+  .note p{margin:0;font-size:14px;color:var(--ink2);line-height:1.72}
+  .note b{color:var(--ink)}
+  .tagline{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#eef0ff,#fdf3e6);
+    font-size:14.5px;color:#2c3352;border:1px solid #e6e2f5;
+  }
+  .tagline b{color:#3542ad}
+
+  /* solar system svg */
+  .svg-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svg-box svg{display:block;width:100%;height:auto;min-width:520px}
+  .swipe-hint{display:none;margin:8px 0 0;font-size:11.5px;color:#9aa1b8;text-align:right}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- level head ---------- */
+  .lvl{margin-top:44px}
+  .lvl:first-of-type{margin-top:8px}
+  .lvl-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .lvl-badge{
+    flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:19px;letter-spacing:-.02em;
+  }
+  .lvl-head h3{margin:0;font-size:19.5px;letter-spacing:-.01em}
+  .lvl-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .lvl-pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;
+    background:#eef0f7;color:var(--ink2);vertical-align:2px;margin-left:8px;font-weight:600;
+  }
+
+  /* ---------- question ---------- */
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;margin-bottom:14px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .qhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .qno{
+    font-size:12px;font-weight:800;color:var(--lc,#4858d4);background:var(--lcl,#eef0ff);
+    border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .src.real{color:#8a5a00;border-color:#f0dcb8;background:#fffaf0}
+  .src.mock{color:#8b5cf6;border-color:#e2d8fb;background:#faf7ff}
+  .star{margin-left:auto;font-size:11px;color:var(--warm);letter-spacing:2px}
+  .stem{margin:0 0 14px;font-size:15.5px;color:var(--ink);line-height:1.8}
+  .stem .qmark{color:var(--brand);font-weight:700}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:#fcfdff;border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 13px;font:inherit;font-size:14.5px;color:var(--ink2);
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:#bcc6ea;background:#f7f9ff}
+  .opt:active:not(:disabled){transform:scale(.995)}
+  .opt i{
+    flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #ccd3e8;
+    display:grid;place-items:center;font-style:normal;font-size:11.5px;font-weight:700;
+    color:var(--muted);margin-top:1px;
+  }
+  .opt.ok{border-color:#9ddcc6;background:var(--ok-l);color:#0a6e54}
+  .opt.ok i{border-color:var(--ok);background:var(--ok);color:#fff}
+  .opt.bad{border-color:#f3b9c6;background:var(--bad-l);color:#a51f41}
+  .opt.bad i{border-color:var(--bad);background:var(--bad);color:#fff}
+  .opt.dim{opacity:.55}
+  .opt:disabled{cursor:default}
+
+  .qfoot{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+  .toggle{
+    border:1px solid var(--line);background:#fff;border-radius:9px;
+    padding:7px 14px;font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;
+    transition:.15s;
+  }
+  .toggle:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+  .verdict{font-size:13px;font-weight:600}
+  .verdict.ok{color:var(--ok)}
+  .verdict.bad{color:var(--bad)}
+
+  .explain{
+    margin-top:14px;padding:16px 18px;border-radius:12px;
+    background:#f8faff;border:1px solid #e6ebfa;border-left:3px solid var(--lc,#4858d4);
+    font-size:14.3px;color:var(--ink2);
+  }
+  .explain p{margin:0 0 9px}
+  .explain p:last-child{margin-bottom:0}
+  .explain .k{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--brand);
+    background:#fff;border:1px solid #dfe4fb;border-radius:5px;padding:0 6px;margin-right:7px;
+    vertical-align:1px;
+  }
+  .explain .k.g{color:#0b7d5e;border-color:#c8e9dd}
+  .explain .k.o{color:#a25f00;border-color:#f0dcb8}
+  .explain b{color:var(--ink)}
+
+  /* essay */
+  .material{
+    background:#fffdf6;border:1px solid #f1e5c8;border-radius:11px;
+    padding:14px 16px;font-size:14.3px;color:#4a4230;margin-bottom:14px;line-height:1.8;
+  }
+  .material b{color:#7a5300}
+  .material table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  .material th,.material td{border:1px solid #eee2c8;padding:6px 9px;text-align:left}
+  .material th{background:#fdf6e6;font-weight:600;color:#6b5320}
+  .material td{background:#fff}
+  .asks{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.6px}
+  .asks li{padding-left:2px;color:var(--ink)}
+  .asks .pt{color:var(--muted);font-size:12.5px;margin-left:6px}
+  .pts{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:7px}
+  .pts li{
+    font-size:14px;padding:9px 12px 9px 34px;position:relative;
+    background:#fff;border:1px solid #e2efe8;border-radius:9px;color:#245c4b;
+  }
+  .pts li::before{
+    content:"✓";position:absolute;left:12px;top:8px;color:#0f9d76;font-weight:700;font-size:12px;
+  }
+  .pts li em{font-style:normal;color:#0f9d76;font-weight:700;font-size:12px;margin-left:6px}
+  .pt-h{margin:16px 0 9px;font-size:13.5px;font-weight:800;color:#2f4a6d;letter-spacing:.02em}
+  .pt-h span{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+  /* traps */
+  .traps{display:grid;gap:11px}
+  .trap{
+    display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:15px 18px;box-shadow:var(--shadow);
+  }
+  .trap .x{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--bad-l);color:var(--bad);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap .y{
+    flex:none;width:26px;height:26px;border-radius:8px;background:var(--ok-l);color:var(--ok);
+    display:grid;place-items:center;font-weight:800;font-size:13px;
+  }
+  .trap div p{margin:0;font-size:14.2px}
+  .trap div p+p{margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* footer */
+  footer{margin-top:56px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  footer h4{color:var(--ink2);font-size:13.5px;margin:0 0 8px}
+  footer ul{margin:0 0 18px;padding-left:18px}
+  footer li{margin-bottom:4px}
+  footer .fine{font-size:12px;line-height:1.7;color:#8a90a8}
+
+  @media(max-width:640px){
+    body{font-size:15.5px}
+    .hero{padding:32px 0 26px}
+    section{padding:38px 0 6px}
+    .panel{padding:17px;border-radius:15px}
+    .q{padding:16px 16px 17px;border-radius:14px}
+    .opt{font-size:14px;padding:9px 11px}
+    .stem{font-size:15px}
+    .lvl-head{gap:11px}
+    .lvl-badge{width:40px;height:40px;font-size:17px;border-radius:12px}
+    .lvl-head h3{font-size:17.5px}
+    .hud .wrap{gap:9px;height:48px}
+    .hud-num{font-size:12px}
+    .nest .hint{display:none}
+    .swipe-hint{display:block}
+    .hero-art{display:none}
+    .hero-grid{grid-template-columns:1fr!important;gap:0!important}
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;background:#e9edf6;border-radius:10px;padding:3px}
+  .tab{
+    border:0;background:transparent;border-radius:8px;padding:5px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.12)}
+  .tab .tn{
+    background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;padding:0 6px;line-height:16px;min-width:16px;text-align:center;
+  }
+  .tab .tn:empty{display:none}
+  body.wbview .quiz-only{display:none!important}
+
+  /* ---------- wrong book ---------- */
+  .wb-head{display:flex;align-items:baseline;gap:12px;margin:38px 0 8px;flex-wrap:wrap}
+  .wb-stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .wb-stats b{color:var(--ink);font-size:15px}
+  .wb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .seg{display:flex;gap:3px;background:#e9edf6;border-radius:9px;padding:3px}
+  .seg button{
+    border:0;background:transparent;border-radius:7px;padding:4px 12px;
+    font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;
+  }
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(22,26,43,.1)}
+  .wb-spacer{flex:1}
+  .wbtn{font-size:12.5px;padding:6px 12px}
+  .wbtn.inwb{background:var(--bad-l);border-color:#f3b9c6;color:var(--bad)}
+  .wb-group{margin-bottom:28px}
+  .wb-crumb{font-size:12px;color:var(--muted);margin:0 0 6px;letter-spacing:.02em}
+  .wb-sec{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 2px;border-bottom:2px solid var(--line);margin-bottom:12px;
+  }
+  .wb-sec h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .wb-sec .cnt{font-size:12.5px;color:var(--muted)}
+  .wb-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wb-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc,#4858d4);opacity:.75}
+  .wb-card.mastered{opacity:.8}
+  .wb-card.mastered::before{background:var(--ok)}
+  .whead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .topic-tag{font-size:11px;background:#eef0f7;color:var(--ink2);border-radius:6px;padding:2px 7px;font-weight:600}
+  .ok-tag{background:var(--ok-l)!important;color:#0a6e54!important}
+  .wdate{margin-left:auto;font-size:11.5px;color:#9aa1b8;font-variant-numeric:tabular-nums}
+  .wstem{font-size:14.5px;color:var(--ink);line-height:1.75;margin:0 0 10px}
+  .wlast{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .wlast .bad-t{color:var(--bad);font-weight:700}
+  .wlast .ok-t{color:var(--ok);font-weight:700}
+  .redo-label{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .redo-opts .opt{font-size:13.8px;padding:8px 11px}
+  .redo-msg{font-size:13px;font-weight:600;margin-top:9px}
+  .redo-msg.ok{color:var(--ok)}
+  .redo-msg.bad{color:var(--bad)}
+  .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .mastered-btn.on{background:var(--ok-l);border-color:#9ddcc6;color:#0a6e54}
+  .wb-empty{
+    text-align:center;padding:64px 24px;color:var(--muted);font-size:14.5px;line-height:2;
+    border:1.5px dashed #d5dbeb;border-radius:18px;background:#fbfcff;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);
+    background:#23283d;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .flash{animation:flashB 1.6s ease}
+  @keyframes flashB{0%,60%{box-shadow:0 0 0 3px var(--brand)}100%{box-shadow:var(--shadow)}}
+  @media(max-width:640px){
+    .tabs .tab{padding:5px 10px;font-size:12.5px}
+    .wb-card{padding:14px}
+    .wb-tools{gap:6px}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .hud,.toggle,.reset,.hero::before,.tabs,.wb-tools,.wb-actions,.redo-opts,.toast,.hero-art{display:none!important}
+    .explain,.explain[hidden]{display:block!important}
+    .q{break-inside:avoid;box-shadow:none;border-color:#ccc}
+    .panel{box-shadow:none}
+    a{text-decoration:none;color:#000}
+  }
+</style>
+<script>window.QUIZ_META = {"sid": "bio", "slug": "xx1-c4-s4", "n": 10, "title": "免疫学的应用"};</script>
+</head>
+<body>
+<style>
+.qz-back { padding: 10px 16px 0; font: 500 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.qz-back a { color: #5a6472; text-decoration: none; }
+.qz-back a:hover { color: #2563eb; }
+@media print { .qz-back { display: none; } }
+</style>
+<div class="qz-back"><a href="../../subject.html?s=bio&quiz=1">‹ 生物 · 真题精练目录</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">人教版 · 选择性必修1 稳态与调节 · 第四章第四节</span>
+        <h1>免疫学的应用<span class="thin">北京真题 2 道 · 外地真题 4 道 · 5 关 13 题</span></h1>
+        <p class="lede">本节是免疫章的“出口”：<b>疫苗</b>（把抗原交给免疫系统去练）、<b>免疫诊断</b>（用抗体去“找”抗原）、<b>免疫治疗</b>（单抗、细胞治疗，把免疫系统当药）、<b>器官移植</b>（把“非己”瞒过免疫系统）。四块内容共享同一句原理：<b>抗原与抗体结合具有特异性</b>。</p>
+        <div class="facts"><div class="fact"><b>10</b><span>选择题</span></div><div class="fact"><b>6</b><span>真题</span></div><div class="fact"><b>3</b><span>综合大题</span></div><div class="fact"><b>5</b><span>难度关卡</span></div></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><svg viewBox='0 0 300 300'><rect x='14' y='14' width='272' height='256' rx='18' fill='#ecfdf5'/><g stroke='#0f766e' stroke-width='2.2' fill='none'><rect x='40' y='44' width='220' height='38' rx='9'/><rect x='40' y='106' width='220' height='38' rx='9'/><rect x='40' y='168' width='220' height='38' rx='9'/></g><g font-size='11' fill='#134e4a' text-anchor='middle' font-weight='700'><text x='150' y='68'>疫苗：给免疫系统“练习题”</text><text x='150' y='130'>免疫诊断：抗体去找抗原</text><text x='150' y='192'>免疫治疗：单抗·CAR-T</text></g><g font-size='10' fill='#0f766e' text-anchor='middle'><text x='150' y='234'>器官移植：配型＋免疫抑制剂</text><text x='150' y='256'>共同原理：抗原—抗体结合具有特异性</text></g></svg></div>
+    </div>
+  </div>
+</header>
+<div class="hud">
+  <div class="wrap">
+    <span class="hud-num"><b id="hud-done">0</b>/<span id="hud-total">15</span> 题</span>
+    <span class="hud-bar"><i id="hud-fill"></i></span>
+    <span class="hud-num" id="hud-rate">正确率 —</span>
+    <nav class="tabs" style="margin-left:auto">
+      <button class="tab active" id="tab-quiz" type="button">练习</button>
+      <button class="tab" id="tab-wb" type="button">错题本<span class="tn" id="wb-count"></span></button>
+    </nav>
+    <button class="reset quiz-only" id="reset">重做</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= 错题本 ================= -->
+  <section id="wbpage" hidden>
+    <div class="wb-head"><span class="sec-num">错题本</span><h2>错过的题，隔天再战</h2></div>
+    <p class="wb-stats" id="wb-stats"></p>
+    <div class="wb-tools">
+      <div class="seg" id="wb-filter">
+        <button data-f="all" class="active" type="button">全部</button>
+        <button data-f="redo" type="button">待重做</button>
+        <button data-f="mastered" type="button">已掌握</button>
+      </div>
+      <span class="wb-spacer"></span>
+      <button class="toggle wbtn" id="wb-export" type="button">导出备份</button>
+      <button class="toggle wbtn" id="wb-import" type="button">导入备份</button>
+      <button class="toggle wbtn" id="wb-clear" type="button">清空错题本</button>
+      <input type="file" id="wb-file" accept=".json" hidden>
+    </div>
+    <div id="wb-list"></div>
+  </section>
+
+  <!-- ================= 知识地图 ================= -->
+    <!-- ================= 知识地图 ================= -->
+  <section id="map">
+  <div class="sec-head"><span class="sec-num">00 / 先看地图</span><h2>一句话记住本节：免疫学的应用＝把“抗原—抗体特异性结合”用在四个地方</h2></div>
+  <p class="sec-sub">左图是单克隆抗体的制备流程（考试最爱考“两次筛选”）；右图把四类应用与各自的原理并排放，判断时先定位“这是在用抗原，还是在用抗体”。</p>
+  <div class="kmap"><div class="panel" style="border-left:4px solid #2050c8;background:#fffefa">
+  <p class="panel-title">高考考频 · 北京等级考 2022—2026（越近权重越高）</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px"><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 3 年北京 1 题</span><span style="background:#eaf1ff;color:#2050c8;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">近 6 年北京 2 题</span><span style="background:#eef7f6;color:#0f7f7c;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">外地近 3 年 1 题</span><span style="background:#fdf3e3;color:#a06412;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600">已收进本页 6 题</span></div>
+  <p style="margin:0 0 10px;font-size:14px;line-height:1.85;color:#8a4b12;background:#fff6e8;border:1px solid #f3dcc0;border-radius:10px;padding:10px 12px"><b>一句话结论：</b>北京卷在免疫章里最舍得考的就是本节：<b>2026 年第 10 题</b>（乙肝疫苗的 S 蛋白）与 <b>2023 年第 15 题</b>（预防和治疗病毒性疾病）两道落在这里，都是“给一个真实场景，判断某环节的原理对不对”。另有两道北京真题（2023 年第 12 题单抗检测 PTH、2024 年北京第 9 题）分别属于单抗制备与特异性免疫的页面。</p>
+  <p style="margin:0;font-size:13.5px;line-height:1.85;color:#455267">北京卷：<b>2026 年第 10 题</b>（乙肝疫苗的 S 蛋白）、<b>2023 年第 15 题</b>（预防和治疗病毒性疾病）两道收入；2023 年第 12 题是“单克隆抗体的制备”，归入《选择性必修3·动物细胞工程》一页（xx3-c2-s2），本页不重复收录；2024 年第 9 题属第二节，2023 年第 10 题属第三节，2022 年第 10 题属第一节。外地卷：<b>2023 年湖南第 11 题</b>（破伤风类毒素与抗毒素）、<b>2024 年海南第 7 题</b>（植物组织培养与杂交瘤的比较）、<b>2022 年山东第 15 题</b>（双特异性抗体，配原卷图）、<b>2022 年湖北第 14 题</b>（肾移植与 ABO 血型）四道收入。另配 4 道原创题，补“四类应用的归类”“疫苗类型”“免疫诊断”“单抗制备”四个落点。</p>
+</div><div class="panel"><p class="panel-title">① 单克隆抗体的制备流程（示意图，非原卷图）</p><div class="svg-box" id="map-fig"><svg viewBox='0 0 760 330'><rect width='760' height='330' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#134e4a'>单克隆抗体的制备流程（示意图，非原卷图）</text><g font-size='11'><rect x='24' y='44' width='336' height='40' rx='8' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='69' fill='#1e3a8a'>① 用特定抗原免疫小鼠，从脾脏取 B 淋巴细胞</text><rect x='24' y='92' width='336' height='40' rx='8' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='117' fill='#1e3a8a'>② 与骨髓瘤细胞融合（动物细胞融合）</text><rect x='24' y='140' width='336' height='40' rx='8' fill='#f5f3ff' stroke='#c4b5fd'/><text x='38' y='165' fill='#6d28d9'>③ 第一次筛选：选择培养基筛出杂交瘤细胞</text><rect x='24' y='188' width='336' height='40' rx='8' fill='#f5f3ff' stroke='#c4b5fd'/><text x='38' y='213' fill='#6d28d9'>④ 第二次筛选：抗原—抗体反应筛出“特定抗体”</text><rect x='24' y='236' width='336' height='40' rx='8' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='261' fill='#0f766e'>⑤ 克隆化培养／小鼠腹腔增殖，提取单抗</text><rect x='384' y='44' width='352' height='120' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='398' y='66' font-weight='700' fill='#b45309'>杂交瘤细胞的两个本领</text><text x='398' y='90' fill='#374151'>① 来自骨髓瘤细胞：能无限增殖</text><text x='398' y='112' fill='#374151'>② 来自 B 淋巴细胞：能产生特异性抗体</text><text x='398' y='134' fill='#374151'>合起来＝“取之不尽的单一抗体工厂”</text><text x='398' y='156' fill='#9f1239'>一个 B 细胞只产生一种抗体</text><rect x='384' y='180' width='352' height='96' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='398' y='202' font-weight='700' fill='#b91c1c'>两次筛选别混</text><text x='398' y='224' fill='#374151'>第一次：筛“是不是杂交瘤”（选择培养基）</text><text x='398' y='246' fill='#374151'>第二次：筛“产不产特定抗体”（抗原—抗体检测）</text><text x='398' y='268' fill='#374151'>单抗的优点：特异性强、纯度高、可大量生产</text><rect x='24' y='288' width='712' height='34' rx='8' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='310' fill='#374151'>应用：免疫诊断（检测抗原）· 免疫治疗（靶向药物、双抗）· 运载药物</text></g></svg></div></div><div class="panel"><p class="panel-title">② 免疫学的四类应用（示意图，非原卷图）</p><div class="svg-box" id="map-fig-apps"><svg viewBox='0 0 760 320'><rect width='760' height='320' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#134e4a'>免疫学的四类应用（示意图，非原卷图）</text><g font-size='11'><rect x='24' y='44' width='172' height='150' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='66' font-weight='700' fill='#1d4ed8'>① 免疫预防</text><text x='38' y='90' fill='#374151'>用疫苗（抗原）</text><text x='38' y='110' fill='#374151'>→ 主动免疫</text><text x='38' y='130' fill='#374151'>产生抗体＋记忆细胞</text><text x='38' y='150' fill='#374151'>保护需时间、有期限</text><text x='38' y='176' fill='#1e40af'>例：乙肝疫苗</text><rect x='208' y='44' width='172' height='150' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='222' y='66' font-weight='700' fill='#6d28d9'>② 免疫诊断</text><text x='222' y='90' fill='#374151'>用抗体（或抗原）</text><text x='222' y='110' fill='#374151'>→ 特异性结合</text><text x='222' y='130' fill='#374151'>检测组织/体液中的抗原</text><text x='222' y='150' fill='#374151'>要求：纯度高、特异性强</text><text x='222' y='176' fill='#5b21b6'>例：戊肝试剂盒</text><rect x='392' y='44' width='172' height='150' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='406' y='66' font-weight='700' fill='#0f766e'>③ 免疫治疗</text><text x='406' y='90' fill='#374151'>弱了补：细胞因子、CAR-T</text><text x='406' y='110' fill='#374151'>强了压：免疫抑制剂</text><text x='406' y='130' fill='#374151'>单抗：靶向药物、双抗</text><text x='406' y='150' fill='#374151'>运送药物到靶细胞</text><text x='406' y='176' fill='#115e59'>例：抗 HER2 单抗</text><rect x='576' y='44' width='160' height='150' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='590' y='66' font-weight='700' fill='#b45309'>④ 器官移植</text><text x='590' y='90' fill='#374151'>配型：HLA＋血型</text><text x='590' y='110' fill='#374151'>术后：免疫抑制剂</text><text x='590' y='130' fill='#374151'>排斥以细胞免疫为主</text><text x='590' y='150' fill='#374151'>代价：感染/肿瘤风险↑</text><text x='590' y='176' fill='#a06412'>例：肾移植</text><rect x='24' y='208' width='712' height='44' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='230' font-weight='700' fill='#0f766e'>共同原理</text><text x='110' y='230' fill='#374151'>抗原与抗体（或受体的配体）结合具有<tspan font-weight='700'>特异性</tspan>——这是本节所有判断题的钥匙</text><rect x='24' y='264' width='712' height='44' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='38' y='286' font-weight='700' fill='#b91c1c'>最爱错</text><text x='104' y='286' fill='#374151'>抗体不通过“激活 T 细胞”起作用；一个浆细胞只产一种抗体；移植不能不考虑血型</text></g></svg></div></div></div>
+</section>
+<section id="quiz">
+    <div class="sec-head"><span class="sec-num">01 / 开始练</span><h2>五关，从“送分题”到“大题”</h2></div>
+    <p class="sec-sub">点选项立刻判对错，答完再看解析。做错的题在页面顶部会计数，方便回头重刷。</p>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= 易错 ================= -->
+    <!-- ================= 易错 ================= -->
+  <section id="traps">
+  <div class="sec-head"><span class="sec-num">02 / 收口</span><h2>最容易丢分的几个点</h2></div>
+  <p class="sec-sub">考前五分钟扫一遍，比再刷十道题管用。</p>
+  <div class="traps"></div>
+</section>
+<footer>
+<h4>怎么用这份材料</h4>
+<ul><li>先画四类应用的对应关系：<b>疫苗（用抗原）／诊断（用抗体找抗原）／治疗（单抗、细胞治疗）／移植（配型＋免疫抑制剂）</b>。</li><li>第 1 题（北京 2026）与第 4 题（北京 2023）都是“疫苗不是万能的”：不是立即有效、不是终身有效。</li><li>第 7、8 题围绕单抗：两次筛选、单个杂交瘤细胞只产一种抗体、杂交瘤细胞能无限增殖。</li><li>第 9、10 题是易错点：双抗不能靠“同时注射两种抗原”获得；移植必须考虑血型与配型。</li><li>三道综合题建议先列要点：疫苗＝免疫原性≠保护效力；试纸条＝双抗体夹心；CAR-T＝细胞免疫＋不依赖 MHC。</li></ul>
+<h4>题目来源说明</h4>
+<ul><li><b>北京真题（2 道）：</b>2026 年第 10 题（乙肝疫苗的 S 蛋白）、2023 年第 15 题（预防和治疗病毒性疾病）。</li><li><b>外地真题（4 道）：</b>2023 年湖南第 11 题（破伤风类毒素与抗毒素）、2024 年海南第 7 题（植物组织培养与杂交瘤的比较）、2022 年山东第 15 题（双特异性抗体，配原卷图）、2022 年湖北第 14 题（肾移植与 ABO 血型）。其中山东、湖北两道为 2022 年，但分别对应“双抗”与“移植配型”这两个本节独有的落点，故保留。</li><li><b>跨页处理：</b>2023 年北京第 12 题（单抗检测 PTH）与 2024 年福建第 1 题（戊肝诊断试剂盒）都是“单克隆抗体的制备与应用”，按“教材节页优先”归入《选择性必修3·第二章第二节 动物细胞工程》一页（xx3-c2-s2），本页不重复收录。</li><li><b>原创题（4 道选择 + 3 道综合）：</b>四类应用归类、疫苗类型、免疫诊断、单抗制备四道选择题，以及“疫苗临床试验”“抗原检测试纸条”“CAR-T 疗法”三道综合题，均标 <b>orig</b>。</li><li><b>配图说明：</b>第 9 题配图取自 2022 年山东卷解析卷 docx（rId11），只做白底、灰度、缩放处理，未重绘；两张方法示意图为原创 SVG，标题已注明“示意图，非原卷图”。</li><li>本页<b>不含北京合格考（学业水平合格性考试）题目</b>；2022 年北京第 10 题属第一节，2024 年北京第 9 题属第二节，2023 年北京第 10 题属第三节，见对应页面。</li></ul>
+</footer>
+
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  // 错题本所需的教材定位（所有题共用）
+  /* ---- 数据层（由 quizgen 生成，勿手改） ---- */
+  var BOOK = {book:"选择性必修1", chapter:"第四章 免疫调节", section:"第四节 免疫学的应用"};
+  var TOPIC = {1:"疫苗诱导的是体液免疫与记忆细胞", 2:"免疫诊断：特异性结合与假阴性", 3:"疫苗、诊断、治疗、移植四类应用", 4:"疫苗保护需要时间，且不是万能的", 5:"类毒素（抗原）与抗毒素（抗体）", 6:"灭活疫苗与减毒活疫苗", 7:"B 细胞不能无限增殖", 8:"杂交瘤细胞与愈伤组织都能增殖", 9:"双特异性抗体不能靠同时注射两种抗原得到", 10:"器官移植必须考虑血型与配型"};
+  var LEVELS = [
+    {id:1, name:"疫苗与免疫诊断", sub:"北京 2026 乙肝疫苗 + 原创免疫诊断", badge:"基础", color:"#0f766e", lcl:"#ecfdf5"},
+    {id:2, name:"疫苗怎么用", sub:"北京 2023 病毒性疾病 + 湖南 2023 破伤风", badge:"巩固", color:"#0369a1", lcl:"#eff6ff"},
+    {id:3, name:"单克隆抗体", sub:"原创单抗制备 + 海南 2024 杂交瘤", badge:"进阶", color:"#b45309", lcl:"#fffbeb"},
+    {id:4, name:"双抗与器官移植", sub:"山东 2022 双特异性抗体 + 湖北 2022 肾移植", badge:"易错", color:"#6d43d9", lcl:"#f1ecfe"},
+    {id:5, name:"综合题", sub:"疫苗临床试验、免疫诊断、肿瘤免疫治疗", badge:"综合", color:"#6d43d9", lcl:"#f1ecfe"},
+  ];
+  var QS = [
+    {
+      id:1, lv:1, src:"2026·北京 第10题", kind:"real", star:2,
+      stem:"乙型肝炎疫苗的核心成分是乙肝病毒表面的S蛋白。对此疫苗作用的认识，错误的是",
+      opts:["能诱导机体产生体液免疫", "能诱导机体产生记忆细胞", "诱导产生的抗体主要通过激活T细胞发挥作用", "诱导产生的抗体能阻止乙肝病毒侵入靶细胞"],
+      ans:2,
+      why:"C 错：抗体<b>直接与病毒结合</b>，阻断病毒吸附、侵入靶细胞，或使病毒失去感染能力；抗体不是通过“激活 T 细胞”来发挥作用的（激活 T 细胞的是抗原呈递与细胞因子等）。A 对：S 蛋白作为抗原，可诱导体液免疫，产生浆细胞与抗体。B 对：同时产生记忆 B 细胞，这是疫苗能提供较长期保护的原因。D 对：抗体与病毒表面的 S 蛋白结合，可阻止病毒侵入靶细胞。",
+      tip:"一句话记住抗体怎么干活：<b>直接结合病原体（或毒素）使其失活/被清除，不靠“激活 T 细胞”</b>。选项里出现“抗体通过激活 T 细胞发挥作用”，直接判错。"
+    },
+    {
+      id:2, lv:1, src:"原创·免疫诊断", kind:"orig", star:2,
+      stem:"关于免疫学原理在诊断中的应用，下列叙述正确的是",
+      opts:["用标记的抗体检测组织中的抗原，利用的是抗原与抗体结合的特异性", "检测试剂盒中的抗体只要浓度足够高，就能识别多种不同的病原体", "检测结果为阴性即可完全排除该病原体感染", "免疫诊断只能检测病原体，不能检测人体自身的激素或肿瘤标志物"],
+      ans:0,
+      why:"A 对：免疫诊断的核心是抗原与抗体的特异性结合，用标记抗体“找”组织或体液中的相应抗原。B 错：抗体具有特异性，一种抗体只识别相应抗原（或决定基），不能靠“提高浓度”扩大识别范围。C 错：样本中抗原量低于检测灵敏度时会出现假阴性，且存在采样部位、病程阶段等因素影响，阴性不能完全排除感染，需结合其他检查。D 错：免疫诊断既可检测病原体抗原，也可检测人体自身的激素、肿瘤标志物等（如用单抗检测 PTH）。",
+      tip:"免疫诊断三句话：<b>原理是特异性结合、抗体只认一种抗原、阴性不等于没感染</b>（假阴性源于灵敏度与病程）。"
+    },
+    {
+      id:3, lv:1, src:"原创·四类应用", kind:"orig", star:2,
+      stem:"关于免疫学原理的应用，下列叙述正确的是",
+      opts:["疫苗是用灭活的或减毒的病原体制成的，接种后只能诱导细胞免疫", "用人工标记的抗体对组织内的抗原进行检测，属于免疫诊断", "免疫治疗只能通过增强机体的免疫功能来实现", "器官移植的成功率只取决于供者器官的大小是否合适"],
+      ans:1,
+      why:"B 对：利用抗原—抗体特异性结合，用标记抗体检测组织中的抗原，属于免疫诊断（如病理切片、试剂盒检测）。A 错：疫苗作为抗原主要诱导<b>体液免疫</b>（产生抗体与记忆细胞），也可诱导细胞免疫，不是“只能”诱导体液或细胞免疫中的一种。C 错：免疫治疗既包括增强免疫功能（如输入细胞因子、CAR-T），也包括<b>抑制</b>过强的免疫功能（如免疫抑制剂、抗过敏治疗）。D 错：器官移植的成功与否取决于供受体配型（HLA、血型等）、免疫抑制剂的使用、供器官质量等多种因素，不只是“大小合适”。",
+      tip:"免疫治疗是“双向”的：<b>弱了要补（肿瘤、免疫缺陷），强了要压（自身免疫病、过敏、移植排斥）</b>。"
+    },
+    {
+      id:4, lv:2, src:"2023·北京 第15题", kind:"real", star:2,
+      stem:"有关预防和治疗病毒性疾病的表述，正确的是",
+      opts:["75%的乙醇能破坏病毒结构，故饮酒可预防感染", "疫苗接种后可立即实现有效保护，无需其他防护", "大多数病毒耐冷不耐热，故洗热水澡可预防病毒感染", "吸烟不能预防病毒感染，也不能用于治疗病毒性疾病"],
+      ans:3,
+      why:"D 对：吸烟不能预防病毒感染，也不能治疗病毒性疾病，还会损害健康。A 错：75% 乙醇能破坏病毒结构，但饮酒时酒精浓度达不到该浓度，且不一定与病毒直接接触，故饮酒不能预防感染。B 错：疫苗相当于抗原，需经免疫应答产生抗体和记忆细胞，<b>接种后要过一段时间</b>才有保护作用，且病毒变异快，仍需其他防护。C 错：洗热水澡的温度远达不到杀灭病毒的程度，且病毒进入细胞后无法靠体表温度清除。",
+      tip:"疫苗的两个“不是立即”：<b>接种后不是立即有效（要等免疫应答）；保护也不是终身有效（病原体会变异）</b>。"
+    },
+    {
+      id:5, lv:2, src:"2023·湖南 第11题", kind:"real", star:3,
+      stem:"某少年意外被锈钉扎出一较深伤口，经查体内无抗破伤风的抗体。医生建议使用破伤风类毒素（抗原）和破伤风抗毒素（抗体）以预防破伤风。下列叙述正确的是",
+      opts:["伤口清理后，须尽快密闭包扎，以防止感染", "注射破伤风抗毒素可能出现的过敏反应属于免疫防御", "注射破伤风类毒素后激活的记忆细胞能产生抗体", "有效注射破伤风抗毒素对人体的保护时间长于注射破伤风类毒素"],
+      ans:1,
+      why:"B 对：注射破伤风抗毒素（外源蛋白质）可能引起过敏反应，其本质是机体排除外来异物的一种免疫防护功能，属于免疫防御。A 错：破伤风杆菌是<b>厌氧菌</b>，深伤口若密闭包扎会造成缺氧环境，反而利于其繁殖，应清理并保持引流通畅。C 错：记忆细胞<b>不能产生抗体</b>，抗体只能由浆细胞产生；记忆细胞的作用是再次接触抗原时迅速增殖分化为浆细胞。D 错：注射抗毒素是<b>被动免疫</b>，输入的是现成抗体，保护时间短；注射类毒素（抗原）是主动免疫，能产生记忆细胞，保护时间长。",
+      tip:"两条必须分清：<b>类毒素＝抗原＝主动免疫（保护久）；抗毒素＝抗体＝被动免疫（起效快、保护短）</b>。另外“记忆细胞能产生抗体”是经典错误句。"
+    },
+    {
+      id:6, lv:2, src:"原创·疫苗类型", kind:"orig", star:2,
+      stem:"关于疫苗与免疫预防，下列叙述错误的是",
+      opts:["灭活疫苗保留了抗原性但失去了感染性，安全性较高", "减毒活疫苗可在体内有限增殖，免疫效果通常更持久", "接种疫苗后需要一段时间才能产生足够的抗体和记忆细胞", "只要接种过疫苗，就一定能终身免疫所有病原体"],
+      ans:3,
+      why:"D 错。疫苗的保护作用有几个前提：（1）需要一定时间才能建立；（2）保护期限有限，可能需要加强免疫；（3）病原体（尤其是 RNA 病毒）容易变异，可能逃逸原有免疫；（4）一种疫苗只针对特定病原体（或特定型别）。A、B、C 都正确：灭活疫苗保留抗原性但无感染性；减毒活疫苗可在体内有限增殖、免疫效果通常更持久，但免疫缺陷者不宜接种；接种后需一段时间才产生足够的抗体与记忆细胞。",
+      tip:"“就一定/一定能/终身”这类绝对化表述，在疫苗题里几乎必错。反向记住：<b>免疫有特异性、有期限、有滞后</b>。"
+    },
+    {
+      id:7, lv:3, src:"原创·单抗制备", kind:"orig", star:3,
+      stem:"关于单克隆抗体的制备与应用，下列叙述错误的是",
+      opts:["需将能产生特定抗体的B淋巴细胞与骨髓瘤细胞融合，获得杂交瘤细胞", "杂交瘤细胞既能无限增殖，又能产生特异性抗体", "筛选出的杂交瘤细胞须经克隆化培养和抗体检测，才能用于生产单抗", "B淋巴细胞本身也能在体外无限增殖，因此不融合也可大量生产单抗"],
+      ans:3,
+      why:"D 错：B 淋巴细胞（浆细胞）是高度分化的细胞，<b>在体外不能无限增殖</b>，培养一段时间后就会死亡，无法大量生产抗体；这正是要把它的“抗体基因”与骨髓瘤细胞的“无限增殖能力”结合在一起的原因。A、B、C 都是正确表述：融合后经选择培养基筛出杂交瘤细胞，再经克隆化培养和抗体检测筛出能产生特定抗体的细胞。",
+      tip:"杂交瘤细胞的“两个本领”来自两个亲本：<b>能无限增殖来自骨髓瘤细胞，能产生特异性抗体来自 B 淋巴细胞</b>。说 B 细胞自己就能无限增殖，是本题的陷阱。"
+    },
+    {
+      id:8, lv:3, src:"2024·海南 第7题", kind:"real", star:3,
+      stem:"海南龙血树具有药用和观赏价值，可利用植物组织培养技术产生愈伤组织，进而获得该种植株。动物细胞融合技术可将骨髓瘤细胞和产生特定抗体的B淋巴细胞融合形成杂交瘤细胞，进而制备单克隆抗体。下列有关这两种技术的叙述，正确的是",
+      opts:["利用的原理均是细胞的全能性", "使用的培养基均需添加葡萄糖和血清", "培养时的温度和pH均相同", "产生的愈伤组织细胞或杂交瘤细胞均具有增殖能力"],
+      ans:3,
+      why:"D 对：愈伤组织细胞是脱分化形成的、具有分裂能力；杂交瘤细胞兼具骨髓瘤细胞的无限增殖能力和 B 细胞产生特定抗体的能力，也能持续增殖。A 错：植物组织培养的原理是细胞的全能性，制备单抗利用的是细胞增殖与细胞膜的流动性，不是全能性。B 错：植物组织培养的培养基加蔗糖，动物细胞培养才需加血清。C 错：植物细胞与动物细胞适宜的培养温度和 pH 不同。",
+      tip:"“全能性”只属于植物组织培养；<b>杂交瘤细胞的两大特点是“能无限增殖”＋“能产生特异性抗体”</b>，这是它在两道题里反复出现的卖点。"
+    },
+    {
+      id:9, lv:4, src:"2022·山东 第15题", kind:"real", star:3, svg:"sd22q15",
+      stem:"如图，将由2种不同的抗原分别制备的单克隆抗体分子，在体外解偶联后重新偶联可制备双特异性抗体，简称双抗。下列说法错误的是",
+      opts:["双抗可同时与2种抗原结合", "利用双抗可以将蛋白类药物运送至靶细胞", "筛选双抗时需使用制备单克隆抗体时所使用的2种抗原", "同时注射2种抗原可刺激B细胞分化为产双抗的浆细胞"],
+      ans:3,
+      why:"D 错：同时注射 2 种抗原，会刺激 B 细胞分化形成<b>不同的浆细胞</b>，分别产生两种不同的抗体；一个浆细胞只能产生一种抗体，不会产生“双抗”。双抗是在<b>体外</b>把两种单抗解偶联后重新偶联得到的。A 对：双抗的两个抗原结合部位分别识别两种抗原，可同时结合两种抗原。B 对：利用双抗一端结合靶细胞、另一端携带药物，可把蛋白类药物运送到靶细胞。C 对：筛选双抗时需用这 2 种抗原做抗原—抗体检测。",
+      tip:"“一个浆细胞只产生一种抗体”是这一章的地基。凡是说“刺激后产生双特异性抗体/多种抗体”的，都错。"
+    },
+    {
+      id:10, lv:4, src:"2022·湖北 第14题", kind:"real", star:2,
+      stem:"某肾病患者需进行肾脏移植手术。针对该患者可能出现的免疫排斥反应，下列叙述错误的是",
+      opts:["免疫排斥反应主要依赖于T细胞的作用", "患者在术后需使用免疫抑制剂以抑制免疫细胞的活性", "器官移植前可以对患者进行血浆置换，以减轻免疫排斥反应", "进行肾脏移植前，无需考虑捐献者与患者的ABO血型是否相同"],
+      ans:3,
+      why:"D 错：供、受者 ABO 血型物质不符可能引起强烈的移植排斥反应，因此移植前<b>必须考虑血型是否相同（相容）</b>。A 对：排斥反应主要是细胞免疫，依赖 T 细胞（细胞毒性 T 细胞攻击移植物）。B 对：术后需用免疫抑制剂抑制免疫细胞增殖与功能，减轻排斥。C 对：血浆置换可去除受者体内的天然抗体，减轻抗体介导的排斥。",
+      tip:"器官移植的“三件套”：<b>配型（HLA＋血型）→ 免疫抑制剂 → 长期随访</b>。凡是说“不用考虑血型/配型”的，一律错。"
+    },
+  ];
+  var ESSAYS = [
+    {
+      id:11, lv:5, src:"原创·综合题", star:3, title:"一款疫苗从实验室到接种点要过几关",
+      material:"某新型疫苗的研发流程如下：先在小动物中确定安全性与免疫原性；再开展临床试验，受试者随机分为疫苗组与安慰剂组，观察抗体水平与发病情况；获批上市后继续监测不良反应。研究显示，接种两剂后疫苗组抗体阳转率 95%，安慰剂组为 4%；随访 6 个月，疫苗组发病率显著低于对照组。",
+      asks:[{q:"该疫苗诱导机体产生抗体的过程属于哪种免疫？请写出主要环节。", pt:5}, {q:"临床试验中为什么要设置安慰剂对照组，并采用随机分组？", pt:4}, {q:"“抗体阳转率 95%”能否直接说明该疫苗能有效预防发病？请说明理由，并指出还需要哪些数据。", pt:5}],
+      points:[
+        ["属于体液免疫（同时产生记忆细胞）", "疫苗中的抗原被抗原呈递细胞摄取、处理并呈递给辅助性 T 细胞", "辅助性 T 细胞表面分子变化并与 B 细胞结合（第二信号），同时分泌细胞因子", "B 细胞活化后增殖分化为浆细胞和记忆 B 细胞", "浆细胞分泌特异性抗体，记忆 B 细胞使机体获得较持久的免疫力"],
+        ["排除安慰剂效应、受试者心理因素与自然感染等无关变量的干扰", "随机分组使两组在年龄、健康状况等方面尽量一致，保证两组具有可比性", "只有设置对照才能判断抗体产生与发病率下降是否由疫苗引起，从而得出可靠结论"],
+        ["不能直接说明。抗体阳转率只反映“免疫应答是否产生”，不等于“保护力”", "抗体水平高不一定能阻止发病（抗体可能只是结合而非中和，或随时间下降）", "还需要：疫苗组与对照组的发病率（保护效力）、重症率、住院率；保护持续时间；对变异株的效果；不良反应发生率", "保护效力常用“（对照组发病率－疫苗组发病率）/对照组发病率”计算"]
+      ],
+      tip:"第三问是区分度所在：<b>“免疫原性 ≠ 保护效力”</b>，写清还需要发病率与保护持续时间的数据即可拿满分。"
+    },
+    {
+      id:12, lv:5, src:"原创·综合题", star:3, title:"一张试纸条怎么“看”出病原体",
+      material:"某抗原检测试纸条的原理是“双抗体夹心”：试纸条上固定有两种针对同一病原体不同抗原决定基的单克隆抗体，其中一种标记了显色颗粒。滴加样本后，若样本中含该病原体抗原，会先与标记抗体结合，再被固定在检测线上的抗体“夹住”而显色。",
+      asks:[{q:"该试纸条的检测原理是什么？为什么要用两种识别不同抗原决定基的单克隆抗体？", pt:5}, {q:"为什么样本中病原体含量很低时可能检测不出（假阴性）？这对临床诊断有什么启示？", pt:5}, {q:"如果改用“抗原—抗体反应”来检测人体是否感染过某病原体（测抗体），与直接检测抗原相比各有什么优缺点？", pt:4}],
+      points:[
+        ["原理：抗原与抗体的<b>特异性结合</b>", "用两种识别不同决定基的抗体，才能形成“抗体—抗原—抗体”的夹心结构，把显色颗粒固定在检测线上", "若只用一种抗体，抗原的两个结合位点可能被同一抗体占据或无法同时结合标记抗体与固定抗体，无法形成夹心", "单克隆抗体纯度高、特异性强，可保证检测的准确性"],
+        ["样本中抗原量低于检测方法的灵敏度下限时，检测线显色过浅或不显色，出现假阴性", "采样部位、采样时间（病程早期抗原量少）、样本处理不当也会造成假阴性", "启示：检测阴性不能完全排除感染，需结合症状、流行病学史与核酸检测；必要时重复采样", "也提示要按说明书规范采样与判读"],
+        ["测抗原：可判断“当前是否有病原体”，早期即可检测；但病原体清除后转阴，不能判断既往感染", "测抗体：可判断“是否感染过或接种过疫苗”，抗体可持续较长时间；但存在窗口期，早期可能阴性，且无法区分现症与既往感染", "两者互补：抗原检测看“现在有没有”，抗体检测看“有没有接触过”"]
+      ],
+      tip:"第二问要写“灵敏度下限”与“阴性不能排除感染”；第三问抓住一句话：<b>抗原＝现在，抗体＝过去（且有窗口期）</b>。"
+    },
+    {
+      id:13, lv:5, src:"原创·综合题", star:3, title:"CAR-T：把患者的 T 细胞改造成“特种兵”",
+      material:"CAR-T 疗法先从患者体内采集 T 细胞，在体外通过基因工程使其表达能识别肿瘤细胞表面特定抗原的受体（CAR），再大量扩增后回输患者体内。部分患者回输后出现高热、低血压等“细胞因子释放综合征”，需密切监护；对实体瘤的疗效目前仍有限。",
+      asks:[{q:"CAR-T 细胞杀伤肿瘤细胞，利用的是哪一种免疫过程？与普通细胞免疫相比，它的“识别”环节有什么特殊之处？", pt:5}, {q:"为什么回输后可能出现“细胞因子释放综合征”？这说明免疫反应需要注意什么问题？", pt:5}, {q:"从抗原特异性的角度，分析 CAR-T 疗法对实体瘤疗效有限的原因，并提出一种可能的改进思路。", pt:4}],
+      points:[
+        ["属于<b>细胞免疫</b>：改造后的 T 细胞相当于细胞毒性 T 细胞，与肿瘤细胞密切接触使其裂解死亡", "特殊之处：普通细胞毒性 T 细胞通过 T 细胞受体识别“抗原—MHC 复合体”，即需要抗原呈递", "CAR 可直接识别肿瘤细胞表面的天然抗原（不依赖 MHC 呈递），因此不受 MHC 下调导致的免疫逃逸影响", "这也使它能够针对特定抗原“定向”杀伤"],
+        ["回输的 T 细胞被激活后大量增殖并分泌大量细胞因子（如白细胞介素、干扰素等）", "细胞因子短时间内大量释放，引起高热、低血压、器官功能损害等全身反应", "说明免疫反应强度需要被精细调控：<b>过强会损伤自身</b>（类似自身免疫病、过敏的“过度”一面）", "因此需要控制回输剂量、监测细胞因子水平，必要时使用免疫抑制手段干预"],
+        ["CAR 只识别某一种特定抗原，而实体瘤细胞表面抗原表达不均一（异质性），部分肿瘤细胞不表达该抗原即可逃逸", "实体瘤还存在物理屏障、免疫抑制性微环境，使 T 细胞难以浸润和发挥作用", "改进思路：设计可识别两种抗原的双靶点 CAR（降低抗原逃逸）；联合改善肿瘤微环境、联合免疫检查点抑制剂等", "也可通过筛选合适的靶抗原、提高 T 细胞浸润能力来改进"]
+      ],
+      tip:"本题的两个亮点表述：<b>CAR 识别抗原不依赖 MHC 呈递</b>、<b>细胞因子释放综合征说明免疫反应“过强也致病”</b>。"
+    },
+  ];function el(tag, cls, html){
+    var d = document.createElement(tag);
+    if(cls) d.className = cls;
+    if(html != null) d.innerHTML = html;
+    return d;
+  }
+  var STORE_KEY = "bio-immune-application-v1";
+  var state = {picked:{}, seen:{}, wb:{}};   // wb[id] = {t, lastPick, lastOk, mastered, redoOk}
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var p = JSON.parse(raw); state.picked = p.picked || {}; state.seen = p.seen || {}; state.wb = p.wb || {}; }
+  }catch(e){}
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+﻿  /* ---------------- 本节示意图（内联 SVG）与真题原卷配图（base64 内嵌） ---------------- */
+
+  /* ---- 图：内联 SVG / base64 配图 ---- */
+  function buildFigMAB(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 330'><rect width='760' height='330' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#134e4a'>单克隆抗体的制备流程（示意图，非原卷图）</text><g font-size='11'><rect x='24' y='44' width='336' height='40' rx='8' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='69' fill='#1e3a8a'>① 用特定抗原免疫小鼠，从脾脏取 B 淋巴细胞</text><rect x='24' y='92' width='336' height='40' rx='8' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='117' fill='#1e3a8a'>② 与骨髓瘤细胞融合（动物细胞融合）</text><rect x='24' y='140' width='336' height='40' rx='8' fill='#f5f3ff' stroke='#c4b5fd'/><text x='38' y='165' fill='#6d28d9'>③ 第一次筛选：选择培养基筛出杂交瘤细胞</text><rect x='24' y='188' width='336' height='40' rx='8' fill='#f5f3ff' stroke='#c4b5fd'/><text x='38' y='213' fill='#6d28d9'>④ 第二次筛选：抗原—抗体反应筛出“特定抗体”</text><rect x='24' y='236' width='336' height='40' rx='8' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='261' fill='#0f766e'>⑤ 克隆化培养／小鼠腹腔增殖，提取单抗</text><rect x='384' y='44' width='352' height='120' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='398' y='66' font-weight='700' fill='#b45309'>杂交瘤细胞的两个本领</text><text x='398' y='90' fill='#374151'>① 来自骨髓瘤细胞：能无限增殖</text><text x='398' y='112' fill='#374151'>② 来自 B 淋巴细胞：能产生特异性抗体</text><text x='398' y='134' fill='#374151'>合起来＝“取之不尽的单一抗体工厂”</text><text x='398' y='156' fill='#9f1239'>一个 B 细胞只产生一种抗体</text><rect x='384' y='180' width='352' height='96' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='398' y='202' font-weight='700' fill='#b91c1c'>两次筛选别混</text><text x='398' y='224' fill='#374151'>第一次：筛“是不是杂交瘤”（选择培养基）</text><text x='398' y='246' fill='#374151'>第二次：筛“产不产特定抗体”（抗原—抗体检测）</text><text x='398' y='268' fill='#374151'>单抗的优点：特异性强、纯度高、可大量生产</text><rect x='24' y='288' width='712' height='34' rx='8' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='310' fill='#374151'>应用：免疫诊断（检测抗原）· 免疫治疗（靶向药物、双抗）· 运载药物</text></g></svg></div>"; }
+  function buildFigAPPS(host){ host.innerHTML = "<div class=\"svg-box\"><svg viewBox='0 0 760 320'><rect width='760' height='320' fill='#fff'/><text x='18' y='26' font-size='13' font-weight='700' fill='#134e4a'>免疫学的四类应用（示意图，非原卷图）</text><g font-size='11'><rect x='24' y='44' width='172' height='150' rx='9' fill='#eff6ff' stroke='#93c5fd'/><text x='38' y='66' font-weight='700' fill='#1d4ed8'>① 免疫预防</text><text x='38' y='90' fill='#374151'>用疫苗（抗原）</text><text x='38' y='110' fill='#374151'>→ 主动免疫</text><text x='38' y='130' fill='#374151'>产生抗体＋记忆细胞</text><text x='38' y='150' fill='#374151'>保护需时间、有期限</text><text x='38' y='176' fill='#1e40af'>例：乙肝疫苗</text><rect x='208' y='44' width='172' height='150' rx='9' fill='#f5f3ff' stroke='#c4b5fd'/><text x='222' y='66' font-weight='700' fill='#6d28d9'>② 免疫诊断</text><text x='222' y='90' fill='#374151'>用抗体（或抗原）</text><text x='222' y='110' fill='#374151'>→ 特异性结合</text><text x='222' y='130' fill='#374151'>检测组织/体液中的抗原</text><text x='222' y='150' fill='#374151'>要求：纯度高、特异性强</text><text x='222' y='176' fill='#5b21b6'>例：戊肝试剂盒</text><rect x='392' y='44' width='172' height='150' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='406' y='66' font-weight='700' fill='#0f766e'>③ 免疫治疗</text><text x='406' y='90' fill='#374151'>弱了补：细胞因子、CAR-T</text><text x='406' y='110' fill='#374151'>强了压：免疫抑制剂</text><text x='406' y='130' fill='#374151'>单抗：靶向药物、双抗</text><text x='406' y='150' fill='#374151'>运送药物到靶细胞</text><text x='406' y='176' fill='#115e59'>例：抗 HER2 单抗</text><rect x='576' y='44' width='160' height='150' rx='9' fill='#fffbeb' stroke='#fcd34d'/><text x='590' y='66' font-weight='700' fill='#b45309'>④ 器官移植</text><text x='590' y='90' fill='#374151'>配型：HLA＋血型</text><text x='590' y='110' fill='#374151'>术后：免疫抑制剂</text><text x='590' y='130' fill='#374151'>排斥以细胞免疫为主</text><text x='590' y='150' fill='#374151'>代价：感染/肿瘤风险↑</text><text x='590' y='176' fill='#a06412'>例：肾移植</text><rect x='24' y='208' width='712' height='44' rx='9' fill='#ecfdf5' stroke='#5eead4'/><text x='38' y='230' font-weight='700' fill='#0f766e'>共同原理</text><text x='110' y='230' fill='#374151'>抗原与抗体（或受体的配体）结合具有<tspan font-weight='700'>特异性</tspan>——这是本节所有判断题的钥匙</text><rect x='24' y='264' width='712' height='44' rx='9' fill='#fef2f2' stroke='#fca5a5'/><text x='38' y='286' font-weight='700' fill='#b91c1c'>最爱错</text><text x='104' y='286' fill='#374151'>抗体不通过“激活 T 细胞”起作用；一个浆细胞只产一种抗体；移植不能不考虑血型</text></g></svg></div>"; }
+  var IMG_SD22Q15 = "data:image/png;base64,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";
+  function buildFigSD22Q15(host){ host.innerHTML = '<img src="'+IMG_SD22Q15+'" alt="2022 年山东卷第 15 题：两种单抗解偶联后重新偶联制备双特异性抗体" style="width:100%;height:auto;display:block;border-radius:10px;max-width:460px;margin:0 auto">'; }
+  var FIG = {
+    "mab": buildFigMAB,
+    "apps": buildFigAPPS,
+    "sd22q15": buildFigSD22Q15
+  };function drawSvg(host, key, opt){
+    if(!host) return;
+    var f = FIG[key];
+    if(f) f(host, opt || {});
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  var levelsHost = document.getElementById("levels");
+  var TOTAL = QS.length;
+  document.getElementById("hud-total").textContent = TOTAL;
+
+  LEVELS.forEach(function(lv){
+    var sec = el("div","lvl");
+    sec.id = "lv"+lv.id;
+
+    var head = el("div","lvl-head");
+    var badge = el("div","lvl-badge", String(lv.id));
+    badge.style.background = lv.color;
+    var txt = el("div");
+    txt.innerHTML = '<h3>'+lv.name+'<span class="lvl-pill">'+lv.badge+'</span></h3><p>'+lv.sub+'</p>';
+    head.appendChild(badge); head.appendChild(txt);
+    sec.appendChild(head);
+
+    QS.filter(function(q){ return q.lv === lv.id; }).forEach(function(q){
+      sec.appendChild(renderQ(q, lv));
+    });
+
+    if(lv.id === 5){
+      ESSAYS.forEach(function(e){ sec.appendChild(renderEssay(e, lv)); });
+    }
+    levelsHost.appendChild(sec);
+  });
+
+  function renderQ(q, lv){
+    var card = el("article","q");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+    card.dataset.id = q.id;
+
+    var kindCls = q.kind === "real" ? "real" : (q.kind === "mock" ? "mock" : (q.kind === "other" ? "" : "mock"));
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(q.id).padStart(2,"0")+'</span>'
+      + '<span class="src '+kindCls+'">'+q.src+'</span>'
+      + '<span class="star">'+ "★".repeat(q.star) + "☆".repeat(3-q.star) +'</span>'
+    ));
+
+    card.appendChild(el("p","stem", '<span class="qmark">题</span>　'+q.stem));
+
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "svg-"+q.id;
+      card.appendChild(box);
+      card.appendChild(el("p","swipe-hint","可左右滑动查看完整图示"));
+      setTimeout(function(){ var h = document.getElementById("svg-"+q.id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+
+    var opts = el("div","opts");
+    q.opts.forEach(function(t, i){
+      var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+      b.type = "button";
+      b.dataset.i = i;
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","查看解析");
+    tg.type = "button";
+    var addWb = el("button","toggle wbtn-add","＋ 错题本");
+    addWb.type = "button";
+    var verdict = el("span","verdict","");
+    foot.appendChild(tg); foot.appendChild(addWb); foot.appendChild(verdict);
+    card.appendChild(foot);
+
+    addWb.addEventListener("click", function(){
+      var inWb = !!state.wb[q.id];
+      if(inWb){ delete state.wb[q.id]; save(); toast("已移出错题本"); }
+      else{
+        state.wb[q.id] = {t:Date.now(), lastPick:(state.picked[q.id] != null ? state.picked[q.id] : null),
+                          lastOk:(state.picked[q.id] === q.ans), mastered:false, redoOk:null};
+        save(); toast("已加入错题本");
+      }
+      syncWbButtons();
+      renderWb();
+    });
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>'
+    );
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "查看解析" : "收起解析";
+    });
+
+    // 恢复状态
+    if(state.picked[q.id] != null){
+      var chosen = state.picked[q.id];
+      paint(card, q, chosen, true);
+    }
+    if(state.wb[q.id]) addWb.classList.add("inwb");
+    return card;
+  }
+
+  function paint(card, q, chosen, silent){
+    var btns = card.querySelectorAll(".opt");
+    btns.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.ans) b.classList.add("ok");
+      if(i === chosen && chosen !== q.ans) b.classList.add("bad");
+      if(i !== q.ans && i !== chosen) b.classList.add("dim");
+    });
+    var v = card.querySelector(".verdict");
+    if(chosen === q.ans){ v.textContent = "答对了"; v.className = "verdict ok"; }
+    else { v.textContent = "选错了，看解析"; v.className = "verdict bad"; }
+    if(!silent){
+      var exp = card.querySelector(".explain");
+      var tg = card.querySelector(".toggle");
+      exp.hidden = false;
+      tg.textContent = "收起解析";
+      // 答错自动进错题本；答对且已在错题本 → 更新记录
+      if(chosen !== q.ans){
+        if(!state.wb[q.id]){
+          state.wb[q.id] = {t:Date.now(), lastPick:chosen, lastOk:false, mastered:false, redoOk:null};
+          toast("已自动加入错题本");
+        }else{
+          state.wb[q.id].lastPick = chosen;
+          state.wb[q.id].lastOk = false;
+        }
+      }else if(state.wb[q.id]){
+        state.wb[q.id].lastPick = chosen;
+        state.wb[q.id].lastOk = true;
+      }
+      save();
+      syncWbButtons();
+      renderWb();
+    }
+  }
+
+  function renderEssay(e, lv){
+    var card = el("article","q essay");
+    card.style.setProperty("--lc", lv.color);
+    card.style.setProperty("--lcl", lv.lcl);
+
+    card.appendChild(el("div","qhead",
+      '<span class="qno">'+String(e.id).padStart(2,"0")+'</span>'
+      + '<span class="src mock">'+e.src+'</span>'
+      + '<span class="star">'+ "★".repeat(e.star) +'</span>'
+    ));
+
+    card.appendChild(el("h3","essay-t","　"+e.title));
+    var t = card.querySelector(".essay-t");
+    t.style.cssText = "font-size:16.5px;margin:0 0 12px;font-weight:700;color:#161a2b";
+
+    var mat = '<b>材料</b>　'+e.material;
+    if(e.table){
+      mat += '<table><thead><tr>'+e.table.head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+          + e.table.rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')
+          + '</tbody></table>';
+    }
+    card.appendChild(el("div","material", mat));
+
+    var ul = el("ul","asks");
+    e.asks.forEach(function(a, i){
+      ul.appendChild(el("li", null, '<b>（'+(i+1)+'）</b>'+a.q + '<span class="pt">· '+a.pt+' 分</span>'));
+    });
+    card.appendChild(ul);
+
+    var foot = el("div","qfoot");
+    var tg = el("button","toggle","展开参考答案");
+    tg.type = "button";
+    foot.appendChild(tg);
+    card.appendChild(foot);
+
+    var exp = el("div","explain");
+    var inner = '<p><span class="k g">参考答案</span>按点作答，每点都要有“结论 + 依据”。</p>';
+    e.asks.forEach(function(a, i){
+      inner += '<p class="pt-h">（'+(i+1)+'）<span>'+a.pt+' 分</span></p><ul class="pts">';
+      (e.points[i]||[]).forEach(function(p){
+        inner += '<li>'+p+'</li>';
+      });
+      inner += '</ul>';
+    });
+    inner += '<p style="margin-top:14px"><span class="k o">得分提示</span>'+e.tip+'</p>';
+    exp.innerHTML = inner;
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    tg.addEventListener("click", function(){
+      exp.hidden = !exp.hidden;
+      tg.textContent = exp.hidden ? "展开参考答案" : "收起参考答案";
+      state.seen[e.id] = !exp.hidden;
+      save();
+      updateHud();
+    });
+    return card;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  levelsHost.addEventListener("click", function(ev){
+    var btn = ev.target.closest ? ev.target.closest(".opt") : null;
+    if(!btn || btn.disabled) return;
+    var card = btn.closest(".q");
+    var id = +card.dataset.id;
+    var q = QS.filter(function(x){ return x.id === id; })[0];
+    if(!q || state.picked[id] != null) return;
+    state.picked[id] = +btn.dataset.i;
+    save();
+    paint(card, q, state.picked[id], false);
+    updateHud();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("重做会清空本页的作答记录（错题本不受影响），确定吗？")) return;
+    state.picked = {};
+    state.seen = {};
+    save();
+    location.reload();
+  });
+
+  function updateHud(){
+    var done = 0, right = 0;
+    QS.forEach(function(q){
+      if(state.picked[q.id] != null){
+        done++;
+        if(state.picked[q.id] === q.ans) right++;
+      }
+    });
+    document.getElementById("hud-done").textContent = done;
+    document.getElementById("hud-fill").style.width = (done/TOTAL*100).toFixed(1)+"%";
+    document.getElementById("hud-rate").textContent = done ? ("正确率 " + Math.round(right/done*100) + "%") : "正确率 —";
+  }
+
+  /* ---------------- 错题本 ---------------- */
+  var wbPage = document.getElementById("wbpage");
+  var wbList = document.getElementById("wb-list");
+  var wbFilter = "all";
+  var QUIZ_SECTIONS = ["map","quiz","traps"];
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    if(!t){ t = el("div","toast"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._tm);
+    t._tm = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function syncWbButtons(){
+    document.querySelectorAll(".wbtn-add").forEach(function(b){
+      var id = +b.closest(".q").dataset.id;
+      b.classList.toggle("inwb", !!state.wb[id]);
+      b.textContent = state.wb[id] ? "✓ 在错题本" : "＋ 错题本";
+    });
+    var n = Object.keys(state.wb).length;
+    document.getElementById("wb-count").textContent = n ? String(n) : "";
+  }
+
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function findQ(id){
+    for(var i=0;i<QS.length;i++) if(QS[i].id === id) return QS[i];
+    return null;
+  }
+
+  function renderWb(){
+    var ids = Object.keys(state.wb).map(Number).sort(function(a,b){ return state.wb[b].t - state.wb[a].t; });
+    var total = ids.length;
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    var needRedo = ids.filter(function(id){ return !state.wb[id].mastered; }).length;
+
+    document.getElementById("wb-count").textContent = total ? String(total) : "";
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + total + "</b> 题 · 待重做 <b>" + needRedo + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+
+    if(!total){
+      wbList.innerHTML = '<div class="wb-empty">错题本还是空的。<br>做题时答错会自动收录，也可以点题目下方的「＋ 错题本」手动收藏。<br>先去「练习」里做几道题吧。</div>';
+      return;
+    }
+
+    // 分组：节 → 考点
+    var groups = {};
+    ids.forEach(function(id){
+      if(wbFilter === "redo" && state.wb[id].mastered) return;
+      if(wbFilter === "mastered" && !state.wb[id].mastered) return;
+      var q = findQ(id);
+      if(!q) return;
+      var key = BOOK.section;
+      (groups[key] = groups[key] || []).push({id:id, q:q});
+    });
+
+    wbList.innerHTML = "";
+    Object.keys(groups).forEach(function(secName){
+      var g = el("div","wb-group");
+      g.appendChild(el("p","wb-crumb", BOOK.book + " ▸ " + BOOK.chapter));
+      var sec = el("div","wb-sec");
+      var masteredN = groups[secName].filter(function(x){ return state.wb[x.id].mastered; }).length;
+      sec.innerHTML = "<h3>" + secName + "</h3><span class='cnt'>错题 " + groups[secName].length + " · 已掌握 " + masteredN + "</span>";
+      g.appendChild(sec);
+
+      groups[secName].forEach(function(item){
+        g.appendChild(renderWbCard(item.id, item.q));
+      });
+      wbList.appendChild(g);
+    });
+  }
+
+  function renderWbCard(id, q){
+    var rec = state.wb[id];
+    var lv = LEVELS.filter(function(l){ return l.id === q.lv; })[0] || LEVELS[0];
+    var card = el("article","wb-card" + (rec.mastered ? " mastered" : ""));
+    card.dataset.id = id;
+    card.style.setProperty("--lc", lv.color);
+
+    var head = '<span class="qno" style="color:'+lv.color+';background:'+lv.lcl+'">'+String(id).padStart(2,"0")+'</span>'
+      + '<span class="src '+(q.kind==="real"?"real":"")+'">'+q.src+'</span>'
+      + '<span class="topic-tag">'+(TOPIC[id]||"综合")+'</span>'
+      + (rec.mastered ? '<span class="topic-tag ok-tag">已掌握</span>' : '')
+      + '<span class="wdate">收录 '+fmtDate(rec.t)+'</span>';
+    card.appendChild(el("div","whead", head));
+
+    // 题干：去掉卷内对图/上一题的引用，错题本里自带图
+    var stem = q.stem.replace(/^同一材料（[^）]*）。/, "").replace(/^同一材料。/, "").replace(/^同一图示。/, "（见下图）");
+    if(q.svg){
+      var box = el("div","svg-box");
+      box.id = "wbsvg-"+id;
+      card.appendChild(box);
+      setTimeout(function(){ var h = document.getElementById("wbsvg-"+id); if(h) drawSvg(h, q.svg); }, 0);
+    }
+    card.appendChild(el("p","wstem", stem));
+
+    if(!rec.mastered){
+      // 重做区
+      if(rec.lastPick != null){
+        var lastTxt = rec.lastOk
+          ? '上次练习：<span class="ok-t">答对</span>（选 ' + "ABCD"[rec.lastPick] + "）"
+          : '上次选错：<span class="bad-t">' + "ABCD"[rec.lastPick] + "</span>";
+        card.appendChild(el("p","wlast", lastTxt));
+      }
+      card.appendChild(el("p","redo-label","重做一遍（选项顺序不变，先别看解析）："));
+      var ropts = el("div","opts redo-opts");
+      q.opts.forEach(function(t, i){
+        var b = el("button","opt", '<i>'+"ABCD"[i]+'</i><span>'+t+'</span>');
+        b.type = "button";
+        b.dataset.i = i;
+        ropts.appendChild(b);
+      });
+      card.appendChild(ropts);
+      var msg = el("div","redo-msg","");
+      msg.hidden = true;
+      card.appendChild(msg);
+    }else{
+      card.appendChild(el("p","wlast", '<span class="ok-t">已掌握</span>　正确答案 <b>'+"ABCD"[q.ans]+'</b>　'+stripTags(q.why)));
+    }
+
+    var acts = el("div","wb-actions");
+    var mBtn = el("button","toggle mastered-btn" + (rec.mastered ? " on" : ""), rec.mastered ? "取消掌握" : "✓ 标记已掌握");
+    mBtn.type = "button";
+    var rmBtn = el("button","toggle", "移出错题本");
+    rmBtn.type = "button";
+    var exBtn = el("button","toggle", "查看解析");
+    exBtn.type = "button";
+    acts.appendChild(mBtn); acts.appendChild(rmBtn); acts.appendChild(exBtn);
+    card.appendChild(acts);
+
+    var exp = el("div","explain",
+      '<p><span class="k g">答案</span><b>'+"ABCD"[q.ans]+'</b></p>'
+      + '<p><span class="k">解析</span>'+q.why+'</p>'
+      + '<p><span class="k o">方法</span>'+q.tip+'</p>');
+    exp.hidden = true;
+    card.appendChild(exp);
+
+    // 事件
+    card.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.classList.contains("opt") && !t.disabled && !rec.mastered){
+        var pick = +t.dataset.i;
+        var ok = pick === q.ans;
+        ropts.querySelectorAll(".opt").forEach(function(b,i){
+          b.disabled = true;
+          if(i === q.ans) b.classList.add("ok");
+          if(i === pick && !ok) b.classList.add("bad");
+          if(i !== q.ans && i !== pick) b.classList.add("dim");
+        });
+        rec.redoOk = ok;
+        rec.lastPick = pick; rec.lastOk = ok;
+        // 练习区的作答状态同步
+        if(state.picked[id] == null || state.picked[id] !== q.ans){ /* 练习区保持原样，也可留空 */ }
+        save();
+        msg.hidden = false;
+        if(ok){
+          msg.className = "redo-msg ok";
+          msg.textContent = "✓ 重做答对！建议过两天再验一次，稳了就标记已掌握。";
+        }else{
+          msg.className = "redo-msg bad";
+          msg.textContent = "✗ 又错了。看解析，弄懂后明天再来一遍。";
+          exp.hidden = false; exBtn.textContent = "收起解析";
+        }
+        renderWbStats();
+      }
+      else if(t === mBtn){
+        rec.mastered = !rec.mastered;
+        save(); renderWb();
+        toast(rec.mastered ? "已标记掌握，鼓励一下" : "已移回待重做");
+      }
+      else if(t === rmBtn){
+        delete state.wb[id];
+        save(); renderWb(); syncWbButtons();
+        toast("已移出错题本");
+      }
+      else if(t === exBtn){
+        exp.hidden = !exp.hidden;
+        exBtn.textContent = exp.hidden ? "查看解析" : "收起解析";
+      }
+    });
+    return card;
+  }
+
+  function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
+
+  function renderWbStats(){
+    var ids = Object.keys(state.wb).map(Number);
+    var mastered = ids.filter(function(id){ return state.wb[id].mastered; }).length;
+    document.getElementById("wb-stats").innerHTML =
+      "共 <b>" + ids.length + "</b> 题 · 待重做 <b>" + (ids.length - mastered) + "</b> 题 · 已掌握 <b>" + mastered + "</b> 题"
+      + '<br><span style="font-size:12.5px">答错的题会自动收进来；重做一次答对后，建议标记"已掌握"。数据保存在本机浏览器，换设备请用导出备份。</span>';
+  }
+
+  // 标签切换
+  document.getElementById("tab-quiz").addEventListener("click", function(){
+    document.getElementById("tab-quiz").classList.add("active");
+    document.getElementById("tab-wb").classList.remove("active");
+    document.body.classList.remove("wbview");
+    wbPage.hidden = true;
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = ""; });
+    document.querySelector("footer").style.display = "";
+    window.scrollTo({top:0});
+  });
+  document.getElementById("tab-wb").addEventListener("click", function(){
+    document.getElementById("tab-wb").classList.add("active");
+    document.getElementById("tab-quiz").classList.remove("active");
+    document.body.classList.add("wbview");
+    QUIZ_SECTIONS.forEach(function(s){ document.getElementById(s).style.display = "none"; });
+    document.querySelector("footer").style.display = "none";
+    wbPage.hidden = false;
+    renderWb();
+    window.scrollTo({top:0});
+  });
+
+  // 筛选
+  document.getElementById("wb-filter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if(!b) return;
+    wbFilter = b.dataset.f;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("active", x === b); });
+    renderWb();
+  });
+
+  // 导出 / 导入 / 清空
+  document.getElementById("wb-export").addEventListener("click", function(){
+    var payload = {ver:1, exportedAt:new Date().toISOString(), store:state};
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题本备份-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("备份已下载");
+  });
+  document.getElementById("wb-import").addEventListener("click", function(){
+    document.getElementById("wb-file").click();
+  });
+  document.getElementById("wb-file").addEventListener("change", function(ev){
+    var f = ev.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{
+        var data = JSON.parse(r.result);
+        var st = data.store || data;
+        if(!st || typeof st !== "object" || !("wb" in st) && !("picked" in st)) throw 0;
+        state = {
+          picked: st.picked || {},
+          seen: st.seen || {},
+          wb: st.wb || {}
+        };
+        save();
+        updateHud(); syncWbButtons(); renderWb();
+        toast("导入成功：" + Object.keys(state.wb).length + " 道错题");
+      }catch(e){ toast("文件格式不对，导入失败"); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  document.getElementById("wb-clear").addEventListener("click", function(){
+    if(!Object.keys(state.wb).length){ toast("错题本本来就是空的"); return; }
+    if(!confirm("确定清空错题本？此操作不可恢复（练习作答记录不受影响）。")) return;
+    state.wb = {};
+    save(); renderWb(); syncWbButtons();
+    toast("错题本已清空");
+  });
+
+  /* ---------------- 初始化 ---------------- */
+  [["map-fig","map-curr"],["map-fig2","map-wave"],["map-fig3","map-tide"]].forEach(function(p){
+    var box = document.getElementById(p[0]);
+    if(box) drawSvg(box, p[1]);
+  });
+  updateHud();
+  syncWbButtons();
+})();
+</script>
+</body>
+</html>
