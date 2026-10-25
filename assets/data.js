@@ -2449,7 +2449,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c1-s2.html",
         "quiz": {
          "href": "quiz/bio/xx1-c1-s2.html",
-         "n": 9,
+         "n": 12,
          "title": "内环境的稳态"
         }
        }
@@ -2531,7 +2531,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c3-s1.html",
         "quiz": {
          "href": "quiz/bio/xx1-c3-s1.html",
-         "n": 10,
+         "n": 13,
          "title": "激素与内分泌系统"
         }
        },
@@ -2543,7 +2543,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c3-s2.html",
         "quiz": {
          "href": "quiz/bio/xx1-c3-s2.html",
-         "n": 10,
+         "n": 13,
          "title": "激素调节的过程"
         }
        },
@@ -2555,7 +2555,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c3-s3.html",
         "quiz": {
          "href": "quiz/bio/xx1-c3-s3.html",
-         "n": 10,
+         "n": 13,
          "title": "体液调节与神经调节的关系"
         }
        }
@@ -2572,7 +2572,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c4-s1.html",
         "quiz": {
          "href": "quiz/bio/xx1-c4-s1.html",
-         "n": 10,
+         "n": 13,
          "title": "免疫系统的组成和功能"
         }
        },
@@ -2584,7 +2584,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c4-s2.html",
         "quiz": {
          "href": "quiz/bio/xx1-c4-s2.html",
-         "n": 10,
+         "n": 13,
          "title": "特异性免疫"
         }
        },
@@ -2596,7 +2596,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c4-s3.html",
         "quiz": {
          "href": "quiz/bio/xx1-c4-s3.html",
-         "n": 9,
+         "n": 12,
          "title": "免疫失调"
         }
        },
@@ -2608,7 +2608,7 @@ window.SUBJECTS = [
         "href": "pages/bio/xx1-c4-s4.html",
         "quiz": {
          "href": "quiz/bio/xx1-c4-s4.html",
-         "n": 10,
+         "n": 13,
          "title": "免疫学的应用"
         }
        }
@@ -3126,7 +3126,7 @@ window.SUBJECTS = [
    "extras": 7,
    "total": 89,
    "quiz": 89,
-   "quizTotal": 1066
+   "quizTotal": 1090
   }
  },
  {
