@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>合册预览</title>
+<link rel="stylesheet" href="/assets/app.css">
+<link rel="stylesheet" href="/assets/print.css" media="print">
+<style>
+  html, body { background: #fff; }
+  body { margin: 0; padding: 0; }
+
+  /* 版心与 print.css 的 @page 对齐：A4 210mm - 左右各 18mm = 174mm ≈ 658px。
+     屏幕预览故意也用这个宽度，看到的换行位置就是纸上 / PDF 里的位置。 */
+  #book { width: 658px; margin: 0 auto; padding: 0; }
+
+  /* 每节另起一页 */
+  .book-sec { page-break-before: always; break-before: page; }
+  .book-sec:first-child { page-break-before: auto; break-before: auto; }
+
+  .book-sec > .page-title { margin: 0 0 3px; font-size: 22px; line-height: 1.35; }
+  .book-sec > .page-meta { margin: 0 0 4px; font-size: 12px; color: #8a93a0; }
+
+  /* 去掉网页版的卡片外壳，让文字直接落在纸上 */
+  .book-sec > .content {
+    margin: 12px 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 0;
+  }
+  .book-sec > .content > *:first-child { margin-top: 0; }
+
+  @media screen {
+    body { background: #f3f5f7; padding: 24px 0; }
+    #book { background: #fff; padding: 28px 30px 40px; box-shadow: 0 2px 20px rgba(16,24,40,.12); }
+    .book-sec { padding-bottom: 30px; margin-bottom: 34px; border-bottom: 1px dashed #d6dbe2; }
+    .book-sec:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+  }
+
+  /* 版心、@page 边距、隐藏交互件、分页 avoid 都在 assets/print.css 里，
+     这里只补合册特有的：一册多节、以及 dense 开关。 */
+  @media print {
+    html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+    #book { width: auto; max-width: none; margin: 0; padding: 0; background: none; box-shadow: none; }
+
+    /* dense 模式：比半页还高的卡片允许跨页，只保证图 / 表本身不被切 */
+    .can-split { break-inside: auto !important; page-break-inside: auto !important; }
+    .can-split svg, .can-split img, .can-split .gx-svgbox, .can-split table, .can-split tr { break-inside: avoid; }
+  }
+</style>
+</head>
+<body class="page">
+<main id="book"></main>
+
+<script>
+(function () {
+  "use strict";
+
+  var q = new URLSearchParams(location.search);
+  var slugs = (q.get("pages") || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+  var book = document.getElementById("book");
+  var injected = {};
+  var MSG = q.get("msg") || "";
+  var DENSE = q.get("dense") === "1";
+
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function onLoad(el) {
+    return new Promise(function (res) { el.addEventListener("load", function () { res(); }, { once: true }); });
+  }
+
+  function copyStyles(doc) {
+    Array.prototype.forEach.call(doc.querySelectorAll("style"), function (st) {
+      var txt = st.textContent || "";
+      if (!txt || txt.length < 12) return;
+      var key = txt.length + "|" + txt.slice(0, 80);
+      if (injected[key]) return;
+      injected[key] = 1;
+      var s = document.createElement("style");
+      s.textContent = txt;
+      document.head.appendChild(s);
+    });
+  }
+
+  function addSection(doc, slug) {
+    var sec = document.createElement("section");
+    sec.className = "book-sec";
+    sec.dataset.slug = slug;
+
+    var t = doc.querySelector(".page-title");
+    if (t) sec.appendChild(t.cloneNode(true));
+
+    if (MSG) {
+      var m = document.createElement("div");
+      m.className = "page-meta";
+      m.textContent = MSG;
+      sec.appendChild(m);
+    }
+
+    var src = doc.querySelector(".content");
+    var holder = document.createElement("div");
+    holder.className = "content";
+    if (src) holder.innerHTML = src.innerHTML;
+    sec.appendChild(holder);
+    book.appendChild(sec);
+  }
+
+  async function run() {
+    if (!slugs.length) throw new Error("没有指定 pages");
+
+    for (var i = 0; i < slugs.length; i++) {
+      var slug = slugs[i];
+      var ifr = document.createElement("iframe");
+      ifr.style.cssText = "position:fixed;left:-30000px;top:0;width:980px;height:1400px;border:0;visibility:hidden";
+      ifr.src = "/pages/" + slug + ".html";
+      document.body.appendChild(ifr);
+      await onLoad(ifr);
+      await sleep(320);                    // 等页内脚本把图 / 交互块画完
+
+      var d = ifr.contentDocument;
+      if (!d) throw new Error("读不到 iframe 内容：" + slug);
+      if (d.querySelector(".content .empty")) throw new Error("这一节还没有内容：" + slug);
+
+      copyStyles(d);
+      addSection(d, slug);
+      ifr.remove();
+    }
+
+    // 等图片解码 + 字体就绪，避免打印时图还没出来
+    await Promise.all(Array.prototype.filter.call(document.images, function (im) { return !im.complete; })
+      .map(function (im) { return new Promise(function (r) { im.onload = im.onerror = r; }); }));
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+    await sleep(250);
+
+    // dense：超过半页高的整块允许跨页（只保图不切），把纸填满
+    if (DENSE) {
+      var LIMIT = 430;
+      var nsplit = 0;
+      Array.prototype.forEach.call(
+        book.querySelectorAll(".gx-fig, .gx-quiz, .gx-board, .gx-take, .er, .qac, .ex-q"),
+        function (el) {
+          if (el.getBoundingClientRect().height > LIMIT) { el.classList.add("can-split"); nsplit++; }
+        }
+      );
+      window.__split = nsplit;
+    }
+
+    window.__secs = document.querySelectorAll(".book-sec").length;
+    window.__ready = true;
+  }
+
+  run().catch(function (e) { window.__err = String((e && e.stack) || e); });
+})();
+</script>
+</body>
+</html>

@@ -1,7 +1,13 @@
-/* 打印 / 导出 PDF 专用样式：A4 竖版，保持屏幕版式（不重排） */
+/* 打印 / 导出 PDF 专用样式：A4 竖版，按纸宽重排（不再锁 900px + 缩放）
+
+   版心 = 210mm - 左右各 18mm ≈ 174mm ≈ 658px，正文字号 15px → 约 44 字/行。
+   这条路径和 tools/print-book.mjs 用的是同一套参数，浏览器 Ctrl+P 与工具导出的结果一致。
+
+   注意：浏览器打印对话框里的「边距」要选「默认」。Chrome 的对话框设置会盖掉这里的
+   @page margin，选「无」会让文字贴到纸边。 */
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 14mm 18mm 14mm;
 }
 
 @media print {
@@ -10,11 +16,9 @@
     background: #fff !important;
   }
 
-  /* 页边距：四边各留 10mm，装订后文字离纸边约 22mm。
-     打印对话框的“边距”必须选“无”，否则 Chrome 会再加一圈默认边距。 */
   body {
     margin: 0;
-    padding: 10mm 10mm 12mm;
+    padding: 0;
   }
 
   /* 屏幕上的导航和交互控件不进 PDF */
@@ -27,31 +31,41 @@
   .gx-zoom,
   .bar,
   .exbar,
-  .gx-ap {
+  .gx-ap,
+  .quiz-cta,
+  .done-btn {
     display: none !important;
   }
 
-  /* 版心锁死 900px（与桌面一致），整页用 transform 等比缩小。
-     transform 不参与排版，所以换行位置和屏幕完全一样。 */
+  /* 版心跟着纸走：不锁宽度、不做 transform —— transform 不参与排版，
+     分页会按未缩放的高度切，每页只能装 80%，下面留一大片空白。 */
   main.wrap {
-    width: 900px;
-    max-width: 900px;
+    width: auto;
+    max-width: none;
     margin: 0;
-    padding: 0 24px;
-    transform: scale(0.797);
-    transform-origin: top left;
+    padding: 0;
+    transform: none;
   }
 
-  .page-title,
+  .page-title {
+    margin-top: 0;
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
   .page-meta {
-    margin-left: 0;
+    margin-top: 4px;
   }
 
+  /* 去掉网页版的卡片外壳，让文字直接落在纸上 */
   .content {
-    margin-top: 10px;
-    padding: 30px 34px;
+    margin-top: 12px;
+    padding: 0;
+    background: transparent;
+    border: 0;
     border-radius: 0;
     box-shadow: none;
+    min-height: 0;
   }
 
   /* 打印件是给人看的：把「下一步」才显示的步骤和答案全部展开 */
@@ -60,7 +74,47 @@
     display: block !important;
   }
 
-  /* 不让卡片 / 表格 / 标题被切在两页之间 */
+  /* app.css 里 .content table 是 display:block + nowrap + overflow-x:auto
+     （给手机横滚用的），纸面上会把右边整列裁掉。恢复成真表格并允许换行 */
+  .content table {
+    display: table !important;
+    overflow: visible !important;
+    white-space: normal !important;
+  }
+
+  /* 横滚容器在纸上会裁掉右边（数学页的表是裸的 <div style="overflow-x:auto">，
+     连类名都没有），一律展开；同时让表格自己适配版心宽度，别把字挤到版心外 */
+  .gx-cmp-wrap,
+  [style*="overflow-x"] {
+    overflow: visible !important;
+  }
+
+  /* 表格按内容自动分列（table-layout:fixed 会把短列硬挤成两行），
+     靠 td 可断行来保证不超出版心 */
+  table.gx-cmp {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 除第一列外都允许换行；第一列是短标签列（「看谁」「对象」「来源」），
+     强行 normal 会把两个字拆成竖排，保持页面原本的 nowrap */
+  table.gx-cmp th,
+  table.gx-cmp td {
+    overflow-wrap: anywhere;
+  }
+
+  table.gx-cmp th:not(:first-child),
+  table.gx-cmp td:not(:first-child) {
+    white-space: normal !important;
+  }
+
+  table.gx-cmp th:first-child,
+  table.gx-cmp td:first-child {
+    white-space: nowrap !important;
+  }
+
+  /* 不让卡片 / 表格 / 标题被切在两页之间（典型：一道题的题干留在页底、
+     选项跑到下页）。宁可页底留白，也不让卡片断框。 */
   .gx-fig,
   .gx-quote,
   .gx-quiz,
